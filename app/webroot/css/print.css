@@ -1,0 +1,48 @@
+@page {
+    size: A4;
+    margin: 0;
+}
+@media print {
+  body { 
+    font-size: 12pt;
+    font-color: #000000; 
+    width:3508px; 
+  }
+  
+  #basicMenu,#footer,#printData,#toTop,#comeBack{
+      display: none !important;
+  }
+
+   div.view
+   {
+       max-width: 100% !important;
+       float: none;
+   }
+   div.print
+   {
+       max-width: 1000px !important;
+       float: none;
+   }
+   #content{
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: always;
+   }
+     .page {
+        min-height: 1600px;
+    }
+    .statisticsUser {
+        min-height: 800px;
+    }
+    .chart {
+        min-height: 600px;
+    }
+    
+ 
+  
+}

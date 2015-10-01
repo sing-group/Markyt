@@ -1,0 +1,10 @@
+
+
+#textContent *, #textContent:hover *, #textContent:active * {
+    cursor: auto ;
+}
+
+#textContent mark {
+    cursor: cell !important;
+    cursor: -moz-cell !important;
+}
