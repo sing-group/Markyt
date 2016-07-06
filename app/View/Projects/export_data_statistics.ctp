@@ -11,7 +11,6 @@ echo $this->Html->script('markyChart.js', array('block' => 'scriptInView'));
 echo $this->Html->script('markyExportDataRound.js', array('block' => 'scriptInView'));
 echo $this->Html->css('print', array('block' => 'cssInView'));
 
-echo $this->Html->link(__('Return'), array('controller' => 'projects', 'action' => 'view', $project_id), array('id' => 'comeBack'));
 echo $this->Html->image('print.svg', array('alt' => 'printDocument', 'id' => 'printData', 'class' => 'toolButton', 'title' => 'Print this document'));
 
 function random_color_part() {
@@ -22,21 +21,6 @@ function random_color() {
     return random_color_part() . random_color_part() . random_color_part();
 }
 ?>
-<div>
-    <ul id="addToMenu" class="hidden">
-        <li id="viewTable">
-            <a href="#">Get agreement Tables</a>
-            <ul>
-                <li><?php echo $this->Html->link(__('among rounds'), array('controller' => 'projects', 'action' => 'confrontationSettingMultiRound', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('among annotators'), array('controller' => 'projects', 'action' => 'confrontationSettingMultiUser', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('among types'), array('controller' => 'projects', 'action' => 'confrontationSettingDual', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('F-score  for two annotators'), array('controller' => 'projects', 'action' => 'confrontationSettingFscoreUsers', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('F-score  for two rounds'), array('controller' => 'projects', 'action' => 'confrontationSettingFscoreRounds', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('Load table from file'), array('controller' => 'projects', 'action' => 'importData', $project_id)); ?></li>            
-            </ul>
-        </li>
-    </ul>
-</div>
 <div class="page">
     <div class="view print">
         <dl>

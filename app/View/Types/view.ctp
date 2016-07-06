@@ -1,98 +1,120 @@
 <?php
-echo $this->Html->script('markyMultiDelete.js', array('block' => 'scriptInView'));
-echo $this->Html->css('../js/dataTables/css/jquery.dataTables', array('block' => 'cssInView'));
-echo $this->Html->script('./dataTables/js/jquery.dataTables.min', array('block' => 'scriptInView'));
-echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
-echo $this->Html->script('markyAjaxQuestion', array('block' => 'scriptInView'));
-echo $this->Html->script('markyView', array('block' => 'scriptInView'));
+//echo $this->Html->css('../js/Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array('block' => 'cssInView'));
+//echo $this->Html->script('Bootstrap/datatables/jquery.dataTables.min', array('block' => 'scriptInView'));
+//echo $this->Html->script('Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array('block' => 'scriptInView'));
 
-$comesFrom = $this->Session->read('comesFrom');
-if (!isset($comesFrom))
-    $comesFrom = array('action' => 'index');
-echo $this->Html->link(__('Return'), $comesFrom, array('id' => 'comeBack'));
-//$this->Session->delete('comesFrom');
+echo $this->Html->css('pubmed', array('block' => 'cssInView'));
+//echo $this->Html->script('markyMultiDelete.js', array('block' => 'scriptInView'));
+//echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
+echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'scriptInView'));
+//echo $this->Html->script('markyView', array('block' => 'scriptInView'));
+
 ?>
-<ul id="menuView">
-    <li id="viewDeleteOption"><?php echo $this->Form->postLink(__('Delete Type'), array('action' => 'delete', $type['Type']['id']), array('class'=>'deleteAction'), __('Are you sure you want to delete this Type: %s?', $type['Type']['name'])); ?> </li>
-    <li id="viewEditOption"><?php echo $this->Html->link(__('Edit Type'), array('action' => 'edit', $type['Type']['id'])); ?> </li>
-</ul>
 <div class="types view">
-    <h1><?php echo __('Type'); ?></h1>
-    <dl>
-        <dt><?php echo __('Project'); ?></dt>
-        <dd>
-            <?php echo $this->Html->link($type['Project']['title'], array('controller' => 'projects', 'action' => 'view', $type['Project']['id'])); ?>
-            &nbsp;
-        </dd>
-        <dt><?php echo __('Name'); ?></dt>
-        <dd>
-            <?php echo h($type['Type']['name']); ?>
-            &nbsp;
-        </dd>
-        <dt><?php echo __('Colour'); ?></dt>
-        <dd id="contentColor">
-            <div class="typeColorIndex" style="background-color: rgba(<?php echo $type['Type']['colour']; ?>)"></div> 
-            &nbsp;
-        </dd>
-        <dt><?php echo __('Description'); ?></dt>
-        <dd class="description">
-            <?php echo h($type['Type']['description']); ?>
-            &nbsp;
-        </dd>
-    </dl>
-    <div id="tabs" class="related">
-        <ul>
-            <li><a href="#tabs-1">Questions</a></li>
-        </ul>
-        <div class="related" id="tabs-1">
-            <h2><?php echo __('Questions'); ?></h2>
-            <table   class="viewTable ">
-                <thead>
-                    <tr>
-                        <th><?php echo $this->Form->input('All', array('type' => 'checkbox', 'id' => 'selectAllQuestions')) ?></th>
-                        <th><?php echo __('Question'); ?></th>
-                        <th class="actions"><?php echo __('Actions'); ?></th>
-                    </tr>
-                </thead>
-                <tbody id="bodyTable">
-                    <?php
-                    $i = 0;
-                    foreach ($type['Question'] as $question):
-                        ?>
-                        <tr>
-                            <td><?php
-                                echo $this->Form->input('', array('type' => 'checkbox', 'value' => $question['id'], 'class' => 'question'));
-                                echo $i + 1;
-                                ?></td>
-                            <td class='editAjax' value='<?php echo $question['id'] ?>'><?php
-                                echo "<span id='key" . $question['id'] . "' value='" . $question['question'] . "' name='row$i'></span>";
-                                echo $question['question'];
-                                ?></td>
-                            <td class="actions">
-                                <?php echo $this->Html->image('edit.svg', array('alt' => 'SaveQuestion', 'title' => 'Edit Question', 'class' => 'imageButton editAjax', 'value' => $question['id'])); ?>
-                                <?php echo $this->Html->image('bin.svg', array('alt' => 'deleteQuestion', 'title' => 'Delete Question', 'class' => 'imageButton deleteAjax', 'value' => $question['id'])) ?>
-
-                            </td>
-                        </tr>
-                        <?php
-                        $i++;
-                    endforeach;
-                    ?>    
-
-                </tbody>
-            </table>
-            <?php
-            echo $this->Form->create('questions', array('id' => 'questionsDelete', 'action' => 'deleteAll'));
-            echo $this->Form->hidden('allQuestions', array('id' => 'allQuestions', 'name' => 'allQuestions', 'class' => 'delete'));
-            echo $this->Form->end(array('class' => 'deleteButton', 'label' => 'Delete Selected'));
-            ?>
-            <div class="actions">
-                <ul>
-                    <li><button id="new" class="addButton">New Question <?php echo $this->Html->image('add.png', array('alt' => 'newQuestion', 'title' => 'new Question')); ?></li>
-                </ul>
+    <div class="col-md-12">
+        <h1><?php echo __('Type'); ?></h1>
+        <div class="col-md-4 section">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-info"></i><?php echo h($type['Type']['name']) ?></h4>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover table-responsive" >
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <?php echo __('Project'); ?>
+                                </td>  
+                                <td>
+                                    <?php echo $this->Html->link($type['Project']['title'], array('controller' => 'projects', 'action' => 'view', $type['Project']['id'])); ?>
+                                </td>  
+                            </tr>
+                            <tr>
+                                <td>
+                                    <?php echo __('Colour'); ?>
+                                </td>  
+                                <td>
+                                    <div class="type-color-box" style="background-color: rgba(<?php echo $type['Type']['colour']; ?>)">
+                                </td>  
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
         </div>
+        <div class="col-md-6 section">
+            <div class="panel-heading">
+                <h4><i class="fa fa-file-text-o"></i><?php echo __('Description'); ?></h4>
+            </div>
+            <div class="panel-body">
+                <?php
+                if (isset($type['Type']['description']) && $type['Type']['description'] != '') {
+                    echo h($type['Type']['description']);
+                } else {
+                    echo __("There isn't description. This description will appear when users annotate the document with this type");
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-4 section data-table">
+            <div class="panel-heading">
+                <h4><i class="fa fa-list"></i><?php echo __('This document is in this projects: '); ?></h4>
+            </div>
+            <div class="panel-body" >
+                <table class="table table-responsive" >
+                    <thead>
+                        <tr>
+                            <th><?php echo $this->Form->input('All', array('type' => 'checkbox', 'id' => 'select-all-items', 'div' => false)) ?></th>
+                            <th><?php echo __('Question'); ?></th>
+                            <th class="actions"><?php echo __('Actions'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyTable">
+                        <?php
+                        $i = 0;
+                        foreach ($type['Question'] as $question):
+                            ?>
+                            <tr class="table-item-row questions">
+                                <td class="item-id">
+                                    <?php
+                                    echo $this->Form->input('', array('type' => 'checkbox', 'value' => $question['id'], 'class' => 'question item', 'id' => uniqid(), 'div' => false));
+                                    ?>
+                                </td>
+                                <td class='editAjax'><?php
+                                    echo $question['question'];
+                                    ?>
+                                </td>
+                                <td class="actions">
+                                    <?php
+                                    echo $this->Html->link('<i class="fa fa-pencil-square-o"></i>', array('controller' => 'questions', 'action' => 'edit', $question['id']), array('class' => 'btn btn-warning editAjax', 'escape' => false, 'title' => 'Edit Question', 'data-question-id' => $question['id']));
+                                    echo $this->Html->link('<i class="fa fa-trash-o"></i>', array('controller' => 'questions', 'action' => 'delete', $question['id']), array('class' => 'btn btn-danger delete-item table-item deleteAjax', 'escape' => false, "title" => __('Are you sure you want to delete this Question:'), 'data-question-id' => $question['id']));
+                                    ?>
+                                </td>                                
+                            </tr>
+                            <?php
+                            $i++;
+                        endforeach;
+                        ?>                           
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="col-md-6">
+                    <?php
+                    echo $this->element('delete_selected', array('controller' => 'questions'));
+                    ?>
+                </div>
+                <div class="col-md-6">
+                    <?php
+                    echo $this->Form->button('<i class="fa fa-plus-square-o"></i> New Question', array('title' => 'Add question', 'class' => 'btn btn-info addButton', 'scape' => false, "id" => "new"));
+                    ?>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+
         <div class="hidden">
             <span id='typeId' value="<?php echo $type['Type']['id'] ?>"></span>	
             <span id='maxRow' value="<?php echo $i ?>"></span>	
@@ -109,32 +131,38 @@ echo $this->Html->link(__('Return'), $comesFrom, array('id' => 'comeBack'));
             echo $this->Html->image('edit.svg', array('alt' => 'edit question', 'title' => 'Edit Question', 'id' => 'originalEdit', 'class' => 'hidden'));
             echo $this->Html->image('bin.svg', array('alt' => 'SaveQuestion', 'title' => 'Delete Question', 'id' => 'originalBin', 'class' => 'hidden'));
             ?>
-            <table >
-                <tr id="tableAdd">
-                    <td></td>
+            <table>
+                <tr class="template-add table-item-row">
+                    <td class="item-id"></td>
                     <td>
                         <?php
-                        echo $this->Form->input('question', array('id' => 'inputBase', "placeholder" => "Ex. why you've annotated it?", 'label' => false));
+                        echo $this->Form->input('question', array('id' => uniqid() . '{0}', "placeholder" => "Ex. why you've annotated it?", 'label' => false, "class" => 'form-control input-question'));
                         ?>
                     </td>
                     <td>
                         <?php
-                        echo $this->Html->image('save.svg', array('alt' => 'SaveQuestion', 'title' => 'Save Question', 'id' => 'saveAjaxAdd', 'class' => 'imageButton'));
+                        echo $this->Form->button('<i class="fa fa-floppy-o"></i>', array('title' => 'save', 'class' => 'btn btn-success save', 'scape' => false));
                         ?>
                     </td>  
                 </tr>
-                <tr id="tableEdit">
-                    <td></td>
-                    <td>
+                <tr class="table-item-row  template-insert">
+                    <td class="item-id">
                         <?php
-                        echo $this->Form->input('question', array('id' => 'inputEdit', "placeholder" => "Ex. why you've annotated it?", 'label' => false));
+                        echo $this->Form->input('', array('type' => 'checkbox', 'data-question-id' => "{0}", 'class' => 'question', 'id' => uniqid() . '{0}', 'div' => false));
                         ?>
                     </td>
-                    <td>
+                    <td class='editAjax'>
                         <?php
-                        echo $this->Html->image('save.svg', array('alt' => 'SaveQuestion', 'title' => 'Save Question', 'id' => 'saveAjaxEdit', 'class' => 'imageButton'));
+                        echo "<span id='key{0}' name='{0}'></span>";
                         ?>
-                    </td>  
+                        {1}
+                    </td>
+                    <td class="actions">
+                        <?php
+                        echo $this->Html->link('<i class="fa fa-pencil-square-o"></i>', array('controller' => 'questions', 'action' => 'edit', '{0}'), array('class' => 'btn btn-warning editAjax','data-question-id'=>'{0}', 'escape' => false, 'title' => 'Edit Question'));
+                        echo $this->Html->link('<i class="fa fa-trash-o"></i>', array('controller' => 'questions', 'action' => 'delete', '{0}'), array('class' => 'btn btn-danger delete-item table-item deleteAjax','data-question-id'=>'{0}', 'escape' => false, "title" => __('Are you sure you want to delete this Question?')));
+                        ?>
+                    </td> 
                 </tr>
             </table>	
             ?>	

@@ -1,6 +1,5 @@
 <?php 
     $redirect=$this->Session->read('redirect');
-    echo $this->Html->link(__('Return'), $redirect,array('id'=>'comeBack' ));
 ?>
 <div class="questions view">
 <h1><?php    echo __('Question'); ?></h1>

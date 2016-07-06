@@ -1,13 +1,14 @@
 $(document).ready(function ()
 {
     
-    heatColour("#2B5B72","#56F717",$('.heatColour td'), "background-color")
+    
+    heatColour("#56F717","#2B5B72",$('.heatColour td'), "background-color")
+    
+    
 });
 
 
 function heatColour(minColour,maxColour,applyTo,cssElement) { 
-
-
     // Get all data values from our table cells making sure to ignore the first column of text
     // Use the parseInt function to convert the text string to a number
 
@@ -29,8 +30,7 @@ function heatColour(minColour,maxColour,applyTo,cssElement) {
     var max = 100;
 
 
-    Math.max.apply(Math,counts); 
-    
+    Math.max.apply(Math,counts);     
     n = counts.length; // Declare the number of groups
     maxColour = hex2rgb(maxColour);
     minColour = hex2rgb(minColour);
@@ -45,15 +45,12 @@ function heatColour(minColour,maxColour,applyTo,cssElement) {
     yr = minColour[0]; // Red value
     yg = minColour[1]; // Green value
     yb = minColour[2]; // Blue value
-
-   
     // Loop through each data point and calculate its % value
     applyTo.each(function ()
     {
         var val = $(this).text().replace("%", '');
         if (val != 0)
         {
-
             var pos = counts.indexOf(val);
             red = parseInt((xr + ((pos * (yr - xr)) / (n - 1))).toFixed(0));
             green = parseInt((xg + ((pos * (yg - xg)) / (n - 1))).toFixed(0));
@@ -63,8 +60,6 @@ function heatColour(minColour,maxColour,applyTo,cssElement) {
             $(this).css("color", "#020202");
         }
     });
-
-
 }
 
 

@@ -10,6 +10,7 @@ App::uses('AppModel', 'Model');
  * @property Project $Project
  */
 class DocumentsAssessment extends AppModel {
+    var $actsAs = array('Containable');
 
     /**
      * Validation rules

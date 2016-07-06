@@ -16,7 +16,7 @@ class Post extends AppModel {
 		'user_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
+				'message' => 'This field cannot be empty',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -26,6 +26,7 @@ class Post extends AppModel {
 		'title' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
+				'message' => 'This field cannot be empty',
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -36,6 +37,7 @@ class Post extends AppModel {
 		'body' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
+				'message' => 'This field cannot be empty',
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,

@@ -1,80 +1,31 @@
-<?php
-//echo $this->Html->script('markyGetPercentage.js', array('block' => 'scriptInView'));
-//echo $this->Html->link('endGoTo', array('controller'=>'projects','action'=>'index'),array('id'=>'endGoTo'));
-//echo $this->Html->link('getPercentage', array('controller'=>'projects','action'=>'getProgress',true),array('id'=>'getPercentage'));
-?>
-<div class="loadFile form">
-    <?php echo $this->Form->create('Project', array('type' => 'file', 'id' => 'getForm')); ?>
+<?php ?>
+<h1><?php echo __("Load annotations and docs: )"); ?></h1>
+<h3>
+    On this page you can load annotations and docs from other ESEI tools. Load zip. <?php echo "Max annotation id=$maxAnnotation+1, Max type id=$maxType+1"; ?>
+</h3> 
+<div class="loadFile form col-md-3">
+    <?php
+    echo $this->Form->create('Project', array('type' => 'file', 'id' => 'getForm',
+        'role' => 'form', 'class' => 'undefinedWaiting'));
+    ?>
     <fieldset>
-        <legend><?php echo __("Load annotations and docs: (Max id=$max)"); ?></legend>
-        <p>
-            On this page you can load annotations and docs from other ESEI tools. Load zip.
-        </p> 
         <?php
-        echo $this->Form->input('User',array('multiple'=>'false'));
-        echo $this->Form->input('File', array('type' => 'file', 'label' => 'Select Zip to load'));
+        echo $this->Form->input('User', array('multiple' => 'false', 'class' => 'form-control'));
+        echo $this->Form->input('File', array('type' => 'file',
+            'label' => 'Select Zip to load',
+            'class' => 'form-control hidden uploadInput'));
+        ?>
+        <div class="filePath">
+            <i class='fa fa-folder-open'></i>&nbsp;<span class='urlFile'>File not selected</span>
+        </div>
+        <?php
+        echo $this->Form->button('Select file <i class="fa fa-cloud-upload"></i>', array(
+            'class' => 'uploadFileButton btn btn-primary', 'escape' => false, 'type' => 'button',
+            'id' => 'falseUploadButton'));
         ?>
     </fieldset>
     <?php
-    echo $this->Form->end(__('Submit'));
+    echo $this->Form->submit('Submit', array('class' => 'btn btn-success'));
+    echo $this->Form->end();
     ?>
 </div>
-<div id="loading" class="dialog" title="Please be patient..">
-    <p>
-        <span>This process can be very long, more than 5 min, depending on the state of the server and the data sent. Thanks for your patience</span>
-    </p>
-    <div id="loadingSprite">
-        <?php
-        echo $this->Html->image('loading.gif', array('alt' => 'loading'));
-        echo $this->Html->image('textLoading.gif', array('alt' => 'Textloading'));
-        ?>
-    </div>
-    <div id="progressbar" class="default"><div class="progress-label">Loading...</div></div>
-</div>
-<script>
-
-    $(document).ready(function() {
-        var request;
-        var progressbar = $("#progressbar"),
-                progressLabel = $(".progress-label");
-        $('#getForm').submit(function(e) {
-            if (request) {
-                request.abort();
-            }
-            // setup some local variables
-            var $form = $(this);
-            var url = $form.attr("action");
-            var serializedData = $form.serialize();
-
-
-            progressbar.progressbar({
-                value: false,
-            });
-
-            $('#loading').dialog({
-                width: '500',
-                height: 'auto',
-                modal: true,
-                position: 'middle',
-                resizable: false,
-                open: function() {
-                    $(this).parent().children().children('.ui-dialog-titlebar-close').hide();
-                },
-                show: {
-                    effect: "blind",
-                    duration: 1000
-                },
-                hide: {
-                    effect: "explode",
-                    duration: 1000
-                }
-            });
-            
-
-           // e.preventDefault();
-        });
-    });
-
-
-
-</script>

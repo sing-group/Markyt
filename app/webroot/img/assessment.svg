@@ -1,12 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!-- License Agreement at http://iconmonstr.com/license/ -->
-
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="512px" height="512px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
-<path id="note-27-icon" d="M179,303l-51.332-42l-51.335,42V50H179V303z M353.012,272.715H209v30h144.012V272.715z
-	 M352.979,207.298H209v30h143.979V207.298z M209,50v40h186.667c0,0,0,186.325,0,218.075c0,63.121-77.928,37.833-77.928,37.833
-	s23.859,76.092-35,76.092c-32.062,0-48.064,0-166.406,0V309.034l-40,32.728V462h207.016c68.165,0,152.318-89.069,152.318-150.472V50
-	H209z M209,171.965h143.979v-30H209V171.965z"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><path d="M179 303l-51.332-42-51.335 42v-253h102.667v253zm174.012-30.285h-144.012v30h144.012v-30zm-.033-65.417h-143.979v30h143.979v-30zm-143.979-157.298v40h186.667v218.075c0 63.121-77.928 37.833-77.928 37.833s23.859 76.092-35 76.092h-166.406v-112.966l-40 32.728v120.238h207.016c68.165 0 152.318-89.069 152.318-150.472v-261.528h-226.667zm0 121.965h143.979v-30h-143.979v30z"/></svg>

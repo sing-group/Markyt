@@ -1,19 +1,3 @@
-<div>
-    <ul id="addToMenu" class="hidden">
-        <li id="viewTable">
-            <a href="#">Get agreement Tables</a>
-            <ul>
-                <li><?php echo $this->Html->link(__('among rounds'), array('controller' => 'projects', 'action' => 'confrontationSettingMultiRound', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('among annotators'), array('controller' => 'projects', 'action' => 'confrontationSettingMultiUser', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('among types'), array('controller' => 'projects', 'action' => 'confrontationSettingDual', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('F-score  for two annotators'), array('controller' => 'projects', 'action' => 'confrontationSettingFscoreUsers', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('F-score  for two rounds'), array('controller' => 'projects', 'action' => 'confrontationSettingFscoreRounds', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('Load table from file'), array('controller' => 'projects', 'action' => 'importData', $project_id)); ?></li>
-
-            </ul>
-        </li>
-    </ul>
-</div>
 <div class="loadFile form">
     <?php echo $this->Form->create('Project', array('type' => 'file')); ?>
     <fieldset>
@@ -38,6 +22,5 @@
     </fieldset>
     <?php
     echo $this->Form->end(__('Submit'));
-    echo $this->Html->link(__('Return'), array('controller' => 'projects', 'action' => 'view', $project_id), array('id' => 'comeBack'));
     ?>
 </div>

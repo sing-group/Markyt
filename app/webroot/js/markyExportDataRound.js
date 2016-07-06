@@ -18,8 +18,6 @@ $(document).ready(function() {
 
     $('#printData').css({'cursor': 'wait'});
     
-    
-    
 });
 
 

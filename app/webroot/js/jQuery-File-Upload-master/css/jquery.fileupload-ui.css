@@ -34,7 +34,7 @@
   margin-bottom: 5px;
 }
 .files .progress {
-  width: 200px;
+  width: 100%;
 }
 .progress-animated .bar {
   background: url(../img/progressbar.gif) !important;
@@ -83,15 +83,16 @@
   }
 }
 /*++++++++++++++++++++++++++++++++++++++++++++++++++*/
-#fileUpload .btn-danger,#fileUpload .toggle, #fileUpload td .start{
+#fileUpload .toggle, #fileUpload td .start{
 display: none;
 }
-
+button.btn.btn-inverse.disabled {
+cursor: not-allowed!important;
+}
 
 #fileUpload div{
 
     clear: none;
     margin-bottom: 0;
-    padding: 0;
     vertical-align: text-top;
 }

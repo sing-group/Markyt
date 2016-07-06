@@ -50,7 +50,7 @@ class Round extends AppModel {
         'title' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-                'message' => 'this field cannot be empty',
+                'message' => 'This field cannot be empty',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -68,7 +68,7 @@ class Round extends AppModel {
         'ends_in_date' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-                'message' => 'this field cannot be empty',
+                'message' => 'This field cannot be empty',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -109,6 +109,28 @@ class Round extends AppModel {
             'order' => '',
             'limit' => '',
             'dependent' => false
+        ),
+        'Annotation' => array(
+            'className' => 'Annotation',
+            'foreignKey' => 'round_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
+        )
+        ,
+        'AnnotatedDocument' => array(
+            'className' => 'AnnotatedDocument',
+            'foreignKey' => 'round_id',
+            'dependent' => TRUE,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
     );
 
@@ -123,6 +145,21 @@ class Round extends AppModel {
             'joinTable' => 'types_rounds',
             'foreignKey' => 'round_id',
             'associationForeignKey' => 'type_id',
+            'unique' => 'keepExisting',
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'finderQuery' => '',
+            'deleteQuery' => '',
+            'insertQuery' => ''
+        ),
+          'User' => array(
+            'className' => 'User',
+            'joinTable' => 'users_rounds',
+            'foreignKey' => 'round_id',
+            'associationForeignKey' => 'user_id',
             'unique' => 'keepExisting',
             'conditions' => '',
             'fields' => '',

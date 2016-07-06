@@ -1,32 +1,30 @@
-<?php 
-        echo $this->Html->script('markyMonitorizing', array('block' => 'scriptInView'));   
-        echo $this->Html->link(__('Return'), array('controller'=>'projects','action'=>'view',$round['Project']['id']),array('id'=>'comeBack' ));
-    
+<?php
+echo $this->Html->script('markyMonitorizing', array('block' => 'scriptInView'));
 ?>
 <div class="rounds view">
-<h1><?php    echo __('Round'); ?></h1>
+    <h1><?php echo __('Round'); ?></h1>
     <dl>
-        <dt><?php   echo __('Project'); ?></dt>
+        <dt><?php echo __('Project'); ?></dt>
         <dd>
-            <?php   echo $this->Html->link($round['Project']['title'], array('controller' => 'projects', 'action' => 'view', $round['Project']['id'])); ?>
+            <?php echo $this->Html->link($round['Project']['title'], array('controller' => 'projects', 'action' => 'view', $round['Project']['id'])); ?>
             &nbsp;
         </dd>
-        <dt><?php   echo __('Title'); ?></dt>
+        <dt><?php echo __('Title'); ?></dt>
         <dd>
-            <?php   echo h( preg_replace('/-[[0-9]*%]/', '', $round['Round']['title'])); ?>
+            <?php echo h(preg_replace('/-[[0-9]*%]/', '', $round['Round']['title'])); ?>
             &nbsp;
         </dd>
-        <dt><?php   echo __('Ends In Date'); ?></dt>
+        <dt><?php echo __('Ends In Date'); ?></dt>
         <dd>
-            <?php   echo h($round['Round']['ends_in_date']); ?>
+            <?php echo h($round['Round']['ends_in_date']); ?>
             &nbsp;
         </dd>
-        <dt><?php   echo __('Description'); ?></dt>
+        <dt><?php echo __('Description'); ?></dt>
         <dd>
-            <?php   echo $round['Round']['description']; ?>
+            <?php echo $round['Round']['description']; ?>
             &nbsp;
         </dd>
-        <dt><?php   echo __('Progress Bar'); ?></dt>
+        <dt><?php echo __('Progress Bar'); ?></dt>
         <dd>
             <div id="progressbar">
                 <span id="progress"></span>                

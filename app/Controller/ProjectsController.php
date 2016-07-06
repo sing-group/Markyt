@@ -50,6 +50,9 @@ App::uses('CakeEmail', 'Network/Email');
  */
 class ProjectsController extends AppController {
 
+//     public $components = array(
+//        'CommonFunctions'
+//    );
     /**
      * index method
      * @param boolean $post
@@ -64,22 +67,40 @@ class ProjectsController extends AppController {
         );
         $data = $this->Session->read('data');
         $busqueda = $this->Session->read('search');
+
+        $conditions = array(
+            'conditions' => array());
+        $group_id = $this->Session->read('group_id');
+        $user_id = $this->Session->read('user_id');
+        if ($group_id > 1) {
+            $projects = $this->Project->ProjectsUser->find('list', array(
+                'recursive' => -1,
+                'fields' => 'ProjectsUser.project_id',
+                'ProjectsUser.project_id',
+                'conditions' => array(
+                    'ProjectsUser.user_id' => $user_id
+            )));
+
+            $conditions['conditions']['AND'] = array(
+                'id' => $projects);
+        }
+
         if ($post == null) {
             $this->Session->delete('data');
             $this->Session->delete('search');
             $this->set('search', '');
         } //$post == null
-        else {
-            $conditions = array(
-                'conditions' => array(
-                    'OR' => $data
-                )
-            );
-            $this->paginate = $conditions;
+        else if (!empty($data)) {
+            $conditions['conditions']['OR'] = $data;
             $this->set('search', $busqueda);
         }
+        $this->paginate = $conditions;
         $name = strtolower($this->name);
         $this->set($name, $this->paginate());
+
+        if ($group_id > 1) {
+            $this->render('userIndex');
+        }
     }
 
     /**
@@ -108,22 +129,6 @@ class ProjectsController extends AppController {
      * userIndex method
      * @return void
      */
-    public function userIndex() {
-        $this->Project->recursive = 0;
-        $id_user = $this->Session->read('user_id');
-        $projects = $this->Project->ProjectsUser->find('all', array(
-            'recursive' => -1,
-            'fields' => 'ProjectsUser.project_id',
-            'conditions' => array(
-                'ProjectsUser.user_id' => $id_user
-            )
-        ));
-        $projects = $this->flatten($projects);
-        $cond = array(
-            'Project.id' => $projects
-        );
-        $this->set('projects', $this->paginate($cond));
-    }
 
     /**
      * user_view method
@@ -153,7 +158,37 @@ class ProjectsController extends AppController {
                         'Project.id' => $id
                     )
         )));
+
+        $user_id = $this->Session->read('user_id');
+        $documents = $this->Project->DocumentsProject->find('count', array(
+            'conditions' => array(
+                'project_id' => $id,
+            )
+        ));
+
+        $rounds = $this->Project->Round->find('list', array(
+            'fields' => array(
+                'id',
+                'id'),
+            'conditions' => array(
+                'project_id' => $id,
+            )
+        ));
+
+
+        $annotations = $this->Project->Type->Annotation->find('count', array(
+            'recursive' => -1,
+            'conditions' => array(
+                'Annotation.user_id' => $user_id,
+                'Annotation.round_id' => $rounds
+            )
+        ));
+
+
         $this->set('user_id', $user_id);
+        $this->set(compact('documents', 'rounds', 'annotations'));
+        $this->set('user_id', $user_id);
+        $this->set('project_id', $id);
     }
 
     /**
@@ -169,6 +204,7 @@ class ProjectsController extends AppController {
             throw new NotFoundException(__('Invalid project'));
         } //!$this->Project->exists()
         //si existen rounds sin existeir ningun documento se borran dado que no tiene sentido tener rounds sin documentos.
+
         $numberOfDocuments = $this->Project->DocumentsProject->find('first', array(
             'conditions' => array(
                 'DocumentsProject.project_id' => $this->Project->id
@@ -182,15 +218,25 @@ class ProjectsController extends AppController {
                     'Round.project_id' => $this->Project->id
                 )
             ));
+            $deleteCascade = Configure::read('deleteCascade');
+
+
             $this->Project->Round->deleteAll(array(
                 'Round.id' => $rounds
-                    ), true);
+                    ), $deleteCascade);
         }
+
+
         $cond = array(
             'Project.id' => $id
         );
         $contain = array(
             'Type' => array(
+                'id',
+                'name',
+                'colour'
+            ),
+            'Relation' => array(
                 'id',
                 'name',
                 'colour'
@@ -204,23 +250,32 @@ class ProjectsController extends AppController {
                 'id',
                 'username',
                 'surname',
-                'email'
+                'email',
+                'image_type',
+                'image',
+            ),
+            'Participant' => array(
+                'id',
+                'email',
+                'team_id',
             )
         );
-        $this->set('project', $this->Project->find('first', array(
-                    'contain' => $contain,
-                    'conditions' => array(
-                        'Project.id' => $id
-                    )
-        )));
+        $project = $this->Project->find('first', array(
+            'contain' => $contain,
+            'conditions' => array(
+                'Project.id' => $id
+            )
+        ));
 
         $this->Project->virtualFields['negatives'] = 'SUM(DocumentsAssessment.negative)';
         $this->Project->virtualFields['neutral'] = 'SUM(DocumentsAssessment.neutral)';
         $this->Project->virtualFields['positives'] = 'SUM(DocumentsAssessment.positive)';
-        
+
         $fields = array(
-            ' `Document`.`id`, `Document`.`title`, `Document`.`created`, `DocumentsProject`.`document_id`, `DocumentsProject`.`project_id`', 'positives','neutral','negatives'
-             
+            ' `Document`.`id`, `Document`.`title`, `Document`.`created`, `DocumentsProject`.`document_id`, `DocumentsProject`.`project_id`',
+            'positives',
+            'neutral',
+            'negatives'
         );
         $this->paginate = array(
             'fields' => $fields,
@@ -244,7 +299,7 @@ class ProjectsController extends AppController {
                 array(
                     'table' => 'documents_assessments',
                     'alias' => 'DocumentsAssessment',
-                    'type' => 'Inner',
+                    'type' => 'LEFT',
                     'conditions' => array(
                         'DocumentsAssessment.document_id = Document.id',
                         'DocumentsAssessment.project_id=Project.id'
@@ -252,11 +307,64 @@ class ProjectsController extends AppController {
                 )
             ),
             'conditions' => $cond,
-            'group'=>array('Document`.`id`'),
+            'group' => array(
+                'Document`.`id`'),
             'recursive' => 0
         );
-        $this->set('documents', $this->paginate());
 
+
+        /* =========statistisc=============== */
+
+
+        $types = $project['Type'];
+        $rounds = Set::classicExtract($project['Round'], '{n}.id');
+        $users = Set::classicExtract($project['User'], '{n}.id');
+
+
+
+
+
+        $statisticsData = array();
+        $totalAnnotations = 0;
+
+        foreach ($types as $type) {
+
+            $count = $this->Project->Type->Annotation->find('count', array(
+                'recursive' => -1,
+                'conditions' => array(
+                    'Annotation.type_id' => $type['id'],
+                    'Annotation.user_id' => $users,
+                    'Annotation.round_id' => $rounds
+                )
+            ));
+            array_push($statisticsData, array(
+                'GraficColumns' => $type['name'],
+                'Colour' => $this->RGBToHex($type['colour']),
+                'value' => $count
+            ));
+            $totalAnnotations += $count;
+        }
+
+
+        $totalRelations = $this->Project->Relation->find('count', array(
+            'recursive' => -1,
+            'conditions' => array(
+                'project_id' => $id,
+            )
+        ));
+
+
+        /* =================== */
+        $this->set('totalAnnotations', $totalAnnotations);
+        $this->set('totalRelations', $totalRelations);
+        $this->set('statisticsData', $statisticsData);
+        $this->set('documents', $this->paginate());
+        $this->set('project_id', $id);
+        $this->set('project', $project);
+        $this->set('projects', $this->Project->find('list', array(
+                    'conditions' => array(
+                        'NOT' => array(
+                            'id' => $id)))));
 
         /*
           $contain = array(
@@ -275,6 +383,9 @@ class ProjectsController extends AppController {
           'conditions' => array('project_id' => $id)));
 
           $this->set('documents', $documents); */
+
+
+
         $this->Session->write('comesFrom', array(
             'controller' => 'Projects',
             'action' => 'view',
@@ -332,47 +443,55 @@ class ProjectsController extends AppController {
      */
     public function edit($id = null) {
         $this->Project->id = $id;
+        $this->Round = $this->Project->Round;
+        $this->UsersRound = $this->Round->UsersRound;
+        $this->AnnotatedDocument = $this->Round->AnnotatedDocument;
+
         $deleteCascade = Configure::read('deleteCascade');
         if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid project'));
         } //!$this->Project->exists()
         if ($this->request->is('post') || $this->request->is('put')) {
+//            debug($this->request->data);
             if ($this->Project->save($this->request->data)) {
                 $redirect = $this->Session->read('redirect');
                 if ($deleteCascade) {
                     $this->Session->setFlash(__('Project has been saved'), 'success');
                     $this->backGround($redirect);
                 }
-                $noDocuments = $this->request->data['Project']['noDocuments'];
-                $noDocuments = json_decode($noDocuments);
-                $noUsers = $this->request->data['Project']['noUsers'];
-                $noUsers = json_decode($noUsers);
-                if (!empty($noDocuments)) {
-                    $rounds = $this->Project->Round->find('list', array(
-                        'fields' => 'id',
-                        'recursive' => -1,
-                        'conditions' => array(
-                            'Round.project_id' => $this->Project->id
-                        )
-                    ));
-                    $this->Project->Round->UsersRound->deleteAll(array(
+//                $noDocuments = $this->request->data['Project']['noDocuments'];
+//                $noDocuments = json_decode($noDocuments);
+//                $noUsers = $this->request->data['Project']['noUsers'];
+//                $noUsers = json_decode($noUsers);
+
+
+                $rounds = $this->Round->find('list', array(
+                    'fields' => 'id',
+                    'recursive' => -1,
+                    'conditions' => array(
+                        'Round.project_id' => $this->Project->id
+                    )
+                ));
+//                $this->AnnotatedDocument->deleteAll(array(
+//                    'AND' => array(
+//                        'AnnotatedDocument.round_id' => $rounds,
+//                    ),
+//                    'NOT' => array(
+//                        'AnnotatedDocument.document_id' => $this->request->data['Document']['Document']
+//                    )
+//                        ), $deleteCascade);
+
+
+
+                $this->UsersRound->deleteAll(array(
+                    'AND' => array(
                         'UsersRound.round_id' => $rounds,
-                        'UsersRound.document_id' => $noDocuments
-                            ), $deleteCascade);
-                } //!empty($noDocuments)
-                if (!empty($noUsers)) {
-                    $rounds = $this->Project->Round->find('list', array(
-                        'fields' => 'id',
-                        'recursive' => -1,
-                        'conditions' => array(
-                            'Round.project_id' => $this->Project->id
-                        )
-                    ));
-                    $this->Project->Round->UsersRound->deleteAll(array(
-                        'UsersRound.round_id' => $rounds,
-                        'UsersRound.user_id' => $noUsers
-                            ), $deleteCascade);
-                }
+                    ),
+                    'NOT' => array(
+                        'UsersRound.user_id' => $this->request->data['User']['User']
+                    )
+                        ), $deleteCascade);
+
                 $this->Session->setFlash(__('Project has been saved'), 'success');
                 $this->redirect($redirect);
             } //$this->Project->save($this->request->data)
@@ -382,10 +501,10 @@ class ProjectsController extends AppController {
         } //$this->request->is('post') || $this->request->is('put')
         else {
             $contain = array(
-                'Document' => array(
-                    'id',
-                    'title'
-                ),
+//                'Document' => array(
+//                    'id',
+//                    'title'
+//                ),
                 'User' => array(
                     'id',
                     'username',
@@ -419,7 +538,8 @@ class ProjectsController extends AppController {
         $users = $this->Project->User->find('list', array(
             'conditions' => $userConditions
         ));
-        $this->set(compact('documents', 'users'));
+        $project_id = $id;
+        $this->set(compact('documents', 'users', 'project_id'));
     }
 
     /**
@@ -431,6 +551,10 @@ class ProjectsController extends AppController {
      * @return void
      */
     public function delete($id = null) {
+
+//        $this->CommonFunctions = $this->Components->load('CommonFunctions');
+//        $this->CommonFunctions->delete($id, 'title');
+
         if (!$this->request->is('post')) {
             throw new MethodNotAllowedException();
         } //!$this->request->is('post')
@@ -455,11 +579,15 @@ class ProjectsController extends AppController {
         } else {
             if ($this->Project->delete($id, $deleteCascade)) {
                 $this->Session->setFlash(__('Project has been deleted'), 'success');
-                $this->redirect($redirect);
+                $this->redirect(array(
+                    'controller' => 'projects',
+                    'action' => 'index'
+                ));
             } //$this->Project->delete()
         }
         $this->Session->setFlash(__("Project hasn't been deleted"));
-        $this->redirect(array('action' => 'index'));
+        $this->redirect(array(
+            'action' => 'index'));
     }
 
     /*     * *************
@@ -540,7 +668,8 @@ class ProjectsController extends AppController {
             //se mandan los dos igual debido a que confrontation dual se puede llegar desde dos funciones distintas
             $this->Session->write('confrontationSettingsData', $this->request->data);
             $this->redirect(array(
-                'action' => 'confrontationDual', true
+                'action' => 'confrontationDual',
+                true
             ));
         } //$this->request->is('post') || $this->request->is('put')
         $cond = array(
@@ -566,8 +695,6 @@ class ProjectsController extends AppController {
         // top of file
         $time_start = microtime(true);
         $this->Session->write('start', $time_start);
-
-
         $data = $this->Session->read('confrontationPostedData');
         $settingData = $this->Session->read('confrontationSettingsData');
         $this->Project->id = $data['Project']['id'];
@@ -598,7 +725,7 @@ class ProjectsController extends AppController {
                 }
 
 
-                if (!($data['user_A'][0] == $data['user_B'][0] && $data['round_A'] == $data['round_B']) && !empty($data['Project']['type'])) {
+                if (!($data['user_A'] == $data['user_B'] && $data['round_A'] == $data['round_B']) && !empty($data['Project']['type'])) {
                     $sendMail = false;
                     ignore_user_abort(true);
                     if (isset($data['Project']['sendEmail']) && $data['Project']['sendEmail'] == true) {
@@ -638,8 +765,8 @@ class ProjectsController extends AppController {
                     $types = $settingData['Project']['type'];
                     $round_id_A = $data['round_A'];
                     $round_id_B = $data['round_B'];
-                    $user_id_A = $data['user_A'][0];
-                    $user_id_B = $data['user_B'][0];
+                    $user_id_A = $data['user_A'];
+                    $user_id_B = $data['user_B'];
 
                     $cond = array(
                         'id' => $round_id_A
@@ -669,8 +796,8 @@ class ProjectsController extends AppController {
                         'conditions' => $cond,
                         'recursive' => -1
                     ));
-                    $field_A = $user_A['User']['username'] . ':' . $round_A['Round']['title'];
-                    $field_B = $user_B['User']['username'] . ':' . $round_B['Round']['title'];
+                    $field_A = $user_A['User']['username'] . ' in round ' . $round_A['Round']['title'];
+                    $field_B = $user_B['User']['username'] . ' in round ' . $round_B['Round']['title'];
 
                     //si el usuario es el mismo marca que estamos haciendo las cosas por round
                     $byRound = FALSE;
@@ -831,8 +958,8 @@ class ProjectsController extends AppController {
                         $this->set('differentTypes', $differentTypes);
                         $this->set('id_group_files', $group_B);
                         $this->set('id_group_cols', $group_A);
-                        $this->set('columnes', $field_B);
-                        $this->set('files', $field_A);
+                        $this->set('colName', $field_B);
+                        $this->set('rowName', $field_A);
                         $this->set('byRound', $byRound);
                         $this->set('noneRelation', $noneRelation_aux);
                         $this->set('relationTypes', $relationTypes);
@@ -904,6 +1031,8 @@ class ProjectsController extends AppController {
      */
     public function confrontationMultiRound() {
         // top of file
+
+        $this->User = $this->Project->User;
         $time_start = microtime(true);
         $this->Session->write('start', $time_start);
 
@@ -959,9 +1088,12 @@ class ProjectsController extends AppController {
                     ));
                     $margin = $data['Project']['margin'];
                     $rounds = $data['round'];
-                    $user = $data['user'][0];
+                    $user = $data['user'];
+
+                    $this->User->id = $user;
+
                     $types_id = $data['Project']['type'];
-                    $user_name = $data['user_name_A'];
+                    $user_name = $this->User->field('full_name');
                     $confrontationResult = $this->Session->read('confrontationResult');
                     if (empty($confrontationResult)) {
                         $relationRounds = array();
@@ -1032,9 +1164,12 @@ class ProjectsController extends AppController {
                             'Annotation.user_id' => $data['user']
                         );
                         $cont = $this->Project->Type->Annotation->find('count', array(
+                            'recursive' => -1,
                             'conditions' => $cond
                         ));
-                        $this->set('NumAnnotations', $cont);
+
+
+                        $this->set('numAnnotations', $cont);
                         $this->set('differentElements', $differentRounds);
                         $this->set('elementName', 'Round');
                         $this->set('margin', $margin);
@@ -1159,7 +1294,7 @@ class ProjectsController extends AppController {
                 $margin = $data['Project']['margin'];
                 if ($data['Project']['margin'] > 100)
                     $margin = 100;
-                $rounds = $data['round'][0];
+                $rounds = $data['round'];
                 $users = $data['user'];
                 $types_id = $data['Project']['type'];
                 $round_name = $data['round_name_A'];
@@ -1169,7 +1304,6 @@ class ProjectsController extends AppController {
                     $tam = sizeof($users);
                     $db = $this->Project->getDataSource();
                     $types = implode(",", $types_id);
-                    $db = $this->Project->getDataSource();
                     $scriptTimeLimit = Configure::read('scriptTimeLimit');
                     set_time_limit($scriptTimeLimit);
                     error_reporting(E_ERROR | E_PARSE);
@@ -1234,7 +1368,7 @@ class ProjectsController extends AppController {
                     $cont = $this->Project->Type->Annotation->find('count', array(
                         'conditions' => $cond
                     ));
-                    $this->set('NumAnnotations', $cont);
+                    $this->set('numAnnotations', $cont);
                     $this->set('differentElements', $differentUsers);
                     $this->set('elementName', 'User');
                     $this->set('margin', $margin);
@@ -1388,8 +1522,8 @@ class ProjectsController extends AppController {
                         $f_scores = array();
                         $tamRounds = sizeof($rounds);
                         $tamTypes = sizeof($types_id);
-                        $user_A = $data['user_A'][0];
-                        $user_B = $data['user_B'][0];
+                        $user_A = $data['user_A'];
+                        $user_B = $data['user_B'];
                         $scriptTimeLimit = Configure::read('scriptTimeLimit');
                         set_time_limit($scriptTimeLimit);
                         error_reporting(E_ERROR | E_PARSE);
@@ -2076,7 +2210,8 @@ class ProjectsController extends AppController {
             $Email->subject('Marky agreement statistics');
             $Email->emailFormat('html');
             $Email->template('sendData');
-            $Email->viewVars(array('userName' => $userName));
+            $Email->viewVars(array(
+                'userName' => $userName));
             $tmpfname = tempnam(sys_get_temp_dir(), "sendData");
             $file = new File($tmpfname, true, 0777);
 
@@ -2187,7 +2322,8 @@ class ProjectsController extends AppController {
                 $db = $this->Project->getDataSource();
                 $db->begin();
                 $types = $this->Project->Type->find('all', array(
-                    'conditions' => array('Type.id' => $types),
+                    'conditions' => array(
+                        'Type.id' => $types),
                     'recursive' => -1
                 ));
                 $problems = array();
@@ -2196,7 +2332,11 @@ class ProjectsController extends AppController {
                     $type_id = $type['Type']['id'];
                     $type['Type']['project_id'] = $id;
                     unset($type['Type']['id']);
-                    $questions = $this->Project->Type->Question->find('all', array('conditions' => array('type_id' => $type_id), 'recursive' => -1, 'fields' => 'question'));
+                    $questions = $this->Project->Type->Question->find('all', array(
+                        'conditions' => array(
+                            'type_id' => $type_id),
+                        'recursive' => -1,
+                        'fields' => 'question'));
                     $type['Question'] = $questions;
                     $commit = $commit & $this->Project->Type->saveAssociated($type);
                     if ($commit == FALSE) {
@@ -2224,16 +2364,20 @@ class ProjectsController extends AppController {
             $types = $this->Project->Type->find('all', array(
                 'recursive' => -1,
                 //'conditions' => array('project_id !=' => $id)
-                'group' => array('Type.description', 'Type.name')
+                'group' => array(
+                    'Type.description',
+                    'Type.name')
             ));
             $project = $this->Project->find('first', array(
                 'recursive' => -1,
-                'conditions' => array('id' => $id)
+                'conditions' => array(
+                    'id' => $id)
             ));
         }
         $project = $this->Project->find('first', array(
             'recursive' => -1,
-            'conditions' => array('id' => $id)
+            'conditions' => array(
+                'id' => $id)
         ));
         $this->set(compact('types', 'project'));
     }
@@ -2242,14 +2386,21 @@ class ProjectsController extends AppController {
         App::uses('Folder', 'Utility');
         App::uses('File', 'Utility');
         App::uses('CakeTime', 'Utility');
-        App::import('Vendor', 'htmLawed', array('file' => 'htmLawed' . DS . 'htmLawed.php'));
+        App::import('Vendor', 'htmLawed', array(
+            'file' => 'htmLawed' . DS . 'htmLawed.php'));
         $this->autoRender = false;
         $dir = new Folder('/home/server/Desktop/fulltexts/', false, 0777);
         $files = $dir->find('.*');
         $this->count = 0;
         $this->UsersRound = $this->Project->User->UsersRound;
 
-        $config = array('cdata' => 1, 'safe' => 1, 'keep_bad' => 6, 'no_deprecated_attr' => 2, 'valid_xhtml' => 1, 'abs_url' => 1);
+        $config = array(
+            'cdata' => 1,
+            'safe' => 1,
+            'keep_bad' => 6,
+            'no_deprecated_attr' => 2,
+            'valid_xhtml' => 1,
+            'abs_url' => 1);
         foreach ($files as $file) {
             //sleep(5);
             $fileName = substr($file, 0, strrpos($file, '.'));
@@ -2263,19 +2414,34 @@ class ProjectsController extends AppController {
                 $content = str_replace('<?xml version="1.0" encoding="ISO-8859-1"?><?xml-stylesheet type="text/css" href="..\..\default.css"?>', "", $content);
 
                 $file->close();
-                $document = $this->Project->Document->find('first', array('conditions' => array('title' => $fileName), 'fields' => 'id'));
+                $document = $this->Project->Document->find('first', array(
+                    'conditions' => array(
+                        'title' => $fileName),
+                    'fields' => 'id'));
                 if (isset($document['Document']['id'])) {
                     $date = date("Y-m-d H:i:s");
-                    $data = array('title' => $fileName, 'html' => $content, 'id' => $document['Document']['id'], 'created' => $date);
+                    $data = array(
+                        'title' => $fileName,
+                        'html' => $content,
+                        'id' => $document['Document']['id'],
+                        'created' => $date);
                     $this->Project->Document->save($data);
                     $results = htmLawed($content, $config);
-                    $results = preg_replace_callback('/class="[^>]*/', array($this, "callbackImportFulltextClass"), $results);
-                    $cond = array('document_id' => $document['Document']['id'], 'round_id' => '1');
+                    $results = preg_replace_callback('/class="[^>]*/', array(
+                        $this,
+                        "callbackImportFulltextClass"), $results);
+                    $cond = array(
+                        'document_id' => $document['Document']['id'],
+                        'round_id' => '1');
                     $results = gzdeflate($results, 9);
-                    $ids = $this->UsersRound->find('list', array('conditions' => $cond, 'recursive' => -1));
+                    $ids = $this->UsersRound->find('list', array(
+                        'conditions' => $cond,
+                        'recursive' => -1));
                     foreach ($ids as $id) {
                         $this->UsersRound->id = $id;
-                        if (!$this->UsersRound->save(array('text_marked' => $results, 'created' => $date))) {
+                        if (!$this->UsersRound->save(array(
+                                    'text_marked' => $results,
+                                    'created' => $date))) {
                             print('user_rounds_error_' . $fileName . '<br>');
                         }
                     }
@@ -2297,148 +2463,113 @@ class ProjectsController extends AppController {
         return $result;
     }
 
-    function exportDataStatistics($projectId = null, $roundId = null) {
-        $this->Project->id = $projectId;
-        $this->Project->Round->id = $roundId;
-        if (!$this->Project->exists()) {
-            throw new NotFoundException(__('Invalid proyect'));
-        } //!$this->Project->exists()
-        if (!$this->Project->Round->exists()) {
-            throw new NotFoundException(__('Invalid Round'));
-        } //!$this->Project->exists()
-        else {
-            $margin = 0;
-            $project = $this->Project->find('first', array('recursive' => -1, array('conditions' => array('id' => $projectId))));
-            $users = $this->Project->User->find('all', array(
-                'recursive' => -1,
-                'joins' => array(
-                    array(
-                        'type' => 'inner',
-                        'table' => 'projects_users',
-                        'alias' => 'ProjectsUser',
-                        'conditions' => array('ProjectsUser.user_id = User.id', 'ProjectsUser.project_id' => $projectId)
-                    )
-                ),
-            ));
+    function import($id = null) {
 
 
-            $types = $this->Project->Type->find('all', array(
-                'recursive' => -1,
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $this->Project->id = $this->request->data['Project']['id'];
+            if (!$this->Project->exists()) {
+                throw new NotFoundException(__('Invalid project'));
+            } //!$this->Project->exists()
+
+
+            $users = $this->Project->ProjectsUser->find('all', array(
+                'fields' => 'user_id',
                 'conditions' => array(
-                    'Type.project_id' => $projectId
-                )
+                    'project_id' => $this->Project->id
+                ),
+                'recursive' => -1
             ));
 
-            $round = $this->Project->Round->find('first', array('recursive' => -1, array('conditions' => array('id' => $roundId))));
-            $exportData = $this->Session->read('exportData');
-            if (empty($exportData)) {
-                $typeIds = $this->Project->Type->find('list', array(
-                    'recursive' => -1,
-                    'fields' => 'Type.id',
-                    'conditions' => array(
-                        'Type.project_id' => $projectId
-                    )
+            if (empty($users)) {
+                $this->Session->setFlash("There is not users in this project");
+                $this->redirect(array(
+                    'action' => 'view', $this->Project->id
                 ));
-
-                $relationUsers = array();
-                $tam = sizeof($users);
-                $typeIdsString = implode(",", $typeIds);
-                $db = $this->Project->getDataSource();
-                $totalUsersAnnotation = array();
-
-                if ($this->request->is('post') || $this->request->is('put')) {
-                    $scriptTimeLimit = Configure::read('scriptTimeLimit');
-                    set_time_limit($scriptTimeLimit);
-                    error_reporting(E_ERROR | E_PARSE);
-                    $_SESSION['progress'] = 0;
-                    header("Content-Encoding: none");
-                    header("Content-Length: " . 0);
-                    header("Connection: close");
-                    ob_end_flush();
-                    flush();
-                }
-
-
-                //el array que viene de la BD trae como claves los ids de los tipos
-                for ($i = 0; $i < $tam - 1; $i++) {
-                    $userA = $users[$i]['User'];
-                    //las siguientes lineas son debidas a causa de la barra de progreso
-                    for ($j = $i + 1; $j < $tam; $j++) {
-                        $userB = $users[$j]['User'];
-                        $hits = $db->fetchAll("select count(a.id) as hits from  annotations a FORCE INDEX (complex_index_2), annotations b FORCE INDEX (complex_index_2) 
-							where a.round_id =:round_a and b.round_id =:round_b and a.user_id =:user_a and b.user_id =:user_b 
-							and a.document_id=b.document_id  and a.type_id=b.type_id and a.type_id in ($typeIdsString) 
-							and a.init between b.init - :margin and b.init + :margin and a.end between b.end - :margin and b.end + :margin", array(
-                            'round_a' => $roundId,
-                            'round_b' => $roundId,
-                            'user_a' => $userA['id'],
-                            'user_b' => $userB['id'],
-                            'margin' => 0
-                        ));
-
-                        array_push($relationUsers, array(
-                            'fila' => $userA['id'],
-                            'columna' => $userB['id'],
-                            'hits' => $hits[0][0]['hits']
-                        ));
-                    }
-                }
-
-                foreach ($users as $user) {
-                    $totalTypeData = array();
-                    foreach ($types as $type) {
-                        $count = $this->Project->Type->Annotation->find('count', array(
-                            'recursive' => -1,
-                            'conditions' => array(
-                                'Annotation.type_id' => $type['Type']['id'],
-                                'Annotation.user_id' => $user['User']['id'],
-                                'Annotation.round_id' => $roundId
-                            )
-                        ));
-
-                        array_push($totalTypeData, array(
-                            'GraficColumns' => $type['Type']['name'],
-                            'Colour' => $this->RGBToHex($type['Type']['colour']),
-                            'value' => $count
-                        ));
-                    }
-
-                    $totalUsersAnnotation[$user['User']['id']] = $totalTypeData;
-                }
-
-                $this->Session->write('exportData', array('annotationsConfrontation' => $relationUsers, 'totalUsersAnnotation' => $totalUsersAnnotation));
-                $_SESSION['progress'] = 100;
-                session_write_close();
-            } else {
-                $relationUsers = $exportData['annotationsConfrontation'];
-                $totalUsersAnnotation = $exportData['totalUsersAnnotation'];
-                $_SESSION['progress'] = 100;
-                session_write_close();
-                session_start();
             }
-            $cond = array(
-                'Annotation.round_id' => $roundId,
-            );
-            $cont = $this->Project->Type->Annotation->find('count', array(
-                'conditions' => $cond
+
+
+            $this->Job = $this->Project->User->Job;
+            App::uses('Folder', 'Utility');
+//            App::uses('File', 'Utility');
+//            App::uses('CakeTime', 'Utility');
+//            $scriptTimeLimit = Configure::read('scriptTimeLimit');
+//            set_time_limit($scriptTimeLimit);
+            //App::import('Vendor', 'htmLawed', array('file' => 'htmLawed' . DS . 'htmLawed.php'));
+            $zipFile = new File($this->request->data['Project']['File']['tmp_name'], false, 0777);
+            if ($zipFile->exists()) {
+                $path = Configure::read('uploadFolder');
+                $newPath = $path . uniqid();
+                $zipFile->copy($newPath);
+
+
+                $user_id = $this->Session->read('user_id');
+
+                $this->Job->create();
+                $programName = "ImportPorject";
+                $data = array('user_id' => $user_id,
+                    'percentage' => 0, '' => $programName,
+                    'status' => 'Starting...');
+
+                if ($this->Job->save($data)) {
+                    $id = $this->Job->id;
+                    $project_id = $this->Project->id;
+                    $operationId = 0;
+                    $arguments = "$operationId\t$id\t$user_id\t$newPath\t$project_id";
+                    $this->sendJob($id, $programName, $arguments, false);
+                    $this->redirect(array(
+                        'controller' => 'jobs',
+                        'action' => 'index',
+                    ));
+                }
+            }
+
+            $this->Session->setFlash("Ops! An error has occurred!");
+            $this->redirect(array(
+                'action' => 'view', $this->Project->id
             ));
-            $this->set('NumAnnotations', $cont);
-            $this->set('users', $users);
-            $this->set('project', $project);
-            $this->set('round', $round);
-            $this->set('hitsArray', $relationUsers);
-            $this->set('project_id', $this->Project->id);
-            $this->set('types', $types);
-            $this->set('totalUsersAnnotation', $totalUsersAnnotation);
-            $this->set('redirect', 'confrontationSettingMultiRound');
-            //$this->render('confrontationMulti');
         }
+        if ($this->request->is('ajax')) {
+//            $this->autoRender = false;
+            $this->layout = false;
+        }
+        $this->set("id", $id);
     }
 
     function importAnnotationsAndDocuments() {
-        $max = $this->Project->Type->Annotation->find('first', array('recursive' => -1, 'fields' => ('id'), 'order' => 'id DESC'));
-        $max = $max['Annotation']['id'];
+
+        $this->Round = $this->Project->Round;
+        $this->Document = $this->Project->Document;
+        $this->UsersRound = $this->Project->User->UsersRound;
+        $this->AnnotatedDocument = $this->Round->AnnotatedDocument;
+        $this->Type = $this->Project->Type;
+        $this->Annotation = $this->Type->Annotation;
+
+        $maxAnnotation = $this->Annotation->find('first', array(
+            'recursive' => -1,
+            'fields' => ('id'),
+            'order' => 'id DESC'));
+
+        if (isset($maxAnnotation['Annotation']['id'])) {
+            $maxAnnotation = $maxAnnotation['Annotation']['id'];
+        } else {
+            $maxAnnotation = 0;
+        }
+        $maxType = $this->Project->Type->find('first', array(
+            'recursive' => -1,
+            'fields' => ('id'),
+            'order' => 'id DESC'));
+
+        if (isset($maxType['Type']['id'])) {
+            $maxType = $maxType['Type']['id'];
+        } else {
+            $maxType = 0;
+        }
+
+
         if ($this->request->is('post') || $this->request->is('put')) {
+            $maxAnnotation++;
+
             App::uses('Folder', 'Utility');
             App::uses('File', 'Utility');
             App::uses('CakeTime', 'Utility');
@@ -2448,6 +2579,8 @@ class ProjectsController extends AppController {
             $users = $this->request->data['User']['User'];
             //App::import('Vendor', 'htmLawed', array('file' => 'htmLawed' . DS . 'htmLawed.php'));
             $zipFile = new File($this->request->data['Project']['File']['tmp_name'], false, 0777);
+            $projectName = ucwords(pathinfo($this->request->data['Project']['File']['name'], PATHINFO_FILENAME));
+
             if ($zipFile->exists() && !empty($users)) {
                 $filesAllowed = Configure::read('filesAllowed');
                 $zip = new ZipArchive;
@@ -2465,43 +2598,76 @@ class ProjectsController extends AppController {
 
                 $rounds = array();
                 $db = $this->Project->getDataSource();
-                $db->query("ALTER TABLE annotations AUTO_INCREMENT = $max");
+
+
+                $db->query("ALTER TABLE annotations AUTO_INCREMENT = $maxAnnotation");
+                $db->execute("LOCK TABLES " . $this->Annotation->table . " " . $this->Type->table . " WRITE");
                 $db->begin();
                 $db->useNestedTransactions = false;
 
                 $this->Project->create();
-                if ($this->Project->save(array('Project' => array("title" => "imported_" . date("Y/m/d"), "description" => ""), "User" => array('User' => $users)))) {
+                if ($this->Project->save(array(
+                            'Project' => array(
+                                "title" => $projectName,
+                                "description" => ""),
+                            "User" => array(
+                                'User' => $users)))) {
                     //creamos round de anotacion automatica
-                    $this->Project->Round->create();
-                    if (!$this->Project->Round->save(array('Round' => array("title" => "Automatic system Round " . date("Y/m/d"), "project_id" => $this->Project->id, "description" => "-", 'ends_in_date' => date("Y-m-d")), "User" => array('User' => $users)))) {
+                    $this->Round->create();
+                    if (!$this->Round->save(array(
+                                'Round' => array(
+                                    "title" => "Round for job " . date("Y/m/d"),
+                                    "project_id" => $this->Project->id,
+                                    "description" => "-",
+                                    'ends_in_date' => date("Y-m-d", strtotime("+30 day")),
+                                    'trim_helper' => true,
+                                    'whole_word_helper' => true,
+                                    'punctuation_helper' => true,
+                                    'start_document' => 0,
+                                    'end_document' => 0,
+                                    'is_visible' => 0,
+                                ),
+                            ))
+                    ) {
                         $extractFolder->delete();
                         $db->rollback();
-                        throw new Exception("System round can not be saved");
-                    }
-                    //queremos saber cual va a ser el round de control o el round de systema
-                    //debido a que esas anotaciones no van a ser modificadas en el texto no necesitan el id concordante en base de datos y texto 
-                    $system_round = $this->Project->Round->id;
-                    //creammos round  para anotacion en trabajo
-                    $this->Project->Round->create();
-                    if (!$this->Project->Round->save(array('Round' => array("title" => "Round for job " . date("Y/m/d"), "project_id" => $this->Project->id, "description" => "-", 'ends_in_date' => date("Y-m-d", strtotime("+30 day"))), "User" => array('User' => $users)))) {
-                        $extractFolder->delete();
-                        $db->rollback();
+                        $db->execute("UNLOCK TABLES");
                         throw new Exception("Round work can not be saved");
                     }
-                    //metemos el round de usuario primero de forma que se creen primero las anotaciones de usuario para tener ids concordantes en base de datos y en
-                    //el html
-                    array_push($rounds, $this->Project->Round->id);
-                    array_push($rounds, $system_round);
+
+                    array_push($rounds, $this->Round->id);
+
+                    foreach ($users as $user) {
+                        foreach ($rounds as $round) {
+                            $this->UsersRound->create();
+                            if (!$this->UsersRound->save(array(
+                                        'state' => 0,
+                                        'round_id' => $round,
+                                        'user_id' => $user))) {
+                                $extractFolder->delete();
+                                $db->rollback();
+                                $db->execute("UNLOCK TABLES");
+
+                                throw new Exception("This UsersRound can not be save:" . $fileName);
+                            }
+                        }
+                    }
+
+
                     $typesText = new File($extractFolder->pwd() . DS . 'types.txt', false, 0644);
                     if (!$typesText->exists()) {
                         $extractFolder->delete();
                         $db->rollback();
+                        $db->execute("UNLOCK TABLES");
+
                         throw new Exception("types.txt not exist in zip file");
                     }
                     $count = new File($extractFolder->pwd() . DS . 'count.txt', false, 0644);
                     if (!$count->exists()) {
                         $extractFolder->delete();
                         $db->rollback();
+                        $db->execute("UNLOCK TABLES");
+
                         throw new Exception("count.txt not exist in zip filer");
                     }
 
@@ -2509,46 +2675,102 @@ class ProjectsController extends AppController {
                     $count = $count->read();
                     $count = intval($count) + 1;
 
-                    //buscamos la anotacion con dicho Id si ya existe no se puede crear el proyecto 
-                    $existId = $this->Project->Type->Annotation->find('count', array('recursive' => -1, 'conditions' => array('id' => $count)));
-                    if ($existId > 0) {
+                    //buscamos la anotacion final con dicho Id si ya existe no se puede crear el proyecto 
+                    $existLastId = $this->Annotation->find('count', array(
+                        'recursive' => -1,
+                        'conditions' => array(
+                            'id' => $count)));
+
+                    $existInitialId = $this->Annotation->find('count', array(
+                        'recursive' => -1,
+                        'conditions' => array(
+                            'id' => $count - ($count - $maxAnnotation))));
+
+
+                    if ($existInitialId > 0) {
                         $extractFolder->delete();
                         $db->rollback();
+                        $db->execute("UNLOCK TABLES");
+
                         throw new Exception("the first id already exist in Marky");
+                    }
+
+
+                    if ($existLastId > 0) {
+                        $extractFolder->delete();
+                        $db->rollback();
+                        $db->execute("UNLOCK TABLES");
+
+                        throw new Exception("the last id already exist in Marky");
                     }
 
                     $types = preg_split("/[\r\n]+/", trim($typesText));
                     $typesMap = array();
+                    $defaultColors = Configure::read('defaultColors');
+                    $colorCont = 0;
                     foreach ($types as $type) {
                         //debug($types);
-                        $this->Project->Type->create();
-                        $type = str_replace(' ', '_', $type);
-                        if ($this->Project->Type->save(
-                                        array('Type' =>
-                                            array('name' => $type, 'project_id' => $this->Project->id, 'colour' => rand(50, 255) . ',' . rand(50, 255) . ',' . rand(50, 255) . ',1'),
-                                            'Round' => array('Round' => $rounds)
-                                        )
-                                )
-                        ) {
-                            $typesMap[$type] = $this->Project->Type->id;
+                        $type = explode("\t", $type);
+                        if (sizeof($type) > 1) {
+                            $typeName = $type[0];
+                            $typeId = $type[1];
+                            $typeName = str_replace(' ', '_', $typeName);
+
+                            if (!empty($defaultColors[$colorCont])) {
+                                $color = $defaultColors[$colorCont];
+                                $colorCont++;
+                            } else {
+                                $color = array(
+                                    rand(50, 255),
+                                    rand(50, 255),
+                                    rand(50, 255));
+                            }
+
+
+                            $this->Type->create();
+                            if ($this->Type->save(
+                                            array(
+                                                'Type' =>
+                                                array(
+                                                    'id' => $typeId,
+                                                    'name' => $typeName,
+                                                    'project_id' => $this->Project->id,
+                                                    'colour' => $color[0] . ',' . $color[1] . ',' . $color[2] . ',1'),
+                                                'Round' => array(
+                                                    'Round' => $rounds)
+                                            )
+                                    )
+                            ) {
+                                $typesMap[$typeName] = $this->Type->id;
+                            } else {
+                                $extractFolder->delete();
+                                $db->rollback();
+                                $db->execute("UNLOCK TABLES");
+
+//                            debug($types);
+//                            debug($this->Project->Type->validationErrors);
+                                throw new Exception("This type can not be save" . $type);
+                            }
                         } else {
                             $extractFolder->delete();
                             $db->rollback();
-                            debug($types);
-                            debug($this->Project->Type->validationErrors);
-                            throw new Exception("This type can nor be save" . $type);
+                            $db->execute("UNLOCK TABLES");
+
+//                            debug($types);
+//                            debug($this->Project->Type->validationErrors);
+                            throw new Exception("This type can not be save" . $type);
                         }
                     }
 
-                    $files = $extractFolder->find('.*.html');
+                    $files = $extractFolder->find('.*.html', true);
                     if (empty($files)) {
                         $extractFolder->delete();
                         $db->rollback();
-                        debug($files);
+                        $db->execute("UNLOCK TABLES");
                         throw new Exception("The html documents can not be read");
                     }
 
-                    $this->UsersRound = $this->Project->User->UsersRound;
+
                     //$config = array('cdata' => 1, 'safe' => 1, 'keep_bad' => 6, 'no_depreca ted_attr' => 2, 'valid_xhtml' => 1, 'abs_url' => 1);
                     $annotationsAcumulate = array();
                     foreach ($files as $file) {
@@ -2558,67 +2780,117 @@ class ProjectsController extends AppController {
                         if ($file->readable()) {
                             //$content = '<p>' . preg_replace("/\.\s*\n/", '.</p><p>', $file->read()) . '</p>';
                             $content = $file->read();
-                            $content = str_replace("\n", '', $content);
-                            $file->close();
-                            $date = date("Y-m-d H:i:s");
-                            $this->Project->Document->create();
-                            if (!$this->Project->Document->save(array('Document' => array('title' => $fileName, 'html' => strip_tags($content, '<p>'), 'created' => $date), 'Project' => array('Project' => $this->Project->id)))) {
-                                $extractFolder->delete();
-                                $db->rollback();
-                                throw new Exception("This Document can nor be save:" . $fileName);
-                            }
 
-                            $annotations = $this->getAnnotations($content, $typesMap, $this->Project->Document->id);
-                            $tam = count($annotations);
-                            $results = gzdeflate($content, 9);
-                            foreach ($users as $user) {
-                                foreach ($rounds as $round) {
-                                    $this->UsersRound->create();
-                                    if (!$this->UsersRound->save(array('text_marked' => $results, 'created' => $date, 'document_id' => $this->Project->Document->id, 'round_id' => $round, 'user_id' => $user))) {
+                            if (strlen($content) > 1) {
+                                $file->close();
+                                $date = date("Y-m-d H:i:s");
+
+                                $document = $this->Document->find('first', array(
+                                    'recursive' => -1,
+                                    'conditions' => array('external_id' => $fileName)
+                                ));
+                                if (empty($document)) {
+                                    $this->Document->create();
+                                    if (!$this->Document->save(array(
+                                                'Document' => array(
+                                                    'external_id' => $fileName,
+                                                    'title' => $fileName,
+                                                    'html' => strip_tags($content),
+                                                    'created' => $date),
+                                                'Project' => array(
+                                                    'Project' => $this->Project->id)
+                                            ))) {
                                         $extractFolder->delete();
                                         $db->rollback();
-                                        throw new Exception("This UsersRound can not be save:" . $fileName);
+                                        $db->execute("UNLOCK TABLES");
+
+                                        throw new Exception("This Document can not be save:" . $fileName);
                                     }
-                                    if (!empty($annotations)) {
-                                        for ($index = 0; $index < $tam; $index++) {
-                                            $annotations[$index]['user_id'] = $user;
-                                            $annotations[$index]['round_id'] = $round;
-                                            $annotations[$index]['users_round_id'] = $this->UsersRound->id;
-                                            if ($round == $system_round) {
-                                                $annotations[$index]['id'] = $count;
-                                                $count++;
-                                            }
+                                } else {
+                                    $this->Document->id = $document['Document']['id'];
+                                    if (!$this->Document->save(array(
+                                                'Document' => array(
+                                                    'id' => $this->Document->id,
+                                                ),
+                                                'Project' => array(
+                                                    'Project' => $this->Project->id)
+                                            ))) {
+                                        $extractFolder->delete();
+                                        $db->rollback();
+                                        $db->execute("UNLOCK TABLES");
+                                        throw new Exception("This Document - Project can not be save");
+                                    }
+                                }
+
+
+                                $annotations = $this->getAnnotations($content, $typesMap, $this->Document->id);
+                                $tam = count($annotations);
+                                $modes = Configure::read('annotationsModes');
+
+//                                $results = gzdeflate($content, 9);
+                                foreach ($users as $user) {
+                                    foreach ($rounds as $round) {
+                                        $this->AnnotatedDocument->create();
+                                        if (!$this->AnnotatedDocument->save(array(
+                                                    'text_marked' => $content,
+                                                    'document_id' => $this->Document->id,
+                                                    'mode' => $modes["AUTOMATIC"],
+                                                    'round_id' => $round,
+                                                    'user_id' => $user))) {
+                                            $extractFolder->delete();
+                                            $db->rollback();
+                                            $db->execute("UNLOCK TABLES");
+                                            throw new Exception("This UsersRound can not be save:" . $fileName);
                                         }
-                                        $annotationsAcumulate = array_merge($annotationsAcumulate, $annotations);
+
+                                        if (!empty($annotations)) {
+                                            for ($index = 0; $index < $tam; $index++) {
+                                                $annotations[$index]['user_id'] = $user;
+                                                $annotations[$index]['round_id'] = $round;
+////                                                if ($round == $this->Round->id) {
+//////                                                    $annotations[$index]['id'] = $maxAnnotation;
+//////                                                    $maxAnnotation++;
+////                                                }
+                                            }
+                                            $annotationsAcumulate = array_merge($annotationsAcumulate, $annotations);
+                                        }
                                     }
                                 }
-                            }
-                            if (count($annotationsAcumulate) > 500) {
-                                if (!$this->Project->Type->Annotation->saveMany($annotationsAcumulate)) {
-                                    //debug($annotations);
-                                    //debug($this->Project->Type->Annotation->validationErrors);
-                                    debug($fileName);
-                                    $extractFolder->delete();
-                                    $db->rollback();
-                                    throw new Exception("Annotations can not be save");
+                                if (count($annotationsAcumulate) > 500) {
+                                    if (!$this->Project->Type->Annotation->saveMany($annotationsAcumulate)) {
+                                        //debug($annotations);
+                                        debug($this->Project->Type->Annotation->validationErrors[0]);
+                                        debug($fileName);
+                                        $extractFolder->delete();
+                                        $db->rollback();
+                                        $db->execute("UNLOCK TABLES");
+
+                                        throw new Exception("Annotations can not be save");
+                                    }
+                                    $annotationsAcumulate = array();
                                 }
-                                $annotationsAcumulate = array();
                             }
                         }
                     }
 
                     if (count($annotationsAcumulate) > 0) {
-                        if (!$this->Project->Type->Annotation->saveMany($annotationsAcumulate)) {
+                        if (!$this->Annotation->saveMany($annotationsAcumulate)) {
                             //debug($annotations);
-                            //debug($this->Project->Type->Annotation->validationErrors);
+                            debug($this->Project->Type->Annotation->validationErrors[0]);
                             debug($fileName);
                             $extractFolder->delete();
                             $db->rollback();
+                            $db->execute("UNLOCK TABLES");
+
                             throw new Exception("Annotations can not be save");
                         }
                     }
-
+//                    throw new Exception;
+                    $extractFolder->delete();
                     $db->commit();
+                    $db->execute("UNLOCK TABLES");
+
+
                     $this->Session->setFlash(__('Project has been created with documents imported'), 'success');
                     $this->redirect(array(
                         'action' => 'index'
@@ -2627,7 +2899,7 @@ class ProjectsController extends AppController {
 
                 $extractFolder->delete();
             } else {
-                $this->Session->setFlash(__('Choose almost one user'));
+                $this->Session->setFlash(__('Choose almost one user and one file'));
             }
         }
 
@@ -2637,25 +2909,20 @@ class ProjectsController extends AppController {
         $users = $this->Project->User->find('list', array(
             'conditions' => $userConditions
         ));
-        $this->set(compact('users', 'max'));
+        $this->set(compact('users', 'maxAnnotation', 'maxType'));
     }
 
     private function getAnnotations($text = null, $typesMap = array(), $document_id = null) {
         $allAnnotations = array();
+        $parseKey = Configure::read('parseKey');
+        $classKey = Configure::read('classKey');
+        $parseIdAttr = Configure::read('parseIdAttr');
         if (isset($text) && $text != '') { // nos ahorramos tran
-            $text = preg_replace('/\s+/', ' ', $text);
-            //las siguientes lineas son necesarias dado que cada navegador hace lo  que le da la gana con el DOM con respecto a la gramatica,
-            //no hay un estandar asi por ejemplo en crhome existe Style:valor y en Explorer Style :valor,etc
-            $text = str_replace(array(
-                "\n",
-                "\t",
-                "\r"
-                    ), '', $text);
-            //$textoForMatches = str_replace('> <', '><', $textoForMatches);
+            $text = $this->parseHtmlToGetAnnotations($text);
 
-            $text = strip_tags($text, '<mark>');
-            $text = utf8_decode(html_entity_decode($text));
-            preg_match_all("/(<mark[^>]*Marky[^>]*>)(.*?)<\/mark>/", $text, $matches, PREG_OFFSET_CAPTURE);
+
+
+            preg_match_all("/(<mark[^>]*" . $parseKey . "[^>]*>)(.*?)<\/mark>/", $text, $matches, PREG_OFFSET_CAPTURE);
 
 
 //            if(sizeof($matches[1])!=substr_count($textoForMatches,"<mark"))
@@ -2676,16 +2943,16 @@ class ProjectsController extends AppController {
                 for ($i = 0; $i < $size; $i++) {
                     $texto = $matches[2][$i][0];
                     if ($texto != '') {
-                        preg_match('/[^>]*value=.?(\w*).?[^>]/', $matches[1][$i][0], $value);
+                        preg_match('/[^>]*' . $parseIdAttr . '=.?(\w*).?[^>]/', $matches[1][$i][0], $value);
                         $insertID = $value[1];
                         $original_start = $matches[1][$i][1] - $accum;
                         preg_match('/[^>]*class=.?(\w*).?[^>]/', $matches[1][$i][0], $type);
-                        $type = str_replace('myMark', '', $type[1]);
+                        $type = str_replace($classKey, '', $type[1]);
                         array_push($allAnnotations, array(
                             'init' => $original_start,
                             'end' => $original_start + strlen($texto),
                             'annotated_text' => $texto,
-                            'type_id' => $typesMap[$type],
+                            'type_id' => $type,
                             'document_id' => $document_id,
                             'id' => $insertID,
                         ));

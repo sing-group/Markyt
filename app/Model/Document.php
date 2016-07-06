@@ -12,6 +12,8 @@ class Document extends AppModel {
 
     var $actsAs = array('Containable');
 
+//    public $virtualFields = array("full_name" => "CONCAT(COALESCE(external_id,''),' - ' ,COALESCE(title,''))");
+
     public function beforeSave($options = array()) {
         if (isset($this->data[$this->name]['title'])) {
             $this->data[$this->name]['title'] = ucfirst($this->data[$this->name]['title']);
@@ -20,11 +22,16 @@ class Document extends AppModel {
             //si los documentos ya estan limpios no se limpian
             App::import('Vendor', 'HTMLPurifier', array('file' => 'htmlpurifier' . DS . 'library' . DS . 'HTMLPurifier.auto.php'));
             $config = HTMLPurifier_Config::createDefault();
+//            $dirty_html = htmlentities($this->data[$this->name]['html']);
             $dirty_html = $this->data[$this->name]['html'];
             $purifier = new HTMLPurifier($config);
             $clean_html = $purifier->purify($dirty_html);
             $this->data[$this->name]['html'] = gzdeflate($clean_html, 9);
         }
+        if (!isset($this->data[$this->name]["id"]) && (!isset($this->data[$this->name]['external_id']) || trim($this->data[$this->name]['external_id']) == '')) {
+            $this->data[$this->name]['external_id'] = "MID" . date("dmyhms");
+        }
+
         return true;
     }
 
@@ -47,7 +54,7 @@ class Document extends AppModel {
         'title' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-                'message' => 'this field cannot be empty',
+                'message' => 'This field cannot be empty',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -65,7 +72,7 @@ class Document extends AppModel {
         'html' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-                'message' => 'this field cannot be empty',
+                'message' => 'This field cannot be empty',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -84,6 +91,19 @@ class Document extends AppModel {
     public $hasMany = array(
         'UsersRound' => array(
             'className' => 'UsersRound',
+            'foreignKey' => 'document_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => '',
+            'dependent' => true
+        ),
+        'DocumentsAssessment' => array(
+            'className' => 'DocumentsAssessment',
             'foreignKey' => 'document_id',
             'conditions' => '',
             'fields' => '',

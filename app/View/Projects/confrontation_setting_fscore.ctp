@@ -15,20 +15,7 @@ echo $this->Html->script('markyConfrontationSettings.js', array('block' => 'scri
     </fieldset>
     <?php
     echo $this->Form->end(__('Submit'));
-    echo $this->Html->link(__('Return'), array('controller' => 'projects', 'action' => 'view', $project_id), array('id' => 'comeBack'));
     ?>
-</div>
-<div>
-    <ul id="addToMenu">
-        <li id="viewTable">
-            <a href="#">Get agreement Tables</a>
-            <ul>
-                <li><?php echo $this->Html->link(__('among rounds'), array('controller' => 'projects', 'action' => 'confrontationSettingMultiRound', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('among annotators'), array('controller' => 'projects', 'action' => 'confrontationSettingMultiUser', $project_id)); ?></li>
-                <li><?php echo $this->Html->link(__('among types'), array('controller' => 'projects', 'action' => 'confrontationSettingDual', $project_id)); ?></li>
-            </ul>
-        </li>
-    </ul>
 </div>
 <div id="loading" class="dialog" title="Please be patient..">
     <p>

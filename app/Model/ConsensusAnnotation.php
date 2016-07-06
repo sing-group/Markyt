@@ -16,7 +16,7 @@ class ConsensusAnnotation extends AppModel {
      *
      * @var mixed False or table name
      */
-    public $useTable = 'consensusAnnotations';
+    public $useTable = 'consensus_annotations';
     var $actsAs = array('Containable');
 
     /**
@@ -43,6 +43,16 @@ class ConsensusAnnotation extends AppModel {
             ),
         ),
         'document_id' => array(
+            'numeric' => array(
+                'rule' => array('numeric'),
+            //'message' => 'Your custom message here',
+            //'allowEmpty' => false,
+            //'required' => false,
+            //'last' => false, // Stop validation after this rule
+            //'on' => 'create', // Limit validation to 'create' or 'update' operations
+            ),
+        ),
+        'type_id' => array(
             'numeric' => array(
                 'rule' => array('numeric'),
             //'message' => 'Your custom message here',
@@ -102,6 +112,13 @@ class ConsensusAnnotation extends AppModel {
         'Document' => array(
             'className' => 'Document',
             'foreignKey' => 'document_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        ),
+        'Type' => array(
+            'className' => 'Type',
+            'foreignKey' => 'type_id',
             'conditions' => '',
             'fields' => '',
             'order' => ''

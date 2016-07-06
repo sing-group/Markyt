@@ -7,7 +7,6 @@ echo $this->Html->script('./amcharts/exporting/amexport.js', array('block' => 's
 echo $this->Html->script('./amcharts/exporting/canvg.js', array('block' => 'scriptInView'));
 echo $this->Html->script('./amcharts/exporting/rgbcolor.js', array('block' => 'scriptInView'));
 echo $this->Html->script('markyChart.js', array('block' => 'scriptInView'));
-echo $this->Html->link(__('Return'), $redirect, array('id' => 'comeBack'));
 ?>
 <div class="statistics view">
     <h2>There are the statistics  of annotation for <?php echo h($userName) ?> in project: <?php echo h($projectName) ?></h2>

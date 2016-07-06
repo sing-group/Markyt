@@ -27,7 +27,6 @@ echo $this->Html->script('./form-master/jquery.form.js', array('block' => 'scrip
         echo $this->Form->input('codes', array('id' => 'pubmedCodes', 'type' => 'textarea', 'placeholder' => "7216443"));
         echo $this->Form->input('Project', array('id' => 'selectionProjects'));
         echo $this->Form->end('submit');
-        echo $this->Html->link(__('Return'), array('controller' => 'documents', 'action' => 'index'), array('id' => 'comeBack'));
         ?>
     </fieldset>
     <div id="alert" class="dialog" title="Pubmed documents">

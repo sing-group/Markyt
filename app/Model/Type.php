@@ -16,11 +16,19 @@ class Type extends AppModel {
 
     public function beforeSave($options = array()) {
         if (isset($this->data[$this->name]['name'])) {
-            $this->data[$this->name]['name'] = str_replace("'", '´', ucfirst($this->data[$this->name]['name']));
+            $name = str_replace(' ', '_', $this->data[$this->name]['name']);
+            $this->data[$this->name]['name'] = str_replace("'", '´', strtoupper($name));
         }
         if (isset($this->data[$this->name]['description'])) {
             $this->data[$this->name]['description'] = str_replace("'", '´', ucfirst($this->data[$this->name]['description']));
         }
+        if (isset($this->data[$this->name]['colour'])) {
+            $colour=$this->data[$this->name]['colour'];
+            $colour=str_replace("rgba(", '',$colour);
+            $colour=str_replace(")", '',$colour);        
+            $this->data[$this->name]['colour'] = $colour;
+        }
+        
         return true;
     }
 
@@ -43,7 +51,7 @@ class Type extends AppModel {
         'name' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-                'message' => 'this field cannot be empty',
+                'message' => 'This field cannot be empty',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -63,7 +71,7 @@ class Type extends AppModel {
         'colour' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-                'message' => 'this field cannot be empty',
+                'message' => 'This field cannot be empty',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule

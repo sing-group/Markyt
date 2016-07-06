@@ -1,118 +1,153 @@
 <?php
-echo $this->Html->css('../js/box-slider-master/css/screen');
-echo $this->Html->script('./box-slider-master/js/box-slider-tile.jquery.min');
-echo $this->Html->script('./box-slider-master/js/box-slider-all.jquery.min');
-echo $this->Html->script('markySliderPost.js');
+echo $this->Html->script('Bootstrap/markySliderPost', array('block' => 'scriptInView')); 
 ?>
-<div class="posts index minRequired">
-
+<div class="col-md-12 posts">
     <h1 id="welcome">Welcome to Marky</h1>
-    <p>
-        Marky is the application that help administrators and scorers to make your job easier. This project has been developed using open source initiatives.
-        You can view a more detailed information 
-        <?php
-        echo $this->Html->link('here', array('controller' => 'pages', 'action' => 'display', 'markyInformation'));
-        ?>
-        .<span class="bold">Below you can see the news that administrators want to communicate to you:</span>
-    </p>
-    <div class="searchDiv" id="welcomeSearch">
-        <?php
-        echo $this->Form->create($this->name, array('action' => 'postsSearch', 'id' => 'mySearch'));
-        echo $this->Form->input('search', array('value' => $search, 'maxlength' => '50', "placeholder" => "", 'label' => '', 'id' => 'searchBox', 'div' => false));
-        echo $this->Form->button('Search', array('class' => 'searchButton', 'div' => false));
-        echo $this->Form->end();
-        ?>
-    </div>
-    <section>
-        <div id="viewport-shadow">
-
-            <a href="#" id="prev" title="go to the next slide"></a>
-            <a href="#" id="next" title="go to the next slide"></a>
-
-            <div id="viewport">
-                <div id="box">
-                    <?php
-                    $cont = 0;
-                    foreach ($posts as $post):
-                        ?>
-                        <figure class="slide"> 
-                            <figcaption>
-                                <span>
-                                    <?php
-                                    echo $this->Paginator->sort('username', 'Created by:');
-                                    echo h($post['User']['username'] . ' ' . $post['User']['surname']);
-                                    ?>		
-                                </span>
-                                <span
-                                <?php
-                                echo $this->Paginator->sort('modified', 'Date:');
-                                echo h($post['Post']['modified']);
-                                ?>
-                            </span>              	  
-                        </figcaption>
-                        <div class="new">
-                            <?php echo $post['Post']['body']; ?>
-                        </div>
-                    </figure>
-                    <?php
-                    $cont++;
-                endforeach;
-                if ($cont == 0) {
-                    echo '<figure class="slide"><figcaption>';
-                    echo $this->Html->image('noPost.png', array('alt' => 'noPost', 'id' => 'noPost', 'title' => 'Do not exist any post'));
-                    echo '</figcaption></figure>';
-                }
-                ?>
-            </div>
+    <div class="col-md-6 posts">
+        <h2>What is Marky?</h2>
+        <div><p><span itemprop="name">Marky</span> is a free <span itemprop="keywords">annotation tool</span> 
+                for document annotation. The free annotation software was developed using the <a href="http://cakephp.org/" target="_blank">CakePHP framework</a>,
+                which follows the Model-view-controller <span class="bold">(MVC)</span> software pattern. Crafting application tasks into separate models,
+                views, and controllers has made Marky lightweight, maintainable and modular. Notably, the modular design separates backend development
+                (e.g. the inclusion of natural language tools) from frontend development (e.g. documents and annotations visual representation),
+                and allows developers to make changes in one part of the application without affecting the others. </p><p> 
+                Marky reaches for state-of-the-art and free Web technologies to offer the best possible user experience and provide
+                for efficient project management. The <a href="http://www.w3.org/TR/html5/" target="_blank">HTML5</a> and
+                <a href="http://www.css3.info/" target="_blank">CSS3</a> technologies support the design of intuitive interfaces 
+                whereas <span class="bold">Ajax</span> and <a href="http://jquery.com/" target="_blank">JQuery</a> technologies account 
+                for user-system interaction, notably document traversal and manipulation, event handling, animation, and efficient use 
+                of the network layer. Additionally, <a href="http://code.google.com/p/rangy/" target="_blank">the Rangy library</a> 
+                is used in common DOM range and selection tasks to abstract from the different browser implementations of these 
+                functionalities (namely, Internet Explorer versus DOM-compliant browsers). MySQL database ensures supports data persistence. </p><p> 
+                With Marky you only need a <span class="bold" itemprop="requirements"> server with php technology and one database</span> to annotate 
+                documents with a browser. Web technologies, such as <span itemprop="browserRequirements">HTML5, CSS3, Ajax and JQuery</span> offer
+                an intuitive What-You-See-Is-What-You-Get software. Admins can enter documents to be annotated by annotators and get detailed 
+                statistics about relevant terms. 
+                <strong itemprop="operatingSystem"> This annotation software works in Macintosh, Linux, Windows, etc</strong></p>
         </div>
-
-        <div id="time-indicator"></div>
-    </div>
-
-    <footer>
-        <nav class="slider-controls">
-            <ul id="controls">
-                <li><a class="goto-slide current" href="#" data-slideindex="0"></a></li>
-                <?php
-                for ($i = 1; $i < $cont; $i++) {
-                    echo "<li><a class='goto-slide' href='#' data-slideindex='$i'></a></li>";
-                }
-                ?>
-            </ul>
-        </nav>
-    </footer>
-</section>
-<div class="paging">
-    <?php
-    echo $this->Paginator->prev('< ', array(), null, array('class' => 'prev disabled', 'id' => 'prevCake'));
-    echo $this->Paginator->numbers(array('separator' => ''));
-    echo $this->Paginator->next(' >', array(), null, array('class' => 'next disabled', 'id' => 'nextCake'));
-    ?>
-</div>
-</div>
-<div id="login"  class="actions login-form"  name="login-form">
-
-    <div class="conterLogin">
-        <?php
-        echo $this->Form->create('User', array('controller' => 'users', 'action' => 'login'));
-        ?>
-        <div class="headerLogin">
-            <h1><?php echo __('Enter to Marky'); ?></h1>
+        <div class="col-md-6 col-centered">
             <?php
-            echo $this->Form->input('username', array('class' => 'username'));
-            echo $this->Form->input('password', array('class' => 'password'));
+            echo $this->Html->image("architecture.png", array("alt" => "marky architecture",
+                "class" => "img-responsive"))
             ?>
         </div>
-        <div class="footerLogin">
-            <?php
-            echo $this->Form->input('remember_me', array('label' => 'Remember Me', 'type' => 'checkbox'));
-            echo $this->Html->link('Forgot your username/password?', array('controller' => 'Users', 'action' => 'recoverAccount'), array('id' => 'recoverLink'));
-            echo $this->Form->button('Login', array('class' => 'button', 'id' => 'loginButton'));
-            echo $this->Form->button('Reset', array('type' => 'reset', 'id' => 'reset', 'class' => 'button blue'));
-            ?>                         
+    </div>
+    <div class="col-md-6 carousel">
+        <div class="row">
+            <div class=' text-center'>
+                <h2>You should know that...</h2>
+            </div>
         </div>
-        <?php
-        echo $this->form->end();
-        ?>
+        <div class='row'>
+            <div class=''>
+                <div class="carousel slide" data-ride="carousel" id="quote-carousel">
+                    <!-- Bottom Carousel Indicators -->
+
+                    <ol class="carousel-indicators">
+                        <?php
+                        if (!empty($posts)) {
+                            $index = 0;
+                            $class = "active";
+
+                            foreach ($posts as $post):
+                                ?>
+                                <li data-target="#quote-carousel" data-slide-to="<?php echo $index; ?>" class="<?php echo $class; ?>"></li>
+                                <?php
+                                $index++;
+                            endforeach;
+                        }
+                        else {
+                            ?>
+                            <li data-target="#quote-carousel" data-slide-to="0" class="active"></li>
+                            <li data-target="#quote-carousel" data-slide-to="2"></li>
+                            <?php
+                        }
+                        ?>
+                    </ol>
+                    <!-- Carousel Slides / Quotes -->
+                    <div class="carousel-inner" id="posts">
+                        <!-- Quote 1 -->
+                        <?php
+                        if (!empty($posts)) {
+                            $index = 0;
+                            $class = "active";
+                            foreach ($posts as $post):
+                                ?>
+                                <div class = "item <?php echo $class; ?>">
+                                    <blockquote>
+                                        <div class = "row">
+                                            <div class = "col-sm-3 text-center">
+                                                <?php
+                                                $class = "";
+                                                if (isset($post['User']['image'])) {
+                                                    ?>
+                                                    <img src="<?php echo 'data:' . $post['User']['image_type'] . ';base64,' . base64_encode($post['User']['image']); ?>"  title="<?php echo h($post['User']['full_name']) ?> image profile" class="img-circle little profile-img">
+                                                    <?php
+                                                } else {
+                                                    ?>
+                                                    <div class="profile-img img-circle">
+                                                        <i class="fa fa-user fa-4"></i>
+                                                    </div>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </div>
+                                            <div class = "col-sm-9">
+                                                <?php echo $post['Post']['body']; ?>
+                                                <small><?php echo h($post['User']['full_name']); ?></small>
+                                            </div>
+                                        </div>
+                                    </blockquote>
+                                </div> 
+                                <?php
+                            endforeach;
+                        } else {
+                            ?>
+                            <div class = "item active">
+                                <blockquote>
+                                    <div class = "row">
+                                        <div class = "col-sm-3 text-center">
+                                            <?php
+                                            echo $this->Html->image("Albert_Einstein.jpg", array('class' => "img-circle little profile-img", "title" => "Albert Einstein from wikipedia"))
+                                            ?>
+                                        </div>
+                                        <div class = "col-sm-9">
+                                            <p>
+                                                If you want to obtain different results, do not do always the same 
+                                            </p>
+                                            <small>Albert Einstein</small>
+
+                                        </div>
+                                    </div>
+                                </blockquote>
+                            </div> 
+                            <div class = "item">
+                                <blockquote>
+                                    <div class = "row">
+                                        <div class = "col-sm-3 text-center">
+                                            <?php
+                                            echo $this->Html->image("Darwin.jpg", array('class' => "img-circle little profile-img", "title" => "Darwin from wikipedia"))
+                                            ?>
+                                        </div>
+                                        <div class = "col-sm-9">
+                                            <p>
+                                                Ignorance more frequently begets confidence than does knowledge: it is those who know little, not those who know much, who so positively assert that this or that problem will never be solved by science.”                                             
+                                            </p>
+                                            <small>Charles Darwin, The Descent of Man</small>
+                                        </div>
+                                    </div>
+                                </blockquote>
+                            </div> 
+                            <?php
+                        }
+                        ?>
+                    </div>
+                    <!--Carousel Buttons Next/Prev -->
+                    <a data-slide = "prev" href = "#quote-carousel" class = "left carousel-control"><i class = "fa fa-chevron-left"></i></a>
+                    <a data-slide = "next" href = "#quote-carousel" class = "right carousel-control"><i class = "fa fa-chevron-right"></i></a>
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>

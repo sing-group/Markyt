@@ -10,7 +10,6 @@
 	</fieldset>
 <?php   
     echo $this->Form->end(__('Submit')); 
-    $redirect=$this->Session->read('redirect');
-    echo $this->Html->link(__('Return'), $redirect,array('id'=>'comeBack' ));
+
 ?>
 </div>

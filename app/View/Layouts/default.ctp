@@ -1,4 +1,5 @@
 <?php
+//
 /**
  *
  * PHP 5
@@ -15,172 +16,313 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-$cakeDescription = __d('cake_dev', 'Marky the easily  annotation ');
+$cakeDescription = __d('cake_dev', 'Markyt the easily  annotation ');
 //detecta navegador explorer
 ?>
 <!DOCTYPE html >
 <html>
     <head>
+
         <?php echo $this->Html->charset(); ?>
         <title>
             <?php echo $cakeDescription ?>:
             <?php echo $title_for_layout; ?>
         </title>
+        <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
         <?php
         echo $this->Html->meta('icon');
+
+
+        /* ============CSS================ */
+        echo $this->Html->css('bootstrap-3.3.6/css/bootstrap.min');
+        
+        echo $this->Html->css('font-awesome/css/font-awesome.min');
+        echo $this->Html->css('font-awesome/css/font-awesome-animation.min.css');
+        echo $this->Html->css('../js/Bootstrap/bootstrap-chosen/chosen.bootstrap.min');
+        echo $this->Html->css('../js/Bootstrap/bootstrap-sweetalert/lib/sweet-alert.min');
         echo $this->Html->css('Marky');
+        echo $this->Html->css('../js/Bootstrap/ladda/ladda.min');
+        echo $this->Html->css('open-sans/open-sans.min');
 
-        echo $this->fetch('meta');
-        echo $this->fetch('css');
-        echo $this->fetch('script');
-        echo $this->Html->css('../js/chosen-master/chosen/chosen');
-        echo $this->Html->script('./jquery/js/jquery-2.1.0.min.js');
-        echo $this->Html->script('./jquery/js/jquery-ui-1.10.4.min.js');
-        echo $this->Html->css('./marky-theme/jquery-ui-1.10.1.custom');
+        echo $this->Html->script('./jquery/js/jquery-2.1.0.min.js', array('block' => 'defaultScript'));               
+        echo $this->Html->script('../css/bootstrap-3.3.6/js/bootstrap.min', array('block' => 'defaultScript'));
         
         
-        echo $this->Html->script('./chosen-master/chosen/chosen.jquery.min');
+        echo $this->Html->script('./Bootstrap/bootstrap-chosen/chosen.jquery.min', array(
+            'block' => 'defaultScript'));
+        echo $this->Html->script('Bootstrap/bootstrap-sweetalert/lib/sweet-alert.min', array(
+            'block' => 'defaultScript'));
+        echo $this->Html->script('Bootstrap/renewSession', array('block' => 'defaultScript'));
+        echo $this->Html->script('Bootstrap/ladda/ladda.min', array('block' => 'defaultScript'));
 
-        //modo, indica si es la pagina de trabajo,sirve para que no aparezca el menu
-        $modeJob = false;
+
 
         //carga de scripts si estamos en la vista para empezar un round
         $here = strtolower($this->here);
-        if (strpos($here, "users") && strpos($here, "rounds") && (strpos($here, "start"))) {
-            $modeJob = true;
-            echo $this->Html->css('markyAnnotation');
-            $is_ie = (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false));
-            if ($is_ie)
-                echo $this->Html->css('markyAnnotation_onlyIE.css');
-            echo $this->Html->css('pubmed');
-            echo $this->Html->css('jquery.countdown');
-            echo $this->Html->script('./rangy/rangy-core.js');         
-            echo $this->Html->script('./rangy/rangy-textrange.js');
-            echo $this->Html->script('./rangy/rangy-serializer.js');
-            echo $this->Html->script('./rangy/rangy-cssclassapplier.js');
-            echo $this->Html->script('./rangy/rangy-selectionsaverestore.js');
-            echo $this->Html->script('./rangy/rangy-highlighter.js');
-            echo $this->Html->script('./jquery-countdown/jquery.plugin.min.js');
-            echo $this->Html->script('./jquery-countdown/jquery.countdown.min.js');
-            echo $this->Html->script('./jss-master/jss.js');
-            echo $this->Html->script('marky.js');
+        if (!(strpos($here, "users") && strpos($here, "rounds") && (strpos($here, "start")))) {
+//            echo $this->Html->css('../js/jquery-multisel/css/jquery-multiselect-2.0');
+//            echo $this->Html->script('./jquery-multisel/js/jquery-multiselect-2.0.js');
+            echo $this->Html->css('../js/Bootstrap/bootstrap-multiselect/css/bootstrap-multiselect');
+            echo $this->Html->script('Bootstrap/bootstrap-multiselect/js/bootstrap-multiselect.min', array(
+                'block' => 'defaultScript'));
+            echo $this->Html->script('Bootstrap/waitingDialog', array('block' => 'defaultScript'));
+            echo $this->Html->script('Bootstrap/jqueryPostLink.min', array('block' => 'defaultScript'));
         }
-        else {
-            echo $this->Html->css('../js/jquery-multisel/css/jquery-multiselect-2.0');
-            echo $this->Html->script('./jquery-multisel/js/jquery-multiselect-2.0.js');
-            echo $this->Html->script('markyGlobal.js');
-        }
+
+
+
+        echo $this->Html->script('Bootstrap/markyGlobalBootstrap', array('block' => 'defaultScript'));
+
         echo $this->fetch('cssInView');
-        echo $this->fetch('scriptInView');
-        ?>       
+
+        $cssInline = $this->fetch('cssInline');
+        if (isset($cssInline)) {
+            echo '<style media="screen" type="text/css">';
+            echo $cssInline;
+            echo '</style>';
+        }
+        $group_id = $this->Session->read('group_id');
+        $user_id = $this->Session->read('user_id');
+        if (isset($group_id)) {
+            if ($group_id == 1) {
+                $url = (array('controller' => 'Projects', 'action' => 'index'));
+            } else {
+                $url = (array('controller' => 'rounds', 'action' => 'index'));
+            }
+        } else {
+            $url = '/';
+        }
+        ?>    
+
+
     </head>
     <body>
-        <?php
-            echo $this->Session->flash();
-        ?>
-        <div id="container">
-            <div id="header">
-                <div id="titleMarky">
-                    <div id="links"> 
-                        <?php
-                        echo $this->Html->link('About', array('controller' => 'pages', 'action' => 'display', 'markyInformation'));
-                        ?>
-                        | 
-                        <?php
-                        echo $this->Html->link('Help', 'http://sing.ei.uvigo.es/marky', array('target' => '_blank'));
-                        ?>	
+
+        <!--        <header id="header" class="navbar navbar-inverse navbar-fixed-top">
+                     
+                </header-->
+
+
+        <div>
+            <div class="row affix-row">
+                <div class="col-sm-3 col-md-2 affix-sidebar" id="affix-sidebar">
+                    <div class="sidebar-nav">
+                        <div class="navbar navbar-default" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <span class="visible-xs navbar-brand">
+                                    <div id="logo2"><?php
+                                        echo $this->Html->image('markyLogo2.svg', array(
+                                            'alt' => 'hilights', 'title' => '', 'url' => $url,
+                                            'height' => "128",
+                                            'width' => "128"));
+                                        ?>
+                                    </div>
+                                </span>
+                            </div>
+                            <div class="logoContainer">
+                                <div id="logo"><?php
+                                    echo $this->Html->image('markyLogo2.svg', array(
+                                        'alt' => 'hilights', 'title' => '', 'url' => $url,
+                                        'height' => "512",
+                                        'width' => "512"));
+                                    ?>
+                                </div>
+                                <div id="links"> 
+                                    <?php
+                                    echo $this->Html->link('About', array('controller' => 'pages',
+                                        'action' => 'display',
+                                        'markyInformation'));
+                                    ?>
+                                    | 
+                                    <?php
+                                    echo $this->Html->link('Help', 'http://markyt.org/', array(
+                                        'target' => '_blank'));
+                                    ?>
+                                    |                                   
+                                    <?php
+                                    echo $this->Html->link('Contact', '#contact', array(
+                                        'id' => 'contactForm'));
+                                    ?>
+                                    |
+                                    4.0.4b
+                                </div>
+                            </div>
+                            <div class="navbar-collapse collapse sidebar-navbar-collapse nav-side-menu">
+                                <?php
+                                if (isset($group_id) || (isset($annotationMenu) && $annotationMenu)) {
+                                    echo $this->element('menu');
+                                } else if (isset($login)) {
+                                    echo $this->element('login');
+                                } else if (isset($analysisResults)) {
+                                    echo $this->element('menuResults');
+                                }
+                                ?>
+
+
+                            </div>
+                        </div>
                     </div>
-                    <div id="logo"><?php echo $this->Html->image('markyLogo.svg', array('alt' => 'hilights', 'title' => '', 'url' => array('controller' => 'pages', 'action' => 'markyInformation'))); ?></div>
-                </div>       
-            </div>
-            <div id="content">  
-                <?php
-                $sesionUser = $this->Session->read('username');
-                $group_id = $this->Session->read('group_id');
-                $user_id = $this->Session->read('user_id');
-                if (isset($sesionUser) && !$modeJob) {
-                ?>
-                <div class="myActions hidden" id="basicMenu" >
-                    <h3><?php echo __('Menu'); ?></h3>
-                    <ul id="menu" class="hidden">
-                        <?php if ($group_id == 1) { ?>
-                            <li id="firstOption">
-                                <a href="#">Project</a>
-                                <ul>
-                                    <li><?php echo $this->Html->link(__('List Project'), array('controller' => 'projects', 'action' => 'index')); ?></li>
-                                    <li><?php echo $this->Html->link(__('New Project'), array('controller' => 'projects', 'action' => 'add')); ?></li>
-                                </ul>
-                            </li>
-                                <!--<li><?php echo $this->Html->link(__('List Rounds'), array('controller' => 'rounds', 'action' => 'index')); ?> </li>-->
-                            <li>
-                                <a href="#">Types</a>
-                                <ul>
-                                    <li><?php echo $this->Html->link(__('List Types'), array('controller' => 'types', 'action' => 'index')); ?> </li>
-                                    <li><?php echo $this->Html->link(__('New Type'), array('controller' => 'types', 'action' => 'add')); ?> </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Documents</a>
-                                <ul>
-                                    <li><?php echo $this->Html->link(__('List Documents'), array('controller' => 'documents', 'action' => 'index')); ?> </li>
-                                    <li><?php echo $this->Html->link(__('Upload Document'), array('controller' => 'documents', 'action' => 'multiUploadDocument')); ?> </li>
-                                    <li><?php echo $this->Html->link(__('Create my own Document'), array('controller' => 'documents', 'action' => 'add')); ?> </li>
-                                    <li><?php echo $this->Html->link(__('Import from PubMed Central'), array('controller' => 'documents', 'action' => 'pubmedImport')); ?> </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Users</a>
-                                <ul>
-                                    <li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
-                                    <li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Posts</a>
-                                <ul>
-                                    <li><?php echo $this->Html->link(__('List all Posts'), array('controller' => 'posts', 'action' => 'index')); ?> </li>
-                                    <li><?php echo $this->Html->link(__('List my Posts'), array('controller' => 'posts', 'action' => 'index', 2)); ?> </li>
-                                    <li><?php echo $this->Html->link(__('New Post'), array('controller' => 'posts', 'action' => 'add')); ?> </li>
-                                </ul>
-                            </li>
-                            <li><?php echo $this->Html->link(__('Load from ESEI aplication'), array('controller' => 'projects','action' => 'importAnnotationsAndDocuments')); ?> </li>
+                </div>     
 
-                            <?php
-                        } else {
-                            ?>
-                            <li id="firstOption"><?php echo $this->Html->link(__('List my Projects'), array('controller' => 'projects', 'action' => 'userIndex')); ?></li>
-                            <li><?php echo $this->Html->link(__('List my Rounds'), array('controller' => 'usersRounds', 'action' => 'index')); ?> </li>
-                            <?php
-                        }
-                        ?>
-                        <li><?php echo $this->Html->link(__('My data'), array('controller' => 'users', 'action' => 'edit', $user_id)); ?> </li>
-                        <li><?php echo $this->Html->link(__('Logout'), array('controller' => 'users', 'action' => 'logout')); ?> </li>
-                    </ul>
-                </div>
-                <?php
-                //$return=$this->Session->read('goTo');
-                //echo $this->Html->link(__('Return'), $return,array('id'=>'comeBack' ));
-                }
 
-                echo $this->fetch('content');
-                ?>
-            </div>
-            <div id="footer">
-                <?php
-                echo $this->Html->link(
-                        $this->Html->image('cake-logo.png', array('alt' => $cakeDescription, 'border' => '0', 'id' => 'cakeLogo')), 'http://www.cakephp.org/', array('target' => '_blank', 'escape' => false)
-                );
-                ?>
-                <div id='singDiv'>
+                
+                <div id="content" class="col-sm-9 col-md-10 affix-content">    
                     <?php
-                    echo $this->Html->link($this->Html->image('singIco.png', array('title' => 'Sing', 'id' => 'singIco')), 'http://sing.ei.uvigo.es/', array('target' => '_blank', 'escape' => false))
+                    echo $this->Session->flash();
+                    echo $this->Session->flash('auth');
+                    echo $this->fetch('content');
                     ?>
-                </div>			
+                    <div id="footer" class="row">
+                        <?php echo $this->element('sql_dump'); ?>		
+                    </div>
+                </div>
+
+
+                
+                <a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button" title="Click to return on the top page" data-toggle="tooltip" data-placement="left"><span class="glyphicon glyphicon-chevron-up"></span></a>
+                <div class="sweet-overlay"></div>
+                
+                <div class="sweet-alert">
+
+                    <div class="icon error">
+                        <span class="x-mark">
+                            <span class="line left"></span>
+                            <span class="line right"></span>
+                        </span>
+                    </div>
+
+                    <div class="icon warning">
+                        <span class="body"></span>
+                        <span class="dot"></span>
+                    </div>
+
+                    <div class="icon info"></div>
+
+                    <div class="icon success">
+                        <span class="line tip"></span>
+                        <span class="line long"></span>
+                        <div class="placeholder"></div>
+                        <div class="fix"></div>
+                    </div>
+
+                    <div class="icon custom"></div>
+                    <h2>Title</h2>
+                    <p class="text-muted">Text</p>
+                    <p>
+                        <button class="cancel btn btn-lg btn-default">Cancel</button>
+                        <button class="confirm btn btn-lg">OK</button>
+                    </p>
+                </div>
+                
+                <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Please Wait</h4>
+                            </div>
+                            <div class="modal-body center-block">
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="textModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">{0}</h4>
+                            </div>
+                            <div class="modal-body center-block">
+                                {1}
+                            </div>
+                            <div class="modal-footer" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="contact-dialog" role="dialog" aria-labelledby="dialog-form" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Contact us</h4>
+                            </div>
+                            <div class="alert alert-warning hidden">
+
+                            </div>
+                            <div class="modal-body center-block">
+                                <?php
+                                echo $this->Form->create('User', array(
+                                    'url' => array(
+                                        'controller' => 'users',
+                                        'action' => 'sendFeedback'),
+                                    'id' => "submitEmail"
+                                ));
+                                $email = $this->Session->read('email');
+                                echo $this->Form->input('email', array(
+                                    'required' => "required",
+                                    "class" => "form-control",
+                                    'label' => "Your email",
+                                    "type" => "email", "value" => $email));   //text
+                                echo $this->Form->input('subject', array(
+                                    'required' => "required",
+                                    "class" => "form-control"));   //text
+                                echo $this->Form->input('body', array(
+                                    'label' => 'Your message',
+                                    'required' => "required",
+                                    "class" => "form-control",
+                                    "type" => "textarea",
+                                    "value" => "Dear markyt team,",
+                                    "id" => "htmlBody"));   //text
+//                            echo $this->Form->button('Submit', array('class' => 'btn btn-success',
+//                                'type' => 'submit'));
+
+                                echo $this->Form->end();
+                                ?>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Close</button>
+                                <button id="sendMail" class="btn btn-success">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <?php echo $this->element('sql_dump'); ?>
+        <?php
+        if (isset($annotationMenu) && $annotationMenu) {
+            echo $this->element('annotationDialogs');
+        }
+        if ($user_id) {
+            $renewSessionMinutes = Configure::read('renewSessionMinutes');
+            echo $this->Html->link('renewSession', array('controller' => 'users',
+                'action' => 'renewSession',
+                $user_id), array('class' => 'hidden', 'title' => 'renewSession',
+                'id' => 'renewSessionLocation'));
+
+            echo $this->Form->hidden('renewSessionMinutes', array('value' => $renewSessionMinutes,
+                'id' => 'renewSessionMinutes'));
+        }
+        ?>
+        <a class="hidden" id="hostPath"  name="canonical" href='<?php echo Router::url('/', false) ?>'></a>
+        <?php
+
+        echo $this->fetch('defaultScript') . $this->fetch('scriptInView');
+        ?>
     </body>
 </html>
-
-
 

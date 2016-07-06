@@ -15,6 +15,7 @@ $(document).ready(function () {
         }
 
     });
+    
 
     $('#projectsDelete').submit(function () {
         if (confirm("are you sure you want to delete these projects?!")) {
@@ -60,6 +61,15 @@ $(document).ready(function () {
             return false;
         }
     });
+    
+    $('#documentsDeleteAll').submit(function () {
+        if (!confirm("are you sure you want to delete all documents?!")) {
+
+            return false;
+        }
+    });
+
+
 
 
     $('#selectAllRounds').change(function () {
@@ -210,8 +220,6 @@ $(document).ready(function () {
             return false;
         }
     });
-
-
 
 
 });

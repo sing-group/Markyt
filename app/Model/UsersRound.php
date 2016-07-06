@@ -14,29 +14,6 @@ class UsersRound extends AppModel {
 
     var $actsAs = array('Containable');
 
-    public function beforeSave($options = array()) {
-        //comprimimos el texto
-        if (isset($this->data[$this->name]['text_marked'])) {
-            /*App::import('Vendor', 'HTMLPurifier', array('file' => 'htmlpurifier' . DS . 'library' . DS . 'HTMLPurifier.auto.php'));
-            $config = HTMLPurifier_Config::createDefault();
-            $dirty_html = $this->data[$this->name]['text_marked'];
-            $purifier = new HTMLPurifier($config);
-            $clean_html = $purifier->purify($dirty_html); */          
-            $this->data[$this->name]['text_marked'] = gzdeflate($this->data[$this->name]['text_marked'], 9);
-        }
-        return true;
-    }
-
-    public function afterFind($results, $primary = false) {
-        $name = $this->name;
-        foreach ($results as $key => $val) {
-            if (isset($val[$name]['text_marked']) && $val[$name]['text_marked'] != '') {
-                $results[$key][$name]['text_marked'] = @gzinflate($val[$name]['text_marked']);
-                
-            }
-        }
-        return $results;
-    }
 
     /**
      * Validation rules
@@ -122,20 +99,20 @@ class UsersRound extends AppModel {
      *
      * @var array
      */
-    public $hasMany = array(
-        'Annotation' => array(
-            'className' => 'Annotation',
-            'foreignKey' => 'users_round_id',
-            'dependent' => TRUE,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        )
-    );
+//    public $hasMany = array(
+//        'Annotation' => array(
+//            'className' => 'Annotation',
+//            'foreignKey' => 'users_round_id',
+//            'dependent' => TRUE,
+//            'conditions' => '',
+//            'fields' => '',
+//            'order' => '',
+//            'limit' => '',
+//            'offset' => '',
+//            'exclusive' => '',
+//            'finderQuery' => '',
+//            'counterQuery' => ''
+//        )
+//    );
 
 }

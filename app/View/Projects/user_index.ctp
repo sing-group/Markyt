@@ -1,22 +1,40 @@
+
+
 <div class="projects index">
     <h1><?php echo __('Projects'); ?></h1>
-    <table   >
-        <tr>
-            <th><?php echo $this->Paginator->sort('title'); ?></th>
-            <th><?php echo $this->Paginator->sort('created'); ?></th>
-            <th><?php echo $this->Paginator->sort('modified'); ?></th>
-            <th class="actions"><?php echo __('Actions'); ?></th>
-        </tr>
-        <?php foreach ($projects as $project): ?>
+    <table class="table table-hover table-responsive" >
+        <thead>
             <tr>
-                <td><?php echo h($project['Project']['title']); ?>&nbsp;</td>
-                <td><?php echo h($project['Project']['created']); ?>&nbsp;</td>
-                <td><?php echo h($project['Project']['modified']); ?>&nbsp;</td>
-                <td class="actions">
-                    <?php echo $this->Html->link(__('View'), array('action' => 'userView', $project['Project']['id'])); ?>
-                </td>
+                <th></th>
+                <th><?php echo $this->Paginator->sort('title'); ?></th>
+                <th><?php echo $this->Paginator->sort('created'); ?></th>
+                <th><?php echo $this->Paginator->sort('modified'); ?></th>
+                <th class="actions"><?php echo __('Actions'); ?></th>
             </tr>
-        <?php endforeach; ?>
+        </thead>
+        <tbody>
+            <?php foreach ($projects as $project): ?>
+                <tr class="table-item-row">
+                    <td class="item-id"></td>
+                    <td><?php
+                        if ($project['Project']['title'] == 'Removing...') {
+                            echo '<span class="removing">';
+                        } else
+                            echo '<span>';
+                        echo h($project['Project']['title']) . '</span>';
+                        ?>&nbsp;</td>
+                    <td><?php echo h($project['Project']['created']); ?>&nbsp;</td>
+                    <td><?php echo h($project['Project']['modified']); ?>&nbsp;</td>
+                    <td class="actions">
+                        <?php
+                        if ($project['Project']['title'] != 'Removing...') {
+                            echo $this->Html->link('<i class="fa fa-info-circle"></i>' . __('View'), array('action' => 'userView', $project['Project']['id']), array('class' => 'btn btn-primary', 'escape' => false));
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
     </table>
     <p>
         <?php
@@ -25,11 +43,9 @@
         ));
         ?>	</p>
 
-    <div class="paging ">
+    <div class="pagination-large">
         <?php
-        echo $this->Paginator->prev('< ', array(), null, array('class' => 'prev disabled'));
-        echo $this->Paginator->numbers(array('separator' => ''));
-        echo $this->Paginator->next(' >', array(), null, array('class' => 'next disabled'));
+        echo $this->element('pagination');
         ?>
     </div>
 </div>

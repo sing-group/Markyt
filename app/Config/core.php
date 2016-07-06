@@ -33,7 +33,7 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-Configure::write('debug', 0);
+Configure::write('debug', 2);
 //delete cascade true=Marky false=database
 Configure::write('deleteCascade', false);
 //max excution time
@@ -50,7 +50,89 @@ Configure::write('documentsBuffer', 100);
 Configure::write('annotationsBuffer', 10000);
 //files allowed
 Configure::write('filesAllowed', '(xml|txt|xls)');
+//max upload files at same time
+Configure::write('max_number_of_files', 1000);
+//theme
+$theme = 'Bootstrap';
 
+Configure::write('Theme', $theme);
+//allow gife users profile
+Configure::write('allowGif', false);
+//parse Key for offsets
+Configure::write('parseKey', "Marky");
+//Class for annotation typ¡e
+Configure::write('classKey', "MarkytClass");
+//autosave module
+Configure::write('autoSaveMinutes', 3);
+//login with email
+Configure::write('loginWithEmail', false);
+//renew session minutes
+Configure::write('renewSessionMinutes', 1);
+//pagination tecnology
+Configure::write('annotationCorePaginationAjax', true);
+//get connection log
+Configure::write('connectionLog', true);
+//get connection log
+Configure::write('connectionLogProxy', true);
+//open annotated docs (round_id,user Id)
+Configure::write('openAnnotatedDocs', true);
+//open annotated docs (round_id,user Id)
+Configure::write('documentsPerPage', 20);
+//java jar path
+//Configure::write('runJava', '..' . DS . 'java_jars'. DS . 'exec_java.sh');
+Configure::write('runJava', 'java -jar -Xmx2G -Xms256m ');
+Configure::write('enableJavaActions', true);
+Configure::write('javaJarPath', '..' . DS . 'java_jars');
+Configure::write('analyze_program', 'markyt_java_agreement.jar');
+Configure::write('max_participant_task_upload', 5);
+Configure::write('biocreative_tasks', array("CEMP" => "CEMP", "GPRO" => "GPRO", "CPD" => "CPD"));
+//Dia no incluido
+Configure::write('final_date_to_upload_tasks', "2015-08-25");
+//Dia incluido
+Configure::write('initial_date_to_upload_tasks', "2015-08-14");
+//Colores por defecto para los tipos
+Configure::write('defaultColors', array(array(47, 165, 244), array(255, 204, 0),
+    array(255, 118, 72), array(255, 76, 76), array(0, 255, 255), array(178, 255,
+        64)));
+//Usar scripts en java
+Configure::write('enableServerStats', true);
+//Porpagar las respuestas de cada pregunta
+Configure::write('enableAnswerPropagation', true);
+//modos de annotacion
+Configure::write('annotationsModes', array("MANUAL" => 0, "SEMI-AUTOMATIC" => 1, "AUTOMATIC" => 2));
+Configure::write('parseIdAttr', "data-id");
+
+
+
+Cache::config('short', array(
+    'engine' => 'File',
+    'duration' => '+30 minutes',
+    'path' => CACHE . 'query' . DS,
+    'prefix' => 'query_'
+));
+
+if (Configure::read('debug') > 0) {
+    // clear Cache::write() items
+    Cache::clear();
+    // clear core cache
+    $cachePaths = array('views', 'persistent', 'models', 'query');
+    foreach ($cachePaths as $config) {
+        clearCache(null, $config);
+    }
+}
+
+/* =====================Files=========================== */
+//Relative path from Controller's path 
+Configure::write('uploadFilesPath', './files/uploadFiles');
+Configure::write('downloadFilesPath', './files/downloadFiles');
+Configure::write('participantsPath', './files/participants');
+
+
+//max upload per user, 0 = infinite
+Configure::write('max_upload_files', 0);
+//files allowed 
+Configure::write('filesAllowed', '(doc|docx|odt|pdf|txt|zip)');
+Configure::write('max_file_size', "20MB");
 
 
 //downloadFolder

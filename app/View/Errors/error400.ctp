@@ -16,16 +16,37 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<h2><?php echo $name; ?></h2>
-<p class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php printf(
-		__d('cake', 'The requested address %s was not found on this server.'),
-		"<strong>'{$url}'</strong>"
-	); ?>
-</p>
-<?php
-if (Configure::read('debug') > 0):
-	echo $this->element('exception_stack_trace');
-endif;
-?>
+<div class="row">
+    <div class="col-md-12">
+        <div class="error-template">
+            <h1>
+                Oops!
+            </h1>
+            <div class="server-error-message">
+                4
+                <div class="loader">
+                </div>
+                4
+            </div>
+            <h1>
+                <?php echo $name; ?>
+            </h1>
+
+            <div class="error-details">
+                Sorry, an error has occured
+            </div>
+            <p class="error">
+                <?php
+                printf(
+                        __d('cake', 'The requested address %s was not found on this server.'), "<strong>'{$url}'</strong>"
+                );
+                ?>
+            </p>
+        </div>
+        <?php
+        if (Configure::read('debug') > 0):
+            echo $this->element('exception_stack_trace');
+        endif;
+        ?>
+    </div>  
+</div>

@@ -1,0 +1,50 @@
+body {
+    color: #000;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #FBFBFB;
+}
+Pseudo ::-webkit-scrollbar-track element
+::-webkit-scrollbar-track {
+    background-color: #E7E3E3;
+    -webkit-border-radius: 5px;
+}
+Pseudo ::before element
+:after, :before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.types-annotations 
+{
+	margin:20px;
+}
+span.label, .types-annotations button {
+    margin-right: 1em;
+    float: left;
+    margin: 5px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+.clear {
+    clear: both;
+}
+.corpora {
+    margin: 7%;
+}
+

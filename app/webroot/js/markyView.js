@@ -28,6 +28,8 @@ $(document).ready(function() {
     {
         $("#tabs").tabs({ active: 3 });
     }
+    
+    
     var progressbar = $("#progressbar"),
             progressLabel = $(".progress-label");
     $(".exportData").click(function(e) {

@@ -38,7 +38,7 @@ class Project extends AppModel {
         'title' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-                'message' => 'this field cannot be empty',
+                'message' => 'This field cannot be empty',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -88,7 +88,33 @@ class Project extends AppModel {
             'finderQuery' => '',
             'counterQuery' => '',
             'dependent' => true
-        )
+        ),
+        'Relation' => array(
+            'className' => 'Relation',
+            'foreignKey' => 'project_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => '',
+            'dependent' => true
+        ),
+        'GoldenProject' => array(
+            'className' => 'GoldenProject',
+            'foreignKey' => '',
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => '',
+            'dependent' => true
+        ),
     );
 
     /**
@@ -126,6 +152,22 @@ class Project extends AppModel {
             'finderQuery' => '',
             'deleteQuery' => '',
             'insertQuery' => ''
+        ),
+        'Participant' => array(
+            'className' => 'Participant',
+            'joinTable' => 'projects_participants',
+            'foreignKey' => 'project_id',
+            'associationForeignKey' => 'participant_id',
+            'unique' => 'keepExisting',
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => '',
+            'dependent' => true
         )
     );
 

@@ -1,3 +1,5 @@
+/*====USED====*/
+
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -6,13 +8,14 @@
 
 
 $(document).ready(function() {
-    $(".tableMap td").find('input,span').hottie({
+    console.log($(".tableMap td").find('.btn'));
+    $(".tableMap td").find('.btn').not('.noHottie').hottie({
         colorArray: [
-            "#FDFDC0",
-            "#F77600",
-            "#F96C35",
-            "#F93232",
-            "#FF0000",
+            "#B6D3EB",
+            "#6191B9",
+            "#336894",
+            "#164870",
+            "#031F36",
         ],
         nullColor:"#F0F0F0"
     });

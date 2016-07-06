@@ -15,7 +15,8 @@ class ConsensusAnnotationsController extends AppController {
      *
      * @var array
      */
-    public $components = array('Paginator');
+    public $components = array(
+        'Paginator');
 
     /**
      * add method
@@ -28,19 +29,28 @@ class ConsensusAnnotationsController extends AppController {
             $this->ConsensusAnnotation->create();
             $id = $this->request->data['consensusAnnotation']['id'];
             $round_id = $this->request->data['consensusAnnotation']['round_id'];
-            $data = $this->ConsensusAnnotation->Annotation->find('first', array('recursive' => -1, 'conditions' => array('id' => $id)));
+            $project_id = $this->request->data['consensusAnnotation']['project_id'];
+            $data = $this->ConsensusAnnotation->Annotation->find('first', array(
+                'recursive' => -1,
+                'conditions' => array(
+                    'id' => $id)));
             $newConsensus = array(
                 'round_id' => $round_id,
+                'project_id' => $project_id,
                 'document_id' => $data['Annotation']['document_id'],
+                'type_id' => $data['Annotation']['type_id'],
                 'annotation' => $data['Annotation']['annotated_text'],
                 'init' => $data['Annotation']['init'],
-                'end' => $data['Annotation']['end']
+                'end' => $data['Annotation']['end'],
+                'section' => $data['Annotation']['section'],
             );
             if ($this->ConsensusAnnotation->save($newConsensus)) {
-                return $this->correctResponseJson(json_encode(array('success' => true)));
+                return $this->correctResponseJson(json_encode(array(
+                            'success' => true)));
             } else {
                 $this->Session->setFlash(__('The condition could not be saved. Please, try again.'));
-                return $this->correctResponseJson(json_encode(array('success' => false)));
+                return $this->correctResponseJson(json_encode(array(
+                            'success' => false)));
             }
         }
     }
@@ -59,17 +69,22 @@ class ConsensusAnnotationsController extends AppController {
         }
         $this->request->onlyAllow('post', 'delete');
         if ($this->ConsensusAnnotation->delete()) {
-            return $this->correctResponseJson(json_encode(array('success' => true)));
+            return $this->correctResponseJson(json_encode(array(
+                        'success' => true)));
         } else {
             $this->Session->setFlash(__('The condition could not be saved. Please, try again.'));
-            return $this->correctResponseJson(json_encode(array('success' => false)));
+            return $this->correctResponseJson(json_encode(array(
+                        'success' => false)));
         }
-        return $this->redirect(array('action' => 'index'));
+        return $this->redirect(array(
+                    'action' => 'index'));
     }
 
     public function automatic() {
 
-        if ($this->request->is(array('post', 'put'))) {
+        if ($this->request->is(array(
+                    'post',
+                    'put'))) {
             $projectId = $this->request->data['consensusAnnotation']['project_id'];
             $roundId = $this->request->data['consensusAnnotation']['round_id'];
             $percent = $this->request->data['consensusAnnotation']['percent'];
@@ -85,20 +100,29 @@ class ConsensusAnnotationsController extends AppController {
 
             $count = $this->ConsensusAnnotation->Project->ProjectsUser->find('count', array(
                 'recursive' => -1,
-                'conditions' => array('ProjectsUser.project_id' => $projectId)
+                'conditions' => array(
+                    'ProjectsUser.project_id' => $projectId)
             ));
+
             if ($percent == '') {
                 $percent = 100;
             } else {
                 $percent = intval($percent);
                 if ($percent > 100 || $percent < 0) {
-                    $this->ConsensusAnnotation->deleteAll(array('round_id' => $roundId));
+                    $this->ConsensusAnnotation->deleteAll(array(
+                        'round_id' => $roundId));
                     $this->Session->setFlash(__('Deleted consensus has had success'), 'success');
-                    return $this->redirect(array('controller' => 'annotations', 'action' => 'generateConsensus', $projectId, $roundId));
+                    return $this->redirect(array(
+                                'controller' => 'annotations',
+                                'action' => 'generateConsensus',
+                                $projectId,
+                                $roundId));
                 }
             }
 
-            $percent = round($percent * ($count / 100),PHP_ROUND_HALF_DOWN);
+            $percent = round($percent * ($count / 100), PHP_ROUND_HALF_DOWN);
+
+
             $this->ConsensusAnnotation->Annotation->virtualFields = array(
                 'project_id' => $projectId
             );
@@ -108,46 +132,75 @@ class ConsensusAnnotationsController extends AppController {
                 'alias' => 'Annotation',
                 'recursive' => -1,
                 'fields' => array(
+                    $projectId,
                     'Annotation.round_id',
                     'Annotation.document_id',
+                    'Annotation.type_id',
                     'Annotation.init',
                     'Annotation.end',
                     'Annotation.annotated_text',
+                    'Annotation.section',
                 ),
-                'group' => array('init', 'end HAVING count(DISTINCT Annotation.user_id) >= ' . $percent),
-                'conditions' => array('round_id' => $roundId),
+                'group' => array(
+                    'init',
+                    'end HAVING count(DISTINCT Annotation.user_id) >= ' . $percent),
+                'conditions' => array(
+                    'round_id' => $roundId,
+                    'Annotation.init IS NOT NULL',
+                    'Annotation.end IS NOT NULL'
+                ),
             );
+
 
 
             //$this->ConsensusAnnotation->Annotation->find('all', $options);
             $commit = true;
             $db->begin();
-            $commit = $commit & $this->ConsensusAnnotation->deleteAll(array('round_id' => $roundId));
+            $commit = $commit & $this->ConsensusAnnotation->deleteAll(array(
+                        'project_id' => $projectId));
             $query = $db->buildStatement($options, $this->ConsensusAnnotation->Annotation);
-            $db->query('INSERT INTO ' . $db->fullTableName($this->ConsensusAnnotation) . ' (round_id,document_id,init,end,annotation) ' . $query);
+            $db->query('INSERT INTO ' . $db->fullTableName($this->ConsensusAnnotation) . ' (project_id,round_id,document_id,type_id,init,end,annotation,section) ' . $query);
             if ($commit) {
                 $db->commit();
                 $this->Session->setFlash(__('Automatic consensus has had success'), 'success');
-                $this->redirect(array('controller' => 'annotations', 'action' => 'generateConsensus', $projectId, $roundId));
+                $this->redirect(array(
+                    'controller' => 'annotations',
+                    'action' => 'generateConsensus',
+                    $projectId,
+                    $roundId));
             } else {
                 $db->rollback();
                 $this->Session->setFlash(__('Automatic consensus has not had success'));
-                $this->redirect(array('controller' => 'annotations', 'action' => 'generateConsensus', $projectId, $roundId));
+                $this->redirect(array(
+                    'controller' => 'annotations',
+                    'action' => 'generateConsensus',
+                    $projectId,
+                    $roundId));
             }
         } else {
             throw new NotFoundException(__('Invalid proyect'));
         }
     }
 
-    function download($projectId = null, $roundId = null) {
+    function download($projectId = null, $roundId = null, $diferenceSection = false) {
+
+
+
+        $this->Project = $this->ConsensusAnnotation->Project;
+        $this->Round = $this->Project->Round;
+        $this->AnnotatedDocument = $this->Round->UsersRound->AnnotatedDocument;
+        $this->Document = $this->Project->Document;
+
+
+
         //$this->autoRender = false;
-        $this->ConsensusAnnotation->Project->id = $projectId;
-        if (!$this->ConsensusAnnotation->Project->exists()) {
+        $this->Project->id = $projectId;
+        if (!$this->Project->exists()) {
             throw new NotFoundException(__('Invalid proyect'));
         } //!$this->Project->exists()
-        $this->ConsensusAnnotation->Project->Round->id = $roundId;
-        if (!$this->ConsensusAnnotation->Project->Round->exists()) {
-            throw new NotFoundException(__('Invalid proyect'));
+        $this->Round->id = $roundId;
+        if (!$this->Round->exists()) {
+            throw new NotFoundException(__('Invalid Round'));
         } //!$this->Project->exists()
         else {
             $downloadPath = Configure::read('downloadFolder');
@@ -162,8 +215,8 @@ class ConsensusAnnotationsController extends AppController {
                 print("A joker!!");
                 exit();
             } else {
-                $this->ConsensusAnnotation->Project->recursive = -1;
-                $projectTitle = $this->ConsensusAnnotation->Project->read('title');
+                $this->Project->recursive = -1;
+                $projectTitle = $this->Project->read('title');
                 $projectTitle = ltrim($projectTitle['Project']['title'], '/');
                 $projectTitle = str_replace(' ', '_', $projectTitle);
                 $projectTitle = "Marky_#" . substr($projectTitle, 0, 20);
@@ -179,10 +232,10 @@ class ConsensusAnnotationsController extends AppController {
                         //se le añaden permisos
 
                         $tempFolderAbsolutePath = $tempFolder->path . DS;
-                       $this->ConsensusAnnotation->Document->UsersRound->virtualFields['count'] = 'COUNT(DISTINCT (UsersRound.document_id))';
-                       //no tiene por que corresponderse el numero de documentos con los documentos
-                       //realmente anotados
-                        $documentsSize = $this->ConsensusAnnotation->Document->UsersRound->find('all', array(
+                        $this->AnnotatedDocument->virtualFields['count'] = 'COUNT(DISTINCT (AnnotatedDocument.document_id))';
+                        //no tiene por que corresponderse el numero de documentos con los documentos
+                        //realmente anotados
+                        $annotatedDocumentsSize = $this->AnnotatedDocument->find('count', array(
                             'recursive' => -1,
                             'joins' => array(
                                 array(
@@ -202,15 +255,22 @@ class ConsensusAnnotationsController extends AppController {
                                     )
                                 ),
                             ),
-                            'conditions' => array('UsersRound.document_id = DocumentsProject.document_id', 'UsersRound.round_id' => $roundId, 'NOT' => array('text_marked' => 'NULL')),
-                            'fields' => array('count'),
-                            
+                            'conditions' => array(
+                                'AnnotatedDocument.document_id = DocumentsProject.document_id',
+                                'AnnotatedDocument.round_id' => $roundId,
+                                'NOT' => array(
+                                    'text_marked' => 'NULL')),
+                            'fields' => array(
+                                'count'),
                         ));
-                        $documentsSize=$documentsSize[0]['UsersRound']['count'];
-                        
-                        if ($documentsSize == 0) {
+//                        $documentsSize = $documentsSize[0]['UsersRound']['count'];
+
+                        if ($annotatedDocumentsSize == 0) {
                             $this->Session->setFlash(__('This round has not annotated documents'));
-                            $this->redirect(array('controller' => 'projects', 'action' => 'view', $projectId));
+                            $this->redirect(array(
+                                'controller' => 'projects',
+                                'action' => 'view',
+                                $projectId));
                         }
                         // Initialize archive object
                         $zip = new ZipArchive;
@@ -221,8 +281,8 @@ class ConsensusAnnotationsController extends AppController {
                         }
 
                         $index = 0;
-                        while ($index < $documentsSize) {
-                            $documents = $this->ConsensusAnnotation->Document->UsersRound->find('all', array(
+                        while ($index < $annotatedDocumentsSize) {
+                            $annotatedDocuments = $this->AnnotatedDocument->find('all', array(
                                 'recursive' => -1,
                                 'joins' => array(
                                     array(
@@ -242,18 +302,32 @@ class ConsensusAnnotationsController extends AppController {
                                         )
                                     ),
                                 ),
-                                'conditions' => array('UsersRound.document_id = DocumentsProject.document_id', 'UsersRound.round_id' => $roundId, 'NOT' => array('text_marked' => 'NULL')),
-                                'fields' => array('UsersRound.text_marked', 'Document.title', 'UsersRound.user_id', 'Document.id'),
-                                'group' => array('UsersRound.user_id', 'UsersRound.round_id', 'UsersRound.document_id'),
+                                'conditions' => array(
+                                    'AnnotatedDocument.document_id = DocumentsProject.document_id',
+                                    'AnnotatedDocument.round_id' => $roundId,
+                                    'NOT' => array(
+                                        'text_marked' => 'NULL')),
+                                'fields' => array(
+                                    'AnnotatedDocument.text_marked',
+                                    'Document.external_id',
+                                    'Document.title',
+                                    'AnnotatedDocument.user_id',
+                                    'Document.id'),
+                                'group' => array(
+                                    'AnnotatedDocument.user_id',
+                                    'AnnotatedDocument.round_id',
+                                    'AnnotatedDocument.document_id'),
                                 'limit' => $documentsBuffer, //int
                                 'offset' => $index, //int
                             ));
 
-                            foreach ($documents as $document) {
-                                $fileName = $document['Document']['id'] . '__' . $document['Document']['title'] . ".txt";
+                            foreach ($annotatedDocuments as $document) {
+                                $id = $document['Document']['external_id'];
+                                $fileName = $id . ".txt";
                                 $file = new File($tempFolder->pwd() . DS . $fileName, 600);
+
                                 if ($file->exists()) {
-                                    $content = $document['UsersRound']['text_marked'];
+                                    $content = $document['AnnotatedDocument']['text_marked'];
                                     $content = preg_replace('/\s+/', ' ', $content);
                                     //las siguientes lineas son necesarias dado que cada navegador hace lo  que le da la gana con el DOM con respecto a la gramatica,
                                     //no hay un estandar asi por ejemplo en crhome existe Style:valor y en Explorer Style :valor,etc
@@ -275,28 +349,84 @@ class ConsensusAnnotationsController extends AppController {
                             }
                             $index+=$documentsBuffer;
                         }
+
+
+                        $documentsList = $this->Document->find('list', array(
+                            'recursive' => -1,
+                            'joins' => array(
+                                array(
+                                    'type' => 'inner',
+                                    'table' => 'documents_projects',
+                                    'alias' => 'DocumentsProject',
+                                    'conditions' => array(
+                                        'DocumentsProject.project_id' => $projectId,
+                                        'DocumentsProject.document_id = Document.id',
+                                    )
+                                ),
+                            ),
+                        ));
+
+
                         $annotationsSize = $this->ConsensusAnnotation->find('count', array(
                             'recursive' => -1,
-                            'conditions' => array('ConsensusAnnotation.round_id' => $roundId),
+                            'conditions' => array(
+                                'ConsensusAnnotation.round_id' => $roundId,
+                            ),
                         ));
                         $index = 0;
                         $file = new File($tempFolder->pwd() . DS . "annotations.tsv", 600);
-                        $content = "original_document_identifier\tsystem_document_identifier\tstarting_offset\tending_offset\tannotation_text\n";
+
+
+                        $content = "Document\tSection\tStarting_offset\tEnding_offset\tAnnotation_text\tType\n";
+
                         while ($index < $annotationsSize) {
                             $annotations = $this->ConsensusAnnotation->find('all', array(
-                                'recursive' => -1,
-                                'conditions' => array('ConsensusAnnotation.round_id' => $roundId),
+                                //'recursive' => -1,
+                                'conditions' => array(
+                                    'ConsensusAnnotation.round_id' => $roundId,
+                                ),
+                                'fields' => array(
+                                    'Document.external_id',
+                                    'Document.title',
+                                    'Type.name',
+                                    'init',
+                                    'end',
+                                    'annotation',
+                                    'section',
+                                    'document_id'),
                                 'limit' => $annotationsBuffer, //int
                                 'offset' => $index, //int
                             ));
 
+
                             foreach ($annotations as $annotation) {
-                                $content.=$annotation['ConsensusAnnotation']['id'] . "\t" .
-                                        $annotation['ConsensusAnnotation']['document_id'] . "\t" .
+
+                                if (isset($annotation['Document']['external_id'])) {
+                                    $content .= $annotation['Document']['external_id'] . "\t";
+                                } else {
+                                    $content .= $annotation['Document']['title'] . "\t";
+                                }
+                                if ($annotation['ConsensusAnnotation']['section'] == 'A') {
+                                    $titleSize = strlen($documentsList[$annotation['ConsensusAnnotation']['document_id']]);
+                                    $annotation['ConsensusAnnotation']['init'] -=$titleSize;
+                                    $annotation['ConsensusAnnotation']['end']-=$titleSize;
+                                }
+                                if (isset($annotation['ConsensusAnnotation']['section'])) {
+                                    $content.=$annotation['ConsensusAnnotation']['section'] . "\t";
+                                } else {
+                                    $content.="NULL\t";
+                                }
+
+
+                                $content.=
                                         $annotation['ConsensusAnnotation']['init'] . "\t" .
                                         $annotation['ConsensusAnnotation']['end'] . "\t" .
-                                        $annotation['ConsensusAnnotation']['annotation'] . "\n";
+                                        $annotation['ConsensusAnnotation']['annotation'] . "\t" .
+                                        $annotation['Type']['name'] . "\n";
                             }
+
+                            //throw new Exception;
+
                             if ($file->exists()) {
                                 $file->append($content);
                             } else {
@@ -306,7 +436,9 @@ class ConsensusAnnotationsController extends AppController {
                             $index+=$annotationsBuffer;
                         }
                         $file->close();
-                        $zip->addFile($file->path, ltrim("annotations.tsv", '/'));                        
+                        $zip->addFile($file->path, ltrim("annotations.tsv", '/'));
+
+
                         if (!$zip->status == ZIPARCHIVE::ER_OK) {
                             throw new Exception("Error creating zip ");
                         }

@@ -3,7 +3,6 @@ echo $this->Html->script('markyMultiDelete.js', array('block' => 'scriptInView')
 echo $this->Html->css('../js/dataTables/css/jquery.dataTables', array('block' => 'cssInView'));
 echo $this->Html->script('./dataTables/js/jquery.dataTables.min', array('block' => 'scriptInView'));
 echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
-echo $this->Html->link(__('Return'), array('controller' => 'usersRounds', 'action' => 'index'), array('id' => 'comeBack'));
 ?>
 <div class="rounds view">
     <h1><?php echo __('Round'); ?></h1>
