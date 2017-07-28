@@ -33,19 +33,17 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
-//    $this->viewPath;
     public $helpers = array(
-        'Session');
+          'Session');
     public $components = array(
-        'Session',
-        'Auth' => array(
-            'loginRedirect' => array(
-                'controller' => 'posts',
-                'action' => 'publicIndex'),
-            //'loginAction' => array('controller' => 'posts', 'action' => 'publicIndex'),
-            'authError' => 'You are not authorized to access this location'));
+          'Session',
+          'Auth' => array(
+                'loginRedirect' => array(
+                      'controller' => 'posts',
+                      'action' => 'publicIndex'),
+                //'loginAction' => array('controller' => 'posts', 'action' => 'publicIndex'),
+                'authError' => 'You are not authorized to access this location'));
 
-    //aplana un array recursivamente
     public function flatten(array $array) {
         $return = array();
         array_walk_recursive($array, function($a) use (&$return) {
@@ -77,12 +75,6 @@ class AppController extends Controller {
         $redirect = $this->Session->read('redirect');
         $scriptTimeLimit = Configure::read('scriptTimeLimit');
         set_time_limit($scriptTimeLimit);
-
-        //cortamos la ejecucion parab el usuario pero el script sigue en ejecucion
-        //de esta forma el usuario puedeseguir navegando
-        //sino estamos en la vista de un proyecto nos dirigimos a donde nos manden
-        //en caso contrario volvemos a la vista
-        //en caso de estar en la vista de un proyecto y querer eliminarlo nos vamos a donde nos manden
         if (!$this->request->is('ajax')) {
             if (isset($redirect) && is_array($redirect)) {
                 if ($redirect['action'] == 'view' && $redirect['controller'] != 'projects') {
@@ -94,32 +86,27 @@ class AppController extends Controller {
                 header("Location: " . $location);
             }
         }
-        //Erase the output buffer
         ob_end_clean();
-        //Tell the browser that the connection's closed
         header("Connection: close");
-        //Ignore the user's abort (which we caused with the redirect).
         ignore_user_abort(true);
-        //Start output buffering again
         ob_start();
-        //Tell the browser we're serious... there's really
-        //nothing else to receive from this page.
         header("Content-Length: 0");
-        //Send the output buffer and turn output buffering off.
         ob_end_flush();
-        //Yes... flush again.
         flush();
-        //Close the session.
         session_write_close();
     }
 
     public function correctResponseJson($response) {
+        $this->response->header(array(
+              "Pragma" => "no-cache",
+        ));
+        $this->response->expires(0);
+        $this->response->disableCache();
         $this->autoRender = false;
         if (isset($response)) {
             if (is_array($response)) {
                 $response = json_encode($response);
             }
-
             $this->response->body($response);
         } else {
             $this->response->body('');
@@ -129,12 +116,10 @@ class AppController extends Controller {
     }
 
     public function exportTsvDocument($lines = array(), $name = "export.tsv") {
-
         $response = "";
         foreach ($lines as $line) {
-            $response.=$line . "\n";
+            $response .= $line . "\n";
         }
-
         $mimeExtension = 'text/tab-separated-values';
         $this->response->type($mimeExtension);
         $this->response->body($response);
@@ -144,59 +129,166 @@ class AppController extends Controller {
     }
 
     public function sendMailWithAttachment($template = null, $to_email = null, $subject = null, $contents = array(), $attachments = array()) {
-
         App::uses('CakeEmail', 'Network/Email');
-
         $emailProfile = Configure::read('emailProfile');
         $from_email = 'markyt.noreplay@gmail.com';
         $email = new CakeEmail($emailProfile);
         $result = $email
-                ->to($to_email)
-                ->template($template)
-                ->emailFormat('html')
-                ->from($from_email)
-                ->subject($subject)
-                ->attachments($attachments)
-                ->viewVars($contents);
+            ->to($to_email)
+            ->template($template)
+            ->emailFormat('html')
+            ->from($from_email)
+            ->subject($subject)
+            ->attachments($attachments)
+            ->viewVars($contents);
         if ($email->send()) {
             return true;
         }
         return false;
     }
 
+    public function cleanLessCharacter(&$content) {
+        $end = false;
+        $regex = "/<(\d|[\-=_!\"#%&'*{},.:;?\(\)\[\]@\\$\^*+<>~`^_`{\|}~\]])/miu";
+        $content = preg_replace($regex, "≺$1", trim($content));
+        $regex = "/<([^>]*(<|$))/miu";
+        preg_match($regex, $content, $matches);
+        $end = empty($matches);
+        while (!$end) {
+            preg_match($regex, $content, $matches);
+            $end = empty($matches);
+            $content = preg_replace($regex, "≺$1", trim($content));
+        }
+        return $content;
+    }
+
     public function parseHtmlToGetAnnotations($content = null) {
-//        $content = preg_replace('/\s+/', ' ', $content);
-//        //las siguientes lineas son necesarias dado que cada navegador hace lo  que le da la gana con el DOM con respecto a la gramatica,
-//        //no hay un estandar asi por ejemplo en crhome existe Style:valor y en Explorer Style :valor,etc
-//        $content = str_replace(array(
-//            "\n",
-//            "\t",
-//            "\r"
-//                ), '', $content);
-        //$textoForMatches = str_replace('> <', '><', $textoForMatches);
+        $content = $this->cleanLessCharacter($content);
         $content = strip_tags($content, '<mark>');
-        $content = utf8_decode(htmlspecialchars_decode($content));
-        return trim($content);
+        $codification = mb_detect_encoding($content, mb_detect_order());
+        if ($codification != "UTF-8")
+            $content = iconv($codification, "UTF-8//TRANSLIT", $content);
+        return $content;
+    }
+
+    function getAnnotations($documentContent = null, $document_id = null, $countTitleSize = true) {
+        $allAnnotations = array();
+        $parseKey = Configure::read('parseKey');
+        $classKey = Configure::read('classKey');
+        $parseIdAttr = Configure::read('parseIdAttr');
+        if (isset($documentContent) && $documentContent != '') { // nos ahorramos tran
+            $documentContent = preg_replace("/(?i)(<mark[^>]*>)(\s)(<\/mark>)/", "$1&nbsp;$3", $documentContent);
+            $totalAnnotations = substr_count($documentContent, "<mark");
+            $headerEndPosition = strpos($documentContent, "</h3>") + 4;
+            $titleSize = 0;
+            if ($countTitleSize)
+                $titleSize = mb_strlen(trim($this->entityStripTags(substr($documentContent, 0, $headerEndPosition))));
+            $documentContent = $this->cleanLessCharacter($documentContent);
+            $dom = new DOMDocument();
+            $markRepresentation = new DOMDocument('5.0', 'UTF-8');
+            libxml_use_internal_errors(true);
+            $dom->preserveWhiteSpace = true;
+            $dom->loadHTML(
+                '<!DOCTYPE html>'
+                . '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'
+                . $documentContent
+                . '</body></html>'
+            );
+            libxml_clear_errors();
+            $documentContent = $this->parseHtmlToGetAnnotations($documentContent);
+            $marks = $dom->getElementsByTagName('mark');
+            $matches = array();
+            foreach ($marks as $mark) {
+                $newdoc = new DOMDocument('5.0', 'UTF-8');
+                $text = $mark->nodeValue;
+                $cloned = $mark->cloneNode(TRUE);
+                $newdoc->appendChild($newdoc->importNode($cloned, TRUE));
+                $html = $newdoc->saveHTML();
+                array_push($matches, array(
+                      "tag" => trim(substr($html, 0, strpos($html, ">") + 1)),
+                      "text" => $text, "id" => $mark->getAttribute($parseIdAttr),
+                      "type" => $mark->getAttribute("data-type-id")
+                ));
+            }
+            $size = sizeof($matches);
+            if ($size != 0) {
+                for ($i = 0; $i < $size; $i++) {
+                    $mark = $matches[$i];
+                    $texto = $mark['text'];
+                    $isAutomatic = strpos($mark['tag'], "automatic");
+                    $mode = 0;
+                    if ($isAutomatic) {
+                        $mode = 2;
+                    }
+                    $insertID = $mark['id'];
+                    if (!isset($allAnnotations[$insertID])) {
+                        $markPosition = strpos($documentContent, $mark['tag']);
+                        if ($markPosition === false) {
+                            debug($mark['tag']);
+                            debug($documentContent);
+                            debug(strpos($documentContent, $mark['tag']));
+                            debug(substr($documentContent, 0, strpos($documentContent, $mark['tag'])));
+                            throw new Exception("Mark not found: " . $mark['tag']);
+                        }
+                        $substring = substr($documentContent, 0, $markPosition);
+                        $substring = html_entity_decode(strip_tags($substring), ENT_COMPAT | ENT_HTML5, 'UTF-8');
+                        $original_start = mb_strlen($substring);
+                        if ($mark['type'] != '') {
+                            $type = $mark['type'];
+                        } else {
+                            preg_match('/[^>]*class=.?(\w*).?[^>]/', $mark['tag'], $type);
+                            $type = str_replace($classKey, '', $type[1]);
+                        }
+                        $section = 'A';
+                        if ($original_start < $titleSize) {
+                            $section = 'T';
+                        } else {
+                            $original_start = $original_start - $titleSize - 1;
+                        }
+                        $allAnnotations[$insertID] = array(
+                              'init' => $original_start,
+                              'annotated_text' => $texto,
+                              'type_id' => $type,
+                              'document_id' => $document_id,
+                              'id' => $insertID,
+                              'section' => $section
+                        );
+                    } else {
+                        $allAnnotations[$insertID]['annotated_text'] .= $texto;
+                        $allAnnotations[$insertID]['nested'] = true;
+                    }
+                }
+                foreach ($allAnnotations as $key => $value) {
+                    $initialSpaces = mb_strlen($value['annotated_text']) - mb_strlen(ltrim($value['annotated_text']));
+                    if ($initialSpaces != 0) {
+                        $allAnnotations[$key]['init'] += $initialSpaces;
+                    }
+                    $allAnnotations[$key]['end'] = $allAnnotations[$key]['init'] + mb_strlen(trim($value['annotated_text']));
+                }
+            }
+        } //sizeof($matches[1]) != 0
+        return $allAnnotations;
+    }
+
+    function entityStripTags($content) {
+        return html_entity_decode(strip_tags($content), ENT_COMPAT | ENT_HTML5, 'UTF-8');
     }
 
     public function filesize2bytes($str) {
         $bytes = 0;
         $bytes_array = array(
-            'B' => 1,
-            'KB' => 1024,
-            'MB' => 1024 * 1024,
-            'GB' => 1024 * 1024 * 1024,
-            'TB' => 1024 * 1024 * 1024 * 1024,
-            'PB' => 1024 * 1024 * 1024 * 1024 * 1024,
+              'B' => 1,
+              'KB' => 1024,
+              'MB' => 1024 * 1024,
+              'GB' => 1024 * 1024 * 1024,
+              'TB' => 1024 * 1024 * 1024 * 1024,
+              'PB' => 1024 * 1024 * 1024 * 1024 * 1024,
         );
         $bytes = floatval($str);
-
         if (preg_match('#([KMGTP]?B)$#si', $str, $matches) && !empty($bytes_array[$matches[1]])) {
             $bytes *= $bytes_array[$matches[1]];
         }
-
         $bytes = intval(round($bytes, 2));
-
         return $bytes;
     }
 
@@ -219,21 +311,16 @@ class AppController extends Controller {
         debug(($tabs));
         debug(($lines * $columns) == $tabs);
         throw new Exception;
-
         return ($lines * $columns) == $tabs;
     }
 
     public function incorrecLineTsvFormat($file) {
-
         $content = $file->read();
         $file->close();
-
         $lines = explode("\n", $content);
-
         $incorrectFormat = empty($lines);
         $count = -1;
         $size = count($lines);
-
         for ($index = 0; $index < $size; $index++) {
             if (strlen(trim($lines[$index])) > 0) {
                 if (!$incorrectFormat) {
@@ -250,8 +337,7 @@ class AppController extends Controller {
                 }
             }
         }
-
-        return $count+=2;
+        return $count += 2;
     }
 
     private function getNumberOfLines($file) {
@@ -286,11 +372,9 @@ class AppController extends Controller {
         $PID = $job["Job"]['PID'];
         $userIdJob = $job["Job"]['user_id'];
         $round_id = $job["Job"]['round_id'];
-        //mirar si el proceso existe
         $success = false;
         $group_id = $this->Session->read('group_id');
         $user_id = $this->Session->read('user_id');
-
         if (isset($PID) && $PID != '' && file_exists("/proc/$PID")) {
             $success = posix_kill($PID, 9);
             sleep(1);
@@ -298,12 +382,11 @@ class AppController extends Controller {
         } else {
             $success = true;
         }
-
         if ($success) {
             $usersRound = $this->UsersRound->find('first', array(
-                'recursive' => -1,
-                'fields' => "id",
-                'conditions' => array("user_id" => $userIdJob, "round_id" => $round_id)
+                  'recursive' => -1,
+                  'fields' => "id",
+                  'conditions' => array("user_id" => $userIdJob, "round_id" => $round_id)
             ));
             if (!empty($usersRound)) {
                 $this->UsersRound->id = $usersRound["UsersRound"]["id"];
@@ -312,70 +395,53 @@ class AppController extends Controller {
             $this->Job->saveField('percentage', 100);
             $this->Job->saveField('status', "Canceled by user");
         }
-//        if ($group_id == 1) {
-//            $cascade = Configure::read("deleteCascade");
-//            if ($this->Job->delete($this->Job->id, $cascade)) {
-//                return $this->correctResponseJson(json_encode(array(
-//                            'success' => true)));
-//            } else {
-//                return $this->correctResponseJson(json_encode(array(
-//                            'success' => false,
-//                            'message' => "The task could not be performed successfully"
-//                )));
-//            }
-//        } else {
         return $this->correctResponseJson(json_encode(array(
-                    'success' => $success)));
-//        }
+                  'success' => $success)));
     }
 
-    public function sendJob($id, $programName, $arguments, $returnJson = true) {
+    public function sendJob($id, $programName, $arguments, $returnJson = true, $logName = "/dev/null") {
         $this->loadModel('Job');
         $runJava = Configure::read('runJava');
         $javaJarPath = Configure::read('javaJarPath');
         $javaProgram = "MARKYT_Scripts.jar";
+        if ($programName != "importation-1.0-SNAPSHOT-jar-with-dependencies.jar") {
+            $javaProgram = "MARKYT_Scripts.jar";
+        } else {
+            $javaProgram = $programName;
+        }
         $program = $javaJarPath . DS . $javaProgram;
         $javaLog = $javaJarPath . DS . "java.log";
         $date = date('Y-m-d H:i:s');
         exec("echo \"$date:$runJava $program $arguments\" >> $javaLog 2>&1 &");
-        $PID = exec("$runJava $program $arguments > /dev/null 2>&1 & echo $!;");
-//                          $PID = exec("sleep 60 > /dev/null 2>&1 & echo $!;",$output);
+        $PID = exec("$runJava $program $arguments > $logName 2>&1 & echo $!;");
         $this->Job->id = $id;
         $this->Job->set('PID', $PID);
-        $this->Job->save(array('PID' => $PID, 'program' => $programName));
+        $this->Job->save(array('PID' => $PID, 'program' => $programName, "arguments" => $arguments));
         if ($returnJson) {
             return $this->correctResponseJson(json_encode(array(
-                        'success' => true,
-                        'PID' => $this->Job->id)));
+                      'success' => true,
+                      'PID' => $this->Job->id)));
         }
     }
 
     public function beforeFilter() {
         $theme = Configure::read('Theme');
         $this->theme = $theme;
-
         /* $this->Auth->allow(array('forward', 'processUrl')); */
         $this->Auth->allow(array(
-            'controller' => 'pages',
-            'action' => 'display',
-            'markyInformation'));
+              'controller' => 'pages',
+              'action' => 'display',
+              'markyInformation'));
         $this->Auth->allow('postsSearch', 'publicIndex', 'recoverAccount');
         $this->Auth->allow('login', 'register', 'Logout');
-        //cambiar aqui a que paginas se puede  ir sin registrarse
         $group = $this->Session->read('group_id');
         $controller = $this->request->params['controller'];
-        //en minuculas dado que en mayusculas daba algunos errores
         $action = $this->request->params['action'];
-
-        //dado a la dificultad de cakephp y sus permisos para acceder a las paginas
-        //se ha optado por hacer nuestra propia forma de permiso a la hora de acceder a las paginas
         $controller = strtolower($controller);
-
-        $deniedMessagge = 'You not authorized to enter this area, your action has been reported';
+        $deniedMessagge = 'You are not authorized to enter this area, your action has been reported';
         $deniedRedirect = array(
-            'controller' => 'rounds',
-            'action' => 'index');
-        //en minuculas dado que en mayusculas daba algunos errores
+              'controller' => 'rounds',
+              'action' => 'index');
         if ($group == 99) {
             $this->Session->destroy();
         }
@@ -385,8 +451,6 @@ class AppController extends Controller {
                     break;
                 case 'videos' :
                     break;
-//                case 'annotations' :
-//                    break;
                 case 'annotations' :
                     switch ($action) {
                         case 'redirectToAnnotatedDocument' :
@@ -442,22 +506,6 @@ class AppController extends Controller {
                 case 'annotated_documents':
                 case 'users_rounds' :
                 case 'usersrounds' :
-//                    switch ($action) {
-//                        case 'view' :
-//                            break;
-//                        case 'start' :
-//                            break;
-//                        case 'start2' :
-//                            break;
-//                        case 'save' :
-//                            break;
-//                        case 'index' :
-//                            break;
-//                        default :
-//                            $this->Session->setFlash($deniedMessagge);
-//                            $this->redirect($deniedRedirect);
-//                            break;
-//                    }
                     break;
                 case 'projectresources' :
                     switch ($action) {
@@ -490,7 +538,6 @@ class AppController extends Controller {
                     }
                     break;
                 default :
-                    //print_r($controller.' '.$action);
                     $this->Session->setFlash($deniedMessagge);
                     $this->redirect($deniedRedirect);
                     break;
@@ -499,23 +546,68 @@ class AppController extends Controller {
             $action = $this->request->params['action'];
             if ($action == 'view' && $controller != "usersrounds") {
                 $redirect = array(
-                    'controller' => $controller,
-                    'action' => $action);
+                      'controller' => $controller,
+                      'action' => $action);
                 if (!empty($this->request->params['pass'][0])) {
-                    //print_r($this->request->params);
                     $redirect = array(
-                        'controller' => $controller,
-                        'action' => $action,
-                        $this->request->params['pass'][0]);
+                          'controller' => $controller,
+                          'action' => $action,
+                          $this->request->params['pass'][0]);
                 }
                 $this->Session->write('redirect', $redirect);
             }
             if ($action == 'index') {
-                //print_r($this->request->params);
                 $redirect = array(
-                    'action' => 'index');
+                      'action' => 'index');
                 $this->Session->write('redirect', $redirect);
                 $this->Session->write('comesFrom', $redirect);
+            }
+        }
+    }
+
+    /* ============================ */
+    /*          Relations           */
+    /* ============================ */
+
+    /**
+     * [getNodeData description]
+     * @param [type] $typesShapes [description]
+     * @param [type] $annotation [description]
+     * @param [type] $shapes [description]
+     * @param [type] $nodeCss [description]
+     * @param [type] $types [description]
+     * @param [type] $nodesMap [description]
+     * @param [type] $cont [description]
+     * @param [type] $nodes [description]
+     */
+    public function getNodeData(&$typesShapes, &$annotation, &$shapes, &$nodeCss, &$types, &$nodesMap, &$annotationTypesDistribution, &$nodes) {
+        $size = count($nodesMap);
+        if (!isset($nodesMap[$annotation["annotated_text"]])) {
+            if (!isset($typesShapes[$annotation["type_id"]])) {
+                $shape = array_shift($shapes);
+                $typesShapes[$annotation["type_id"]] = $shape;
+                array_push($shapes, $shape);
+            }
+            if (!isset($annotationTypesDistribution[$annotation["type_id"]])) {
+                $annotationTypesDistribution[$annotation["type_id"]] = 0;
+            }
+            $annotationTypesDistribution[$annotation["type_id"]] ++;
+            $nodeCss["background-color"] = "rgba(" . $types[$annotation["type_id"]]["colour"] . ")";
+            $nodeCss["shape"] = $typesShapes[$annotation["type_id"]];
+            $nodesMap[$annotation["annotated_text"]] = $annotation["id"];
+            $nodes[$annotation["annotated_text"]] = array("data" => array(
+                        "id" => $annotation["id"],
+                        "userId" => $annotation["user_id"],
+                        "roundId" => $annotation["round_id"],
+                        'weight' => 1,
+                        "name" => $annotation["annotated_text"]),
+                  "css" => $nodeCss);
+        } else {
+            $nodes[$annotation["annotated_text"]]["data"]['weight'] *= 1.05;
+            if ($nodes[$annotation["annotated_text"]]["css"]['width'] < 2000) {
+                $nodes[$annotation["annotated_text"]]["css"]['width'] *= 1.05;
+                $nodes[$annotation["annotated_text"]]["css"]['height'] *= 1.05;
+                $nodes[$annotation["annotated_text"]]["css"]['font-size'] += 2;
             }
         }
     }

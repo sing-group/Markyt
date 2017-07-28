@@ -1,14 +1,10 @@
 <?php
 echo $this->Html->script('./amcharts/amcharts.js', array('block' => 'scriptInView'));
 echo $this->Html->script('./amcharts/serial.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/filesaver.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/amexport.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/canvg.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/rgbcolor.js', array('block' => 'scriptInView'));
+echo $this->Html->script('./amcharts/plugins/export/export.min.js', array('block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/randomColor/randomColor.min', array('block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/markyChart', array('block' => 'scriptInView'));
 echo $this->Html->script('markyHeatColour.js', array('block' => 'scriptInView'));
-
 ?>
 <div class="comparation view">
     <h1>
@@ -97,22 +93,27 @@ echo $this->Html->script('markyHeatColour.js', array('block' => 'scriptInView'))
                             <div class="col-md-12">
                                 <?php
                                 echo $this->Form->button('<i class="fa fa-arrows-alt"></i>', array(
-                                    'class' => 'btn btn-info export-consensus fullScreenButton',
-                                    'escape' => false,
-                                    'id' => false,
+                                      'class' => 'btn btn-info export-consensus fullScreenButton',
+                                      'escape' => false,
+                                      'id' => false,
                                 ));
                                 ?>
                                 <?php
                                 echo $this->Form->button('<i class="fa fa-cloud-download"></i>', array(
-                                    'class' => 'btn btn-green ladda-button downloadButton',
-                                    'escape' => false, "data-style" => "slide-down",
-                                    "data-spinner-size" => "20",
-                                    "data-spinner-color" => "#fff",
-                                    "data-toggle" => "tooltip",
-                                    "data-placement" => "top",
-                                    'id' => false,
-                                    "data-original-title" => 'Download this data to load later with option: load confrontation with file'));
-                                echo $this->Html->link('Download', array('action' => 'downloadConfrontationData', $table), array('class' => 'downloadLink', 'title' => 'Download data to load after', 'class' => 'hidden', 'id' => false));
+                                      'class' => 'btn btn-green ladda-button downloadButton',
+                                      'escape' => false, "data-style" => "slide-down",
+                                      "data-spinner-size" => "20",
+                                      "data-spinner-color" => "#fff",
+                                      "data-toggle" => "tooltip",
+                                      "data-placement" => "top",
+                                      'id' => false,
+                                      "data-original-title" => 'Download this data to load later with option: load confrontation with file'));
+                                echo $this->Html->link('Download', array('action' => 'downloadConfrontationData',
+                                      $table), array('class' => 'downloadLink',
+                                      'title' => 'Download data to load after',
+                                      'class' => 'hidden',
+                                      'target' => '_blank',
+                                      'id' => false));
                                 ?>
                             </div>
                             <div class="clear"></div>
@@ -132,7 +133,7 @@ echo $this->Html->script('markyHeatColour.js', array('block' => 'scriptInView'))
                     </div>
                     <div class="panel-body">
                         <div id="chartdiv" class="chart"></div>
-                        <a href="<?php echo $this->webroot . 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
+                        <a href="<?php echo 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
                     </div>
                 </div>                
             </div>
@@ -144,11 +145,11 @@ echo $this->Html->script('markyHeatColour.js', array('block' => 'scriptInView'))
 <?php
 echo $this->Html->media('BleepSound.mp3', array('fullBase' => true, 'autoplay'));
 
-//$time_start = $this->Session->read('start');
-//$time_end = microtime(true);
-//
-////dividing with 60 will give the execution time in minutes other wise seconds
-//$execution_time = ($time_end - $time_start);
-//$execution_time=number_format($execution_time, 2, ',','');
-//
-//debug('Total Execution Time: '.$execution_time);
+
+
+
+
+
+
+
+

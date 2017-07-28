@@ -1,12 +1,17 @@
 <?php
-echo $this->Html->script('Bootstrap/bootstrap-slider/bootstrap-slider.min', array('block' => 'scriptInView'));
-echo $this->Html->css('../js/Bootstrap/bootstrap-slider/css/bootstrap-slider.min', array('block' => 'scriptInView'));
+echo $this->Html->script('Bootstrap/bootstrap-slider/bootstrap-slider.min', array(
+      'block' => 'scriptInView'));
+echo $this->Html->css('../js/Bootstrap/bootstrap-slider/css/bootstrap-slider.min', array(
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' => 'scriptInView'));
 ?>
 <div class="projects form">
     <div class="col-md-12">
         <h1><?php echo __('Settings for Get F-score for two rounds'); ?></h1>
-        <?php echo $this->Form->create('Project', array('id' => 'setForm', 'class' => 'submitForm')); ?>
+        <?php
+        echo $this->Form->create('Project', array('id' => 'setForm',
+              'class' => 'submitForm'));
+        ?>
 
         <div class="col-md-6">
             <p>In statistics, the <span class="bold">F score (also F-score or F-measure)</span> is a measure of a test's accuracy. It considers both the precision 
@@ -23,16 +28,16 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
                 <span class="bold">Want to send the data to your email to load later with option "load confrontation with file"?</span>
                 <div class="onoffswitch">
                     <?php
-//                    echo $this->Form->input('allRounds', array('label' => false, 'type' => "checkbox", "class" => "onoffswitch-checkbox", "id" => "only_abstract", "div" => false));
+
                     ?>
                     <?php
                     echo $this->Form->input('sendEmail', array(
-                        'type' => "checkbox",
-                        'default' => false,
-                        'label' => false,
-                        "div" => false,
-                        "class" => "onoffswitch-checkbox"
-                        , "id" => "email"
+                          'type' => "checkbox",
+                          'default' => false,
+                          'label' => false,
+                          "div" => false,
+                          "class" => "onoffswitch-checkbox"
+                          , "id" => "email"
                     ));
                     ?>
                     <label class="onoffswitch-label" for="email">
@@ -44,7 +49,7 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
 
 
         </div>
-        <div class="col-md-6"
+        <div class="col-md-6">
              <fieldset>                        	
                      <?php
                      echo $this->Form->hidden('id', array('value' => $project_id));
@@ -53,23 +58,27 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
                     <span class="bold">Margin characters for matching </span>
                     <div class="margin-input">
                         <?php
-                        echo $this->Form->input('margin', array('type' => 'number', 'min' => 0,
-                            'value' => 0,
-                            'label' => false,
-                            'data-slider-min' => "0",
-                            'data-slider-max' => "20",
-                            'data-slider-step' => "1",
-                            'data-slider-value' => "0",
-                            'class' => 'margin-slide form-control',
-                            'data-slider-ticks-labels' => "['0', '5', '10', '15', '20']"
+                        echo $this->Form->input('margin', array('type' => 'number',
+                              'min' => 0,
+                              'value' => 0,
+                              'label' => false,
+                              'data-slider-min' => "0",
+                              'data-slider-max' => "20",
+                              'data-slider-step' => "1",
+                              'data-slider-value' => "0",
+                              'class' => 'margin-slide form-control',
+                              'data-slider-ticks-labels' => "['0', '5', '10', '15', '20']"
                         ));
                         ?>
                     </div>
                 </div>
                 <?php
-                echo $this->Form->input('round', array('multiple' => false, 'name' => 'round_A', 'id' => 'round_A', 'label' => 'Round_A', 'class' => 'form-control'));
-                echo $this->Form->input('round', array('multiple' => false, 'name' => 'round_B', 'id' => 'round_B', 'label' => 'Round_B', 'class' => 'form-control'));
-                echo $this->Form->input('User', array('multiple' => true, 'name' => 'user', 'id' => 'user', 'class' => 'form-control'));
+                echo $this->Form->input('round', array('multiple' => false, 'name' => 'round_A',
+                      'id' => 'round_A', 'label' => 'Round A', 'class' => 'form-control'));
+                echo $this->Form->input('round', array('multiple' => false, 'name' => 'round_B',
+                      'id' => 'round_B', 'label' => 'Round B', 'class' => 'form-control'));
+                echo $this->Form->input('User', array('multiple' => true, 'name' => 'user',
+                      'id' => 'user', 'class' => 'form-control'));
                 ?>
             </fieldset>
             <?php
@@ -81,6 +90,9 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
 </div>
 
 <?php
-echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'confrontationFscoreRounds'), array('id' => 'endGoTo', 'class' => "hidden"));
-echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'getProgress', true), array('id' => 'goTo', 'class' => "hidden"));
-echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'view', $project_id), array('id' => 'goToMail', 'class' => "hidden"));
+echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'confrontationFscoreRounds'), array(
+      'id' => 'endGoTo', 'class' => "hidden"));
+echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'getProgress',
+      true), array('id' => 'goTo', 'class' => "hidden"));
+echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'view',
+      $project_id), array('id' => 'goToMail', 'class' => "hidden"));

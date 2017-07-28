@@ -23,7 +23,7 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
                 <span class="bold">Want to send the data to your email to load later with option "load confrontation with file"?</span>
                 <div class="onoffswitch">
                     <?php
-//                    echo $this->Form->input('allRounds', array('label' => false, 'type' => "checkbox", "class" => "onoffswitch-checkbox", "id" => "only_abstract", "div" => false));
+
                     ?>
                     <?php
                     echo $this->Form->input('sendEmail', array(
@@ -44,7 +44,7 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
 
 
         </div>
-        <div class="col-md-6"
+        <div class="col-md-6">
              <fieldset>                        	
                      <?php
                      echo $this->Form->hidden('id', array('value' => $project_id));

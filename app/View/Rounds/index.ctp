@@ -16,13 +16,14 @@
                     <td>
                         <?php
                         echo $this->Html->link($round['Round']['title'], array(
-                            'controller' => 'rounds', 'action' => 'userView', $round['Round']['id']));
+                              'controller' => 'rounds', 'action' => 'userView', $round['Round']['id']));
                         ?>
                     </td>
                     <td>
                         <?php
                         echo $this->Html->link($round['Project']['title'], array(
-                            'controller' => 'projects', 'action' => 'userView', $round['Project']['id']));
+                              'controller' => 'projects', 'action' => 'userView',
+                              $round['Project']['id']));
                         ?>
                     </td>
                     <?php
@@ -43,7 +44,7 @@
                         <div class="actionStart">
                             <?php
                             echo $this->Html->link(__($vista), array('controller' => 'annotatedDocuments',
-                                'action' => 'start', $round['Round']['id']));
+                                  'action' => 'start', $round['Round']['id']));
                             ?>
                         </div>			
                     </td>
@@ -54,7 +55,7 @@
     <p>
         <?php
         echo $this->Paginator->counter(array(
-            'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+              'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
         ));
         ?>	
     </p>
@@ -67,17 +68,17 @@
 </div>
 <?php
 echo $this->Html->link(__('empty'), array(
-    'controller' => 'annotationsQuestions',
-    'action' => 'getJavaState'), array('id' => 'checkJobState',
-    'class' => 'hidden', 'escape' => false));
+      'controller' => 'annotationsQuestions',
+      'action' => 'getJavaState'), array('id' => 'checkJobState',
+      'class' => 'hidden', 'escape' => false));
 echo $this->Html->link(__('empty'), array(
-    'controller' => 'rounds',
-    'action' => 'getTypes'), array('id' => 'getTypes',
-    'class' => 'hidden', 'escape' => false));
+      'controller' => 'rounds',
+      'action' => 'getTypes'), array('id' => 'getTypes',
+      'class' => 'hidden', 'escape' => false));
 echo $this->Html->link(__('empty'), array(
-    'controller' => 'rounds',
-    'action' => 'automaticAnnotation'), array('id' => 'automaticAnnotation',
-    'class' => 'hidden', 'escape' => false));
+      'controller' => 'rounds',
+      'action' => 'automaticAnnotation'), array('id' => 'automaticAnnotation',
+      'class' => 'hidden', 'escape' => false));
 ?>
 
 <div class="rounds index">
@@ -89,10 +90,10 @@ echo $this->Html->link(__('empty'), array(
             <?php
             $icon = "<i class='fa fa-sort-amount-" . $this->Paginator->sortDir() . "'></i>";
             echo $this->Paginator->sort('ends_in_date', $icon, array('escape' => false,
-                'class' => 'btn btn-info btn-top little',
-                "data-toggle" => "tooltip",
-                "data-placement" => "bottom",
-                "data-original-title" => "sort by date of finalization"));
+                  'class' => 'btn btn-info btn-top little',
+                  "data-toggle" => "tooltip",
+                  "data-placement" => "bottom",
+                  "data-original-title" => "sort by date of finalization"));
             ?>        
         </div>
     </div>
@@ -104,7 +105,7 @@ echo $this->Html->link(__('empty'), array(
             $date = $round['Round']['ends_in_date'];
             $label = "label-success";
             $buttonClass = "btn-success";
-            $buttonValue = '<i class="fa fa-paint-brush"></i>Annotate all';
+            $buttonValue = '<i class="fa fa-paint-brush"></i>Mention level annotation';
             $action = 'start';
             $isOpen = true;
             $roundID = $round['Round']['id'];
@@ -137,9 +138,11 @@ echo $this->Html->link(__('empty'), array(
                                 <span class="label  <?php echo $label; ?>"><?php echo $round['Round']['ends_in_date']; ?> </span>
                                 <?php
                                 echo $this->Html->link(__('<i class="fa fa-download"></i>Guidelines and resources'), array(
-                                    'controller' => 'projectResources',
-                                    'action' => 'downloadAll', $round['Round']['project_id']), array(
-                                    'class' => 'label label-primary', 'escape' => false));
+                                      'controller' => 'projectResources',
+                                      'action' => 'downloadAll', $round['Round']['project_id']), array(
+                                      'class' => 'label label-primary',
+                                      'target' => '_blank',
+                                      'escape' => false));
                             } else {
                                 ?>
                                 <div class="progress">
@@ -162,42 +165,50 @@ echo $this->Html->link(__('empty'), array(
                                 <ul class="dropdown-menu">
                                     <?php
                                     echo $this->Html->tag('li', $this->Html->link($buttonValue, array(
-                                                'controller' => 'annotatedDocuments',
-                                                'action' => 'start',
-                                                $round['Round']['id'],
-                                                $user_id), array(
-                                                'class' => '',
-                                                'escape' => false)));
+                                              'controller' => 'annotatedDocuments',
+                                              'action' => 'start',
+                                              $round['Round']['id'],
+                                              $user_id), array(
+                                              'class' => '',
+                                              'escape' => false)));
+
+
+                                    switch ($round['Project']['relation_level']) {
+                                        case 1:
+                                            $text = "Mention level relation annotation";
+                                            break;
+                                        case 2:
+                                            $text = "Document level relation annotation";
+                                            break;
+                                        default:
+                                            $text = "Tabulate perspective";
+                                            break;
+                                    }
+                                    echo $this->Html->tag('li', $this->Html->link('<i class="fa fa-table"></i>' . $text, array(
+                                              'controller' => 'annotatedDocuments',
+                                              'action' => 'tabularPerspective',
+                                              $round['Round']['id'],
+                                              $user_id,
+                                            ), array(
+                                              'class' => '',
+                                              'escape' => false)));
                                     if ($enableJavaActions && $notJob) {
-                                        echo $this->Html->tag('li', $this->Html->link('<i class="fa fa-folder-open"></i>' . __('Revise recommendations'), array(
-                                                    'controller' => 'annotatedDocuments',
-                                                    'action' => 'start',
-                                                    $round['Round']['id'],
-                                                    $user_id,
-                                                    "lastAutomatic"
-                                                        ), array(
-                                                    'class' => '',
-                                                    'escape' => false)));
-//                                        echo $this->Html->tag('li', $this->Html->link('<i class="fa fa-wrench faa-wrench animated"></i>Automatic annotation', '#',
-//                                                        array(
-//                                                    'class' => 'automatic-work',
-//                                                    'escape' => false,
-//                                                    "data-round-id" => $roundID,
-//                                                    "data-user-id" => $round['UsersRound']['user_id'],)));
+                                        echo $this->Html->tag('li', $this->Html->link('<i class="fa fa-folder-open"></i>' . __('Revise entity recommendations'), array(
+                                                  'controller' => 'annotatedDocuments',
+                                                  'action' => 'start',
+                                                  $round['Round']['id'],
+                                                  $user_id,
+                                                  "lastAutomatic"
+                                                ), array(
+                                                  'class' => '',
+                                                  'escape' => false)));
                                     }
                                     ?>
-                                    <!--<li role="separator" class="divider"></li>-->
+
                                 </ul>
                             </div>
                         </div>
                         <?php
-//                        echo $this->Html->link(__($buttonValue), array(
-//                            'controller' => 'annotatedDocuments',
-//                            'action' => $action, $round['Round']['id']), array(
-//                            'class' => 'action btn ' . $buttonClass, 'escape' => false));
-
-
-
                         if ($enableJavaActions && $round['UsersRound']['state'] == 0 && $isOpen && (!isset($jobs[$roundID]) || $jobs[$roundID]['percentage'] == 100)) {
                             
                         }
@@ -219,8 +230,8 @@ echo $this->Html->link(__('empty'), array(
                                     <div class="col-md-12">
                                         <?php
                                         echo $this->Html->link($round['Project']['title'], array(
-                                            'controller' => 'projects', 'action' => 'userView',
-                                            $round['Project']['id']));
+                                              'controller' => 'projects', 'action' => 'userView',
+                                              $round['Project']['id']));
                                         ?>
                                     </div>
                                     <div class = "col-md-12">
@@ -230,14 +241,8 @@ echo $this->Html->link(__('empty'), array(
                                     </div>
                                 </div>
                             </div>
-                            <!--                            <div class = "panel-footer">
-                            <?php
-//                                echo $this->Html->link(__($buttonValue), array(
-//                                    'controller' => 'annotatedDocuments',
-//                                    'action' => $action,$round['Round']['id']), array(
-//                                    'class' => 'btn ' . $buttonClass, 'escape' => false));
-                            ?>
-                                                        </div>-->
+
+
                         </div>
                     </div>
                 </div>

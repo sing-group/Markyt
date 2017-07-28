@@ -1,7 +1,7 @@
 <div class="questions form">
 <?php   echo $this->Form->create('Question'); ?>
 	<fieldset>
-		<legend><?php   echo __('Add Question'); ?></legend>
+		<legend><?php   echo __('New Question'); ?></legend>
 	<?php  
 		
         echo $this->Form->input('question',array("placeholder"=>"Ex. why you've annotated it?"));

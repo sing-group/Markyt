@@ -80,7 +80,6 @@ $(document).ready(function ($)
             colour = "#f00";
 
         }
-        console.log("safdds")
         $("#color-button").ColorPickerSliders({
             color: colour,
             size: 'sm',
@@ -89,7 +88,6 @@ $(document).ready(function ($)
             hsvpanel: true,
             swatches: CSS_COLOR_NAMES,
             onchange: function (container, color) {
-                console.log()
                 var colour = "#" + color.tiny.toHex();
                 $('#colour').val(colour);
                 $('mark.annotation,#color-button').css(

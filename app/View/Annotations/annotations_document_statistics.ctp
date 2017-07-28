@@ -49,7 +49,7 @@ echo $this->Html->script('markyAnnotationsDocumentStatistics', array('block' => 
                         </td>
                         <?php
                         foreach ($typeColors as $type_id => $colour) {
-//                        debug($type_id);
+
                             if (isset($annotationType[$type_id]['totalAnnotations'])) {
                                 echo $this->Html->tag('td', $annotationType[$type_id]['totalAnnotations'], array(
                                     'style' => " background-color: rgba($colour);"));

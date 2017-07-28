@@ -62,9 +62,9 @@ class QuestionsController extends AppController {
         }
         $this->set('question', $this->Question->read(null, $id));
         $answers = $this->Question->AnnotationsQuestion->find('all', array('order' => 'AnnotationsQuestion.annotation_id ASC',
-            'conditions' => array('AnnotationsQuestion.question_id' => $this->Question->id)));
+              'conditions' => array('AnnotationsQuestion.question_id' => $this->Question->id)));
         $this->set('question', $this->Question->find('first', array('contain' => 'Question',
-                    'conditions' => array('User.id' => $id))));
+                  'conditions' => array('User.id' => $id))));
         $answersMap = NULL;
         foreach ($answers as $answer) {
             $answersMap[$answer['AnnotationsQuestion']['annotation_id']] = $answer['AnnotationsQuestion']['answer'];
@@ -100,7 +100,7 @@ class QuestionsController extends AppController {
         $this->autoRender = false;
         $this->Question->id = $this->request->data['id'];
         if (!$this->Question->exists()) {
-                return $this->correctResponseJson(array('success' => false));
+            return $this->correctResponseJson(array('success' => false));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Question->save($this->request->data)) {
@@ -122,35 +122,6 @@ class QuestionsController extends AppController {
     public function delete($id) {
         $this->CommonFunctions = $this->Components->load('CommonFunctions');
         $this->CommonFunctions->delete($id);
-
-//        $this->autoRender = false;
-//        if (!$this->request->is('post')) {
-//            throw new MethodNotAllowedException(__('unknown error'));
-//        }
-//        if (!isset($id)) {
-//            $id = $this->request->data['id'];
-//        }
-//        $this->Question->id = $id;
-//        if (!$this->Question->exists()) {
-//            throw new NotFoundException(__('Invalid question'));
-//        }
-//        $redirect = $this->Session->read('redirect');
-//        $deleteCascade = Configure::read('deleteCascade');
-//        if ($deleteCascade) {
-//            $data = array('question' => 'Removing...');
-//            if ($this->Question->save($data, false)) {
-//                $this->Session->setFlash('We are deleting this question. Please be patient', 'information');
-//                $this->backGround($redirect);
-//                $this->Question->delete($id, $deleteCascade);
-//            }
-//        } else {
-//            //Actualizamos todas las respuestas a esta pregunta nueva para todas las anotaciones tomadas antes de esta creacion
-//            if ($this->Question->delete($id, $deleteCascade)) {
-//                
-//            }
-//        }
-        
-        
     }
 
     /**
@@ -162,38 +133,6 @@ class QuestionsController extends AppController {
     public function deleteSelected() {
         $this->CommonFunctions = $this->Components->load('CommonFunctions');
         $this->CommonFunctions->deleteSelected('question');
-        
-//        $this->autoRender = false;
-//        if (!$this->request->is('post')) {
-//            throw new MethodNotAllowedException();
-//        } else {
-//            $ids = json_decode($this->request->data['selected-items']);
-//            $redirect = $this->Session->read('redirect');
-//            $deleteCascade = Configure::read('deleteCascade');
-//            if ($deleteCascade) {
-//                $conditions = array('Question.id' => $ids);
-//                if ($this->Question->UpdateAll(array('question' => '\'Removing...\''), $conditions, -1)) {
-//                    $this->Session->setFlash('We are deleting this question. Please be patient', 'information');
-//                    $this->backGround($redirect);
-//                    $this->Question->deleteAll(array('Question.id' => $ids), $deleteCascade);
-//                }
-//            } else {
-//                if ($this->Question->deleteAll(array('Question.id' => $ids), $deleteCascade)) {
-//                    if (!$this->request->is('ajax')) {
-//                        $this->Session->setFlash(__('Questions selected have been deleted'), 'success');
-//                        $this->redirect($redirect);
-//                    } else {
-//                        return $this->correctResponseJson(array('success' => true));
-//                    }
-//                }
-//            }
-//            if (!$this->request->is('ajax')) {
-//                $this->Session->setFlash(__("Questions selected haven't been deleted"));
-//                $this->redirect($redirect);
-//            } else {
-//                throw new NotFoundException(__('Invalid question'));
-//            }
-//        }
     }
 
 }

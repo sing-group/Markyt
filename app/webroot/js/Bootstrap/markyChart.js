@@ -5,7 +5,7 @@ var pathImages = null;
 var exportMenu = {};
 
 $(document).ready(function () {
-    pathImages = $('#chartImages').attr('href');
+    pathImages = "../" + $('#chartImages').attr('href');
     exportMenu = {
         menuTop: "40px",
         menuRight: "80px",
@@ -55,8 +55,7 @@ $(document).ready(function () {
             window.scrollTo(0, 0);
             fullScreen = true;
 
-        }
-        else {
+        } else {
             $("#tableResultsClone").remove();
             $('.affix-row').removeClass('hidden');
             fullScreen = false;
@@ -199,8 +198,7 @@ function animatedIncrement()
                 var percentageVal = Math.round(this.percentage * 100) / 100;
                 if (percentage) {
                     $el.text(percentageVal + '%');
-                }
-                else {
+                } else {
                     $el.text(percentageVal);
 
                 }
@@ -211,8 +209,7 @@ function animatedIncrement()
             // sure the value is correct
             if (percentage) {
                 $el.text(value + '%');
-            }
-            else {
+            } else {
                 $el.text(value);
 
             }
@@ -231,6 +228,7 @@ function zoomChart() {
 
 function charts(values, axisName, strValueField, chartId)
 {
+
     var chart;
     var chartData = [];
     var legendData = [];
@@ -238,12 +236,12 @@ function charts(values, axisName, strValueField, chartId)
     if (tam > 0) {
         for (var i = 0; i < tam; i++) {
             chartData.push(values[i]);
-            legendData.push({title:values[i].GraficColumns, color: values[i].Colour});            
+            legendData.push({title: values[i].GraficColumns, color: values[i].Colour});
         }
 
         // SERIAL CHART    
         chart = new AmCharts.AmSerialChart();
-        chart.pathToImages = pathImages;
+//        chart.pathToImages = pathImages;
         chart.dataProvider = chartData;
         chart.categoryField = "GraficColumns";
         chart.creditsPosition = "bottom-right";
@@ -251,7 +249,7 @@ function charts(values, axisName, strValueField, chartId)
         // this single line makes the chart a bar chart, 
         // try to set it to false - your bars will turn to columns                
 //        chart.rotate = true;
-        chart.exportConfig = exportMenu;
+//        chart.exportConfig = exportMenu;
 
         // the following two lines makes chart 3D
         //chart.depth3D = 20;
@@ -287,16 +285,8 @@ function charts(values, axisName, strValueField, chartId)
         categoryAxis.dashLength = 5;
         categoryAxis.gridPosition = "start";
         categoryAxis.axisColor = "#DADADA";
+
         categoryAxis.title = axisName + 's';
-
-
-        // value
-        var valueAxis = new AmCharts.ValueAxis();
-        valueAxis.title = strValueField;
-        valueAxis.dashLength = 5;
-        valueAxis.integersOnly = true;
-        chart.addValueAxis(valueAxis);
-
 
         // GRAPHS
         var graph1 = new AmCharts.AmGraph();
@@ -306,12 +296,24 @@ function charts(values, axisName, strValueField, chartId)
         graph1.lineAlpha = 0;
         graph1.fillAlphas = 1;
         chart.addGraph(graph1);
+        // value
+        var valueAxis = new AmCharts.ValueAxis();
+        if (strValueField == "Hits")
+        {
+            strValueField = "Agreement";
+        }
+        valueAxis.title = strValueField;
+        valueAxis.dashLength = 5;
+        valueAxis.integersOnly = true;
+        chart.addValueAxis(valueAxis);
+
+
+
 
 
         // WRITE
         chart.write(chartId);
-    }
-    else
+    } else
     {
         $('#' + chartId).hide();
     }
@@ -332,7 +334,7 @@ function pie3D(values, title, strValueField, chartId) {
 
         // SERIAL CHART    
         chart = new AmCharts.AmPieChart();
-        chart.pathToImages = pathImages;
+//        chart.pathToImages = pathImages;
         chart.dataProvider = chartData;
         chart.creditsPosition = "bottom-right";
 
@@ -348,12 +350,14 @@ function pie3D(values, title, strValueField, chartId) {
         chart.outlineThickness = 2;
         chart.radius = 80;
         chart.labelText = "[[percents]]%";
-        chart.exportConfig = exportMenu;
+//        chart.exportConfig = exportMenu;
         // LEGEND
         legend = new AmCharts.AmLegend();
         legend.align = "center";
         legend.markerType = "circle";
-        chart.addLegend(legend);
+
+        if (values.length < 17)
+            chart.addLegend(legend);
 
 
 
@@ -363,8 +367,7 @@ function pie3D(values, title, strValueField, chartId) {
         chart.write(chartId);
         chart.invalidateSize();
         return true;
-    }
-    else
+    } else
     {
         $('#' + chartId).closest('.panel ').hide();
         return false;
@@ -374,7 +377,7 @@ function pie3D(values, title, strValueField, chartId) {
 
 function column3D(chartData, names) {
     chart = new AmCharts.AmSerialChart();
-    chart.pathToImages = pathImages;
+//    chart.pathToImages = pathImages;
     chart.dataProvider = chartData;
     chart.categoryField = "Type";
     chart.color = "#000000";
@@ -384,8 +387,8 @@ function column3D(chartData, names) {
     chart.columnSpacing = 8;
     chart.plotAreaFillAlphas = 0.2;
     chart.creditsPosition = "bottom-right";
-    exportMenu.menuRight = "40px";
-    chart.exportConfig = exportMenu;
+//    exportMenu.menuRight = "40px";
+//    chart.exportConfig = exportMenu;
 
 
 

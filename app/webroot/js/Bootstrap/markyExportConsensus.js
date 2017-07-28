@@ -5,8 +5,8 @@ $(document).ready(function () {
     if ($(".percent-slide").length > 0) {
         $(".percent-slide").slider({
             tooltip: 'always',
-            ticks: [-1, 0, 25, 50, 75, 100],
-            ticks_labels: [-1, 0, 25, 50, 75, 100],
+            ticks: [0, 25, 50, 75, 100],
+            ticks_labels: [0, 25, 50, 75, 100],
         });
     }
 

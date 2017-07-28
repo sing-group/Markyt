@@ -1,18 +1,17 @@
 <?php
-//echo $this->Html->css('../js/Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array('block' => 'cssInView'));
-//echo $this->Html->script('Bootstrap/datatables/jquery.dataTables.min', array('block' => 'scriptInView'));
-//echo $this->Html->script('Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array('block' => 'scriptInView'));
+
+
+
 
 echo $this->Html->css('pubmed', array('block' => 'cssInView'));
-//echo $this->Html->script('markyMultiDelete.js', array('block' => 'scriptInView'));
-//echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
+
+
 echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'scriptInView'));
-//echo $this->Html->script('markyView', array('block' => 'scriptInView'));
 
 ?>
 <div class="types view">
     <div class="col-md-12">
-        <h1><?php echo __('Type'); ?></h1>
+        <h1><?php echo __('Entity type'); ?></h1>
         <div class="col-md-4 section">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -26,7 +25,11 @@ echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'script
                                     <?php echo __('Project'); ?>
                                 </td>  
                                 <td>
-                                    <?php echo $this->Html->link($type['Project']['title'], array('controller' => 'projects', 'action' => 'view', $type['Project']['id'])); ?>
+                                    <?php
+                                    echo $this->Html->link($type['Project']['title'], array(
+                                          'controller' => 'projects', 'action' => 'view',
+                                          $type['Project']['id']));
+                                    ?>
                                 </td>  
                             </tr>
                             <tr>
@@ -66,7 +69,10 @@ echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'script
                 <table class="table table-responsive" >
                     <thead>
                         <tr>
-                            <th><?php echo $this->Form->input('All', array('type' => 'checkbox', 'id' => 'select-all-items', 'div' => false)) ?></th>
+                            <th><?php
+                                echo $this->Form->input('All', array('type' => 'checkbox',
+                                      'id' => 'select-all-items', 'div' => false))
+                                ?></th>
                             <th><?php echo __('Question'); ?></th>
                             <th class="actions"><?php echo __('Actions'); ?></th>
                         </tr>
@@ -79,7 +85,9 @@ echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'script
                             <tr class="table-item-row questions">
                                 <td class="item-id">
                                     <?php
-                                    echo $this->Form->input('', array('type' => 'checkbox', 'value' => $question['id'], 'class' => 'question item', 'id' => uniqid(), 'div' => false));
+                                    echo $this->Form->input('', array('type' => 'checkbox',
+                                          'value' => $question['id'], 'class' => 'question item',
+                                          'id' => uniqid(), 'div' => false));
                                     ?>
                                 </td>
                                 <td class='editAjax'><?php
@@ -88,8 +96,18 @@ echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'script
                                 </td>
                                 <td class="actions">
                                     <?php
-                                    echo $this->Html->link('<i class="fa fa-pencil-square-o"></i>', array('controller' => 'questions', 'action' => 'edit', $question['id']), array('class' => 'btn btn-warning editAjax', 'escape' => false, 'title' => 'Edit Question', 'data-question-id' => $question['id']));
-                                    echo $this->Html->link('<i class="fa fa-trash-o"></i>', array('controller' => 'questions', 'action' => 'delete', $question['id']), array('class' => 'btn btn-danger delete-item table-item deleteAjax', 'escape' => false, "title" => __('Are you sure you want to delete this Question:'), 'data-question-id' => $question['id']));
+                                    echo $this->Html->link('<i class="fa fa-pencil-square-o"></i>', array(
+                                          'controller' => 'questions',
+                                          'action' => 'edit', $question['id']), array(
+                                          'class' => 'btn btn-warning editAjax',
+                                          'escape' => false, 'title' => 'Edit Question',
+                                          'data-question-id' => $question['id']));
+                                    echo $this->Html->link('<i class="fa fa-trash-o"></i>', array(
+                                          'controller' => 'questions',
+                                          'action' => 'delete', $question['id']), array(
+                                          'class' => 'btn btn-danger delete-item table-item deleteAjax',
+                                          'escape' => false, "title" => __('Are you sure you want to delete this Question:'),
+                                          'data-question-id' => $question['id']));
                                     ?>
                                 </td>                                
                             </tr>
@@ -108,7 +126,10 @@ echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'script
                 </div>
                 <div class="col-md-6">
                     <?php
-                    echo $this->Form->button('<i class="fa fa-plus-square-o"></i> New Question', array('title' => 'Add question', 'class' => 'btn btn-info addButton', 'scape' => false, "id" => "new"));
+                    echo $this->Form->button('<i class="fa fa-plus-square-o"></i> New Question', array(
+                          'title' => 'Add question', 'class' => 'btn btn-info addButton',
+                          'scape' => false,
+                          "id" => "new"));
                     ?>
                 </div>
                 <div class="clear"></div>
@@ -120,35 +141,54 @@ echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'script
             <span id='maxRow' value="<?php echo $i ?>"></span>	
 
             <?php
-            echo $this->Form->create('Question', array('controller' => 'question', 'action' => 'add', 'id' => 'createForm'));
+            echo $this->Form->create('Question', array(
+                  'url' => array(
+                        "controller" => 'questions', 'action' => 'add'
+                  ),
+                  'id' => 'createForm'));
             echo $this->Form->end();
-            echo $this->Form->create('Question', array('controller' => 'question', 'action' => 'edit', 'id' => 'editForm'));
+            echo $this->Form->create('Question', array(
+                  'url' => array(
+                        "controller" => 'questions', 'action' => 'edit'
+                  ),
+                  'id' => 'editForm'));
             echo $this->Form->end();
-            echo $this->Form->create('Question', array('controller' => 'question', 'action' => 'delete', 'id' => 'deleteForm'));
+            echo $this->Form->create('Question', array(
+                  'url' => array(
+                        "controller" => 'questions', 'action' => 'delete'
+                  ),
+                  'id' => 'deleteForm'));
             echo $this->Form->end();
 
 
-            echo $this->Html->image('edit.svg', array('alt' => 'edit question', 'title' => 'Edit Question', 'id' => 'originalEdit', 'class' => 'hidden'));
-            echo $this->Html->image('bin.svg', array('alt' => 'SaveQuestion', 'title' => 'Delete Question', 'id' => 'originalBin', 'class' => 'hidden'));
+            echo $this->Html->image('edit.svg', array('alt' => 'edit question', 'title' => 'Edit Question',
+                  'id' => 'originalEdit', 'class' => 'hidden'));
+            echo $this->Html->image('bin.svg', array('alt' => 'SaveQuestion', 'title' => 'Delete Question',
+                  'id' => 'originalBin', 'class' => 'hidden'));
             ?>
             <table>
                 <tr class="template-add table-item-row">
                     <td class="item-id"></td>
                     <td>
                         <?php
-                        echo $this->Form->input('question', array('id' => uniqid() . '{0}', "placeholder" => "Ex. why you've annotated it?", 'label' => false, "class" => 'form-control input-question'));
+                        echo $this->Form->input('question', array('id' => uniqid() . '{0}',
+                              "placeholder" => "Ex. why you've annotated it?",
+                              'label' => false, "class" => 'form-control input-question'));
                         ?>
                     </td>
                     <td>
                         <?php
-                        echo $this->Form->button('<i class="fa fa-floppy-o"></i>', array('title' => 'save', 'class' => 'btn btn-success save', 'scape' => false));
+                        echo $this->Form->button('<i class="fa fa-floppy-o"></i>', array(
+                              'title' => 'save',
+                              'class' => 'btn btn-success save', 'scape' => false));
                         ?>
                     </td>  
                 </tr>
                 <tr class="table-item-row  template-insert">
                     <td class="item-id">
                         <?php
-                        echo $this->Form->input('', array('type' => 'checkbox', 'data-question-id' => "{0}", 'class' => 'question', 'id' => uniqid() . '{0}', 'div' => false));
+                        echo $this->Form->input('', array('type' => 'checkbox', 'data-question-id' => "{0}",
+                              'class' => 'question', 'id' => uniqid() . '{0}', 'div' => false));
                         ?>
                     </td>
                     <td class='editAjax'>
@@ -159,8 +199,15 @@ echo $this->Html->script('Bootstrap/markyAjaxQuestion', array('block' => 'script
                     </td>
                     <td class="actions">
                         <?php
-                        echo $this->Html->link('<i class="fa fa-pencil-square-o"></i>', array('controller' => 'questions', 'action' => 'edit', '{0}'), array('class' => 'btn btn-warning editAjax','data-question-id'=>'{0}', 'escape' => false, 'title' => 'Edit Question'));
-                        echo $this->Html->link('<i class="fa fa-trash-o"></i>', array('controller' => 'questions', 'action' => 'delete', '{0}'), array('class' => 'btn btn-danger delete-item table-item deleteAjax','data-question-id'=>'{0}', 'escape' => false, "title" => __('Are you sure you want to delete this Question?')));
+                        echo $this->Html->link('<i class="fa fa-pencil-square-o"></i>', array(
+                              'controller' => 'questions',
+                              'action' => 'edit', '{0}'), array('class' => 'btn btn-warning editAjax',
+                              'data-question-id' => '{0}',
+                              'escape' => false, 'title' => 'Edit Question'));
+                        echo $this->Html->link('<i class="fa fa-trash-o"></i>', array(
+                              'controller' => 'questions',
+                              'action' => 'delete', '{0}'), array('class' => 'btn btn-danger delete-item table-item deleteAjax',
+                              'data-question-id' => '{0}', 'escape' => false, "title" => __('Are you sure you want to delete this Question?')));
                         ?>
                     </td> 
                 </tr>

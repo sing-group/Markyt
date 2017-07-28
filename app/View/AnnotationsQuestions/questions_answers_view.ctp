@@ -20,7 +20,7 @@
                 <td><?php echo h($question['Question']['question']); ?>&nbsp;</td>
                 <td>
                     <?php echo h($question_answer[$question['Question']['id']]) ?>
-                </td
+                </td>
             </tr>
         <?php endforeach; ?>
     </table>

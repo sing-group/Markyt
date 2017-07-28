@@ -1,19 +1,26 @@
 <?php
-//echo $this->Html->css('../app/webroot/js/jQuery-File-Upload-master/css/bootstrap.min.css', array('block' => 'cssInView'));
-//echo $this->Html->css('../app/webroot/js/jQuery-File-Upload-master/css/jquery.fileupload-ui.css', array('block' => 'cssInView'));
 
 
 
-echo $this->Html->script('Bootstrap/jQuery-File-Upload-9.9.3/js/vendor/jquery.ui.widget', array('block' => 'scriptInView'));
+
+
+echo $this->Html->script('Bootstrap/jQuery-File-Upload-9.9.3/js/vendor/jquery.ui.widget', array(
+      'block' => 'scriptInView'));
 
 echo $this->Html->script('./jQuery-File-Upload-master/js/tmpl.min.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload', array('block' => 'scriptInView'));
-echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload-fp', array('block' => 'scriptInView'));
-echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload-ui', array('block' => 'scriptInView'));
-echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.iframe-transport', array('block' => 'scriptInView'));
+echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload', array(
+      'block' => 'scriptInView'));
+echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload-fp', array(
+      'block' => 'scriptInView'));
+echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload-ui', array(
+      'block' => 'scriptInView'));
+echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.iframe-transport', array(
+      'block' => 'scriptInView'));
 
-echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload-9.9.3/css/jquery.fileupload-ui', array('block' => 'cssInView'));
-echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload-9.9.3/css/jquery.fileupload', array('block' => 'cssInView'));
+echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload-9.9.3/css/jquery.fileupload-ui', array(
+      'block' => 'cssInView'));
+echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload-9.9.3/css/jquery.fileupload', array(
+      'block' => 'cssInView'));
 
 echo $this->Html->script('markyUpload');
 ?>
@@ -43,14 +50,18 @@ echo $this->Html->script('markyUpload');
             echo $this->Form->create('Document', array('id' => 'transform'));
             echo "<p>Enter <span class='bold'> URL of the homepage</span> where you got the 
         text in order to <span class='bold'>repair the links</span>.</p>";
-            echo $this->Form->input('Url', array("placeholder" => "http://en.wikipedia.org or www.en.wikipedia.org", "class" => "form-control"));
+            echo $this->Form->input('Url', array("placeholder" => "http://en.wikipedia.org or www.en.wikipedia.org",
+                  "class" => "form-control"));
             echo $this->Form->input('Project');
             echo $this->Form->end();
             ?>
         </div>
         <div class="col-md-8">
             <?php
-            echo $this->Form->create('Document', array('action' => 'uploadDocumentAjax', 'type' => 'file', 'id' => 'fileUpload'));
+            echo $this->Form->create('Document', array(
+                  'url' => array(
+                        'controller' => 'Documents', 'action' => 'uploadDocumentAjax'
+                  ), 'type' => 'file', 'id' => 'fileUpload'));
             //echo $this->Form->input('files.', array('type' => 'file', 'multiple'));
             ?>
             <div class="row fileupload-buttonbar">
@@ -76,15 +87,15 @@ echo $this->Html->script('markyUpload');
                         <button type="button" class="btn btn-inverse disabled" disabled="disabled" id="transformButton">
                             <i class="fa fa-refresh"></i>
                             <span>Transform</span>
-                        </button
+                        </button>
                         <input type="checkbox" class="toggle">    
                     </div>
                     <div class="col-lg-4 fileupload-progress fade">
-                        <!-- The global progress bar -->
+                        
                         <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
                             <div class="progress-bar progress-bar-success" style="width:0%;"></div>
                         </div>
-                        <!-- The extended global progress state -->
+                        
                         <div class="progress-extended">&nbsp;</div>
                     </div>
                 </div>
@@ -95,7 +106,7 @@ echo $this->Html->script('markyUpload');
             echo $this->Form->end();
             ?>
         </div>
-        <!-- The template to display files available for upload -->
+        
         <script id="template-upload" type="text/x-tmpl">
             {% for (var i=0, file; file=o.files[i]; i++) { %}
             <tr class="template-upload fade">
@@ -125,7 +136,7 @@ echo $this->Html->script('markyUpload');
             </tr>
             {% } %}
         </script>
-        <!-- The template to display files available for download -->
+        
         <script id="template-download" type="text/x-tmpl">
             {% for (var i=0, file; file=o.files[i]; i++) { %}
             <tr class="template-download fade">

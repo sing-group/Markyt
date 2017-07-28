@@ -1,82 +1,85 @@
 
-<!-- The XDomainRequest Transport is included for cross-domain file deletion for IE 8 and IE 9 -->
+
 <!--[if (gte IE 8)&(lt IE 10)]>
 <?php
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/cors/jquery.xdr-transport.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 ?>
 <![endif]-->
 <?php
-//echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload/css/jquery.fileupload.min.css', array('block' => 'cssInView'));
-//echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload/css/myStyle.min.css', array('block' => 'cssInView'));
+
+
 
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/vendor/jquery.ui.widget', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/tmpl.min', array('block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/load-image.min', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/jquery.iframe-transport.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/jquery.fileupload.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/jquery.fileupload-process.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/jquery.fileupload-validate.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/jquery.fileupload-ui.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/cors/jquery.postmessage-transport.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/js/jquery.fileupload-image.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 
-//echo $this->Html->script('Bootstrap/jQuery-File-Upload-9.9.3/js/vendor/jquery.ui.widget', array(
-//    'block' => 'scriptInView'));
-//
-//echo $this->Html->script('./jQuery-File-Upload-master/js/tmpl.min.js', array('block' => 'scriptInView'));
-//
-//echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload', array(
-//    'block' => 'scriptInView'));
-//echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload-fp', array(
-//    'block' => 'scriptInView'));
-//echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.fileupload-ui', array(
-//    'block' => 'scriptInView'));
-//echo $this->Html->script('./jQuery-File-Upload-master/js/jquery.iframe-transport', array(
-//    'block' => 'scriptInView'));
-////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload-9.9.3/css/jquery.fileupload-ui', array(
-    'block' => 'cssInView'));
+      'block' => 'cssInView'));
 echo $this->Html->css('../js/Bootstrap/jQuery-File-Upload-9.9.3/css/jquery.fileupload', array(
-    'block' => 'cssInView'));
+      'block' => 'cssInView'));
 
 
 echo $this->Html->script('Bootstrap/jQuery-File-Upload/uploadFile', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 ?>
 
 <div class="col-md-12">
     <?php
-    echo $this->Form->create($this->name, array('action' => 'uploadDocumentAjax','controller'=>$this->name,
-        'type' => 'file',
-        'id' => 'fileUpload'));
-//echo $this->Form->input('files.', array('type' => 'file', 'multiple'));
+    echo $this->Form->create($this->name, array(
+          'url' => array(
+                'controller' => $this->name, 'action' => 'uploadDocumentAjax'
+          ),
+          'type' => 'file',
+          'id' => 'fileUpload'));
 
-    $filesAllowed=Configure::read('filesAllowed');
-    $max_file_size=Configure::read('max_file_size');
+
+    $filesAllowed = Configure::read('filesAllowed');
+    $max_file_size = Configure::read('max_file_size');
     ?>
-    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+    
     <div class="row fileupload-buttonbar unformDiv">
-        <!-- The global progress state -->
+        
         <div class="col-lg-5 fileupload-progress fade ">
-            <!-- The global progress bar -->
+            
             <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div class="progress-bar progress-bar active" style="width:0%;"></div>
             </div>
-            <!-- The extended global progress state -->
+            
             <div class="progress-extended">&nbsp;</div>
         </div>
     </div>
-    <!-- The table listing the files available for upload/download -->
+    
     <div class=" table-responsive">
         <table role="presentation" class="table table-striped fileupload">
             <tbody class="files"></tbody>
@@ -84,13 +87,13 @@ echo $this->Html->script('Bootstrap/jQuery-File-Upload/uploadFile', array(
     </div>
     <div class="dropFiles">Drop files Here</div>
     <div class="col-md-7 ">
-        <!-- The fileinput-button span is used to style the file input field as button -->
+        
         <span class="btn btn-success fileinput-button">
             <i class="glyphicon glyphicon-plus"></i>
             <span>Add files...</span>
             <input type="file" name="files[]" multiple>
         </span>
-        <!-- The global file processing state -->
+        
         <span class="fileupload-process"></span>
     </div>  
     <div class="col-md-3 ">
@@ -100,22 +103,22 @@ echo $this->Html->script('Bootstrap/jQuery-File-Upload/uploadFile', array(
             <li>You can <strong>drag &amp; drop</strong> files from your desktop on this webpage </li>
         </ul>
     </div>
-    <?php
-    $id = $project['Project']['id'];
-    $filesAllowed = Configure::read('filesAllowed');
-    $this->Form->hidden("filesAllowed", array('id' => 'filesAllowed', 'value' => $filesAllowed));
+<?php
+$id = $project['Project']['id'];
+$filesAllowed = Configure::read('filesAllowed');
+$this->Form->hidden("filesAllowed", array('id' => 'filesAllowed', 'value' => $filesAllowed));
 
-    echo $this->Html->link('empty', array('controller' => 'ProjectResources', 'action' => 'uploadFile',
-        $id), array(
-        'target' => '_blank', 'id' => 'serverUploadFunction', 'class' => "hidden"));
+echo $this->Html->link('empty', array('controller' => 'ProjectResources', 'action' => 'uploadFile',
+      $id), array(
+      'target' => '_blank', 'id' => 'serverUploadFunction', 'class' => "hidden"));
 
 
-    echo $this->Html->link('empty', array('controller' => 'ProjectResources', 'action' => 'getFiles',
-        $id), array('target' => '_blank', 'id' => 'getFilesFunction',
-        'class' => "hidden"));
-    
-    echo $this->Form->end();
-    ?>
+echo $this->Html->link('empty', array('controller' => 'ProjectResources', 'action' => 'getFiles',
+      $id), array('target' => '_blank', 'id' => 'getFilesFunction',
+      'class' => "hidden"));
+
+echo $this->Form->end();
+?>
 </div>
 
 <script id="template-upload" type="text/x-tmpl">
@@ -149,7 +152,7 @@ echo $this->Html->script('Bootstrap/jQuery-File-Upload/uploadFile', array(
     </tr>
     {% } %}
 </script>
-<!-- The template to display files available for download -->
+
 <script id="template-download" type="text/x-tmpl">
     {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-download fade">
@@ -172,7 +175,7 @@ echo $this->Html->script('Bootstrap/jQuery-File-Upload/uploadFile', array(
     <td>
     <p class="name">
     {% if (file.url) { %}
-    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+    <a href="{%=file.url%}" title="{%=file.name%}" target="_blank" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
     {% } else { %}
     <span>{%=file.name%}</span>
     {% } %}

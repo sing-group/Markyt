@@ -51,27 +51,26 @@ jqSimpleConnect._positionConnection = function (connection) {
 //        posB.left = posB.left-padding;                             
     }
 
-    if (elementA.width() > realWidthA + 10)
+
+    if (elementA.width() > realWidthA + 30)
     {
         posA.left = posA.left + parseInt(realWidthA / 4);
         var elementHeight = elementA.height() / 2;
         posA.top = posA.top + parseInt(elementHeight + (elementHeight / 2), 10);
-    }
-    else
+    } else
     {
-        posA.left = posA.left + parseInt(elementA.width() / 2, 10);
+        posA.left = getRandomInt(posA.left+3, (posA.left + realWidthA-3))
         posA.top = posA.top + parseInt(elementA.height() / 2, 10);
     }
 
-    if (elementB.width() > realWidthB + 10)
+    if (elementB.width() > realWidthB + 30)
     {
         posB.left = posB.left + parseInt(realWidthB / 4);
         var elementHeight = elementB.height() / 2;
         posB.top = posB.top + parseInt(elementHeight + (elementHeight / 2), 10);
-    }
-    else
+    } else
     {
-        posB.left = posB.left + parseInt(elementB.width() / 2, 10);
+        posB.left = getRandomInt(posB.left+3, posB.left + realWidthB-3);
         posB.top = posB.top + parseInt(elementB.height() / 2, 10);
     }
 
@@ -84,14 +83,15 @@ jqSimpleConnect._positionConnection = function (connection) {
     if (posA.top == posB.top)
     {
         var jqClass = "inline_" + elementA.attr("data-id");
-        posA.top = posA.top + (10 * ($("."+jqClass).length));
-        posB.top = posB.top + (10 * ($("."+jqClass).length ));
+        posA.top = posA.top + (10 * ($("." + jqClass).length));
+        posB.top = posB.top + (10 * ($("." + jqClass).length));
         line1.addClass(jqClass);
-
-
     }
+
+
     // Verify if the elements are aligned in a horizontal or vertical line.
     if (posA.left == posB.left) {
+
         // Uses only one line (hide the other two).
         line1.show();
         line2.hide();
@@ -106,6 +106,7 @@ jqSimpleConnect._positionConnection = function (connection) {
             jqSimpleConnect._positionHorizontalLine(line1, posA, posB, connection.radius, connection.roundedCorners);
         }
     } else {
+
         // Verify if must use two lines or three.
         if (connection.anchorA != connection.anchorB) {
             // Use two lines (hide the third).
@@ -150,10 +151,23 @@ jqSimpleConnect._positionConnection = function (connection) {
                 corner1.left = posA.left;
                 corner2.left = posB.left;
 
+                var inline = false;
                 // Draw lines.
-                jqSimpleConnect._positionVerticalLine(line1, posA, corner1, connection.radius, connection.roundedCorners);
-                jqSimpleConnect._positionVerticalLine(line2, posB, corner2, connection.radius, connection.roundedCorners);
-                jqSimpleConnect._positionHorizontalLine(line3, corner1, corner2, connection.radius, connection.roundedCorners);
+                if (!(posB.top > posA.top - 10 && posB.top < posA.top + 10))
+                {
+
+                    jqSimpleConnect._positionVerticalLine(line1, posA, corner1, connection.radius, connection.roundedCorners);
+                    jqSimpleConnect._positionVerticalLine(line2, posB, corner2, connection.radius, connection.roundedCorners);
+                    jqSimpleConnect._positionHorizontalLine(line3, corner1, corner2, connection.radius, connection.roundedCorners);
+                } else
+                {
+                    line2.addClass("inline")
+                    jqSimpleConnect._positionHorizontalLine(line2, corner1, corner2, connection.radius, connection.roundedCorners);
+                }
+
+
+
+
             } else {
                 // Middle's line must be vertical.
                 corner1.left = parseInt((posA.left + posB.left) / 2, 10);
@@ -317,4 +331,8 @@ jqSimpleConnect.removeAll = function () {
         jqSimpleConnect._connections[key] = null;
         delete jqSimpleConnect._connections[key];
     }
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

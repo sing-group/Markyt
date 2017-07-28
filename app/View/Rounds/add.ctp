@@ -14,7 +14,7 @@ echo $this->Html->css('../js/Bootstrap/bootstrap-slider/css/bootstrap-slider.min
 ?>
 <div class="rounds form">
     <h1>
-        <?php echo __('Add Round'); ?>
+        <?php echo __('New Round'); ?>
     </h1>
     <div class="col-md-12">
         <div class="col-md-6">
@@ -63,7 +63,7 @@ echo $this->Html->css('../js/Bootstrap/bootstrap-slider/css/bootstrap-slider.min
 
                 <div class="col-md-6">
                     <?php
-//                echo $this->Form->input('start_document', array("class" => "form-control", "min" => 1, "max" => $max - 1, "value" => 1, "type" => "number"));
+
                     echo $this->Form->input('interval', array(
                         "class" => "form-control min_max",
                         "data-slider-min" => "1",
@@ -76,7 +76,7 @@ echo $this->Html->css('../js/Bootstrap/bootstrap-slider/css/bootstrap-slider.min
                 </div>
                 <div class="col-md-6">
                     <?php
-//                echo $this->Form->input('end_document', array("class" => "form-control", "min" => 1, "max" => $max, "value" => $max, "type" => "number"));
+
                     ?>
                 </div>
             </div>

@@ -33,8 +33,6 @@ $(window).load(function () {
 
 $(document).ready(function ()
 {
-
-
     if ($('#getIp').length > 0)
     {
         $.get("http://ipinfo.io", function (response) {
@@ -53,8 +51,7 @@ $(document).ready(function ()
                 $(this).closest("table").find('.item').each(function () {
                     $(this).prop('checked', true);
                 });
-            }
-            else {
+            } else {
                 $(this).closest("table").find('.item').each(function () {
                     $(this).prop('checked', false);
                 });
@@ -105,14 +102,17 @@ $(document).ready(function ()
                     if (path[2] !== undefined) {
                         if (path[3] !== undefined) {
                             pathAction = path[3].toLowerCase();
-                            if ((pathAction.indexOf("setting") >= 0 || pathAction.indexOf("importdata") >= 0 || pathAction.indexOf("confrontation") >= 0))
+                            if (controller.indexOf("projectnetworks") == -1 && (pathAction.indexOf("setting") >= 0 || pathAction.indexOf("importdata") >= 0 || pathAction.indexOf("confrontation") >= 0))
                             {
-                                $('li.statistics').addClass('active');
-                                toActivate = $('li.statistics').attr("data-target");
+                                $('li.statistics').not(".relation").addClass('active');
+                                toActivate = $('li.statistics').not(".relation").attr("data-target");
+                            }
+                            else if (controller.indexOf("projectnetworks") >= 0 ){
+                                $('li.relation.statistics').addClass('active');
+                                toActivate = $('li.relation.statistics').attr("data-target");
                             }
 
-                        }
-                        else
+                        } else
                         {
                             $('li.projects').addClass('active');
                             toActivate = $('li.projects').attr("data-target");
@@ -129,8 +129,7 @@ $(document).ready(function ()
 
                     if (href === location) {
                         $(this).addClass('active');
-                    }
-                    else
+                    } else
                     {
                         var href = $(this).find('a').attr('href');
                         if (href !== undefined) {
@@ -171,12 +170,13 @@ $(document).ready(function ()
                     a.postlink();
                 });
 
-            }
-            else if (!$(this).hasClass("collapsed"))
+            } else if (!$(this).hasClass("collapsed"))
             {
                 var link = $(this).find("a");
-                if (!link.hasClass("prevent-menu-default")) {
-                    window.location = $(this).find("a").attr("href");
+                if (link.length > 0) {
+                    if (!link.hasClass("prevent-menu-default")) {
+                        window.location = $(this).find("a").attr("href");
+                    }
                 }
             }
         });
@@ -209,8 +209,7 @@ $(document).ready(function ()
                             a.closest('.table-item-row').find('.item-id').append('<span class="label label-danger">' + errorThrown + '</span>');
                         }
                     });
-                }
-                else if (a.hasClass("deleteSelected")) {
+                } else if (a.hasClass("deleteSelected")) {
                     var ids = Array();
                     var items = Array();
                     var parent = a.closest("div.data-table");
@@ -231,8 +230,7 @@ $(document).ready(function ()
                                     for (var i = 0; i < items.length; i++) {
                                         items[i].closest('.table-item-row').fadeOut("slow")
                                     }
-                                }
-                                else
+                                } else
                                 {
                                     for (var i = 0; i < items.length; i++) {
                                         items[i].closest('.table-item-row').removeClass("deleting-row").addClass('alert alert-danger');
@@ -248,16 +246,26 @@ $(document).ready(function ()
                             }
                         });
                     }
-                }
-                else if (a.hasClass("delete-item-menu"))
+                } else if (a.hasClass("delete-item-menu"))
                 {
                     a.postlink();
-                }
-                else if (a.hasClass("deleteAll")) {
+                } else if (a.hasClass("deleteAll")) {
                     a.closest('form').submit();
                 }
 
 //                swal("Deleted!", "Your imaginary file has been deleted.", "success");
+            });
+
+        });
+
+        /*======== multiLink ======*/
+
+        $('a.multiLink').click(function (e) {
+            e.preventDefault();
+            $.each($(this).data(), function (i, e) {
+                window.open(e); // ...that opens each stored link in its own window when clicked...
+
+//                alert('name=' + i + ' value=' + e);
             });
 
         });
@@ -288,8 +296,7 @@ $(document).ready(function ()
                 if (idFor.is(':visible'))
                 {
                     currentButton.html('<i class="fa fa-chevron-up text-muted"></i>');
-                }
-                else
+                } else
                 {
                     currentButton.html('<i class="fa fa-chevron-down text-muted"></i>');
                 }
@@ -365,13 +372,49 @@ $(document).ready(function ()
 
         $('select[multiple=multiple]').each(function ()
         {
-            $(this).multiselect({
-                includeSelectAllOption: true,
-                enableFiltering: true,
-                maxHeight: 200
 
-            });
+            if (!$(this).hasClass("no-chosen")) {
+
+                $(this).multiselect({
+                    includeSelectAllOption: true,
+                    enableFiltering: true,
+                    maxHeight: 200,
+                    width: '100%',
+                    buttonWidth: '100%'
+
+                });
+            }
+            if ($(this).hasClass("ordered")) {
+                $(this).chosen({width: '100%'}).on('change', function (evt, params) {
+                    var selectedValues = $(this).val();
+                    var selectionSort = $(this).getSelectionOrder();
+                    if (selectedValues != undefined) {
+                        selectionSort = selectionSort.filter(function (n) {
+                            return selectedValues.indexOf(n) != -1;
+                        });
+                        if ($(this).val().length > 1) {
+                            $(this).attr("value", JSON.stringify(selectionSort))
+                        } else
+                        {
+                            $(this).attr("value", JSON.stringify(selectedValues))
+                        }
+                    } else
+                    {
+                        $(this).attr("value", "[]");
+                    }
+
+
+//                    $(this).trigger("chosen:updated");
+                });
+            }
+
+
+
+
         });
+
+
+
 
 
         $('select[multiple!=multiple]').each(function ()
@@ -386,6 +429,8 @@ $(document).ready(function ()
             }
         });
 
+
+
         /*============users==============*/
         $("div.only-for-user-group").hide()
         $('select.group-selector').chosen().change(function () {
@@ -393,8 +438,7 @@ $(document).ready(function ()
             {
 
                 $("div.only-for-user-group").fadeIn()
-            }
-            else
+            } else
             {
                 $("div.only-for-user-group").fadeOut()
             }
@@ -416,11 +460,13 @@ $(document).ready(function ()
 
         }
 
-        $("#tabs li:eq(" + lastTab + ") a").tab('show');
+        $('.nav-tabs a[href="' + lastTab + '"]').tab('show');
 
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            localStorage['lastTab'] = $($(this).attr('href')).index();
+        $('a.tab').on('click', function (e) {
+            localStorage['lastTab'] = $(this).attr('href');
         })
+
+
         var pathname = window.location.pathname;
         if (pathname.indexOf("page") != -1)
         {
@@ -501,8 +547,7 @@ $(document).ready(function ()
                         checkBox.prop('checked', true);
                     }
                 });
-            }
-            else
+            } else
             {
                 swal({
                     title: "Are you sure?",
@@ -589,8 +634,7 @@ $(document).ready(function ()
                         confirmButtonClass: 'btn-info',
                         confirmButtonText: "ok"
                     });
-                }
-                else
+                } else
                 {
                     swal({
                         title: "Email could not be send!",
@@ -678,8 +722,7 @@ $(document).ready(function ()
 //                    }
 //                });
             });
-        }
-        else
+        } else
         {
             swal({
                 title: "Please select one or more reslations",
@@ -728,7 +771,7 @@ $(document).ready(function ()
     });
 
     /*==========================*/
-    if ($("table.dataTable").length>0){
+    if ($("table.dataTable").length > 0) {
         var count = $("table.dataTable tr.selected").index();
         $("table.dataTable").DataTable({
             "iDisplayStart": count,
@@ -736,6 +779,22 @@ $(document).ready(function ()
         });
     }
 
+
+    /*=========================================*/
+    /*              switch display             */
+    /*=========================================*/
+    $('body').on('change', "input.display-switch", function () {
+        displaySwitch($(this));
+    });
+
+    setTimeout(function () {
+        $("input.display-switch").each(function () {
+            displaySwitch($(this));
+        });
+        $("select.dependable-select").each(function () {
+            dependableSelect($(this));
+        });
+    }, 500);
 
 
 
@@ -756,8 +815,7 @@ function getProgress(url, bar, postData)
         if (data.end !== undefined)
         {
             location.reload();
-        }
-        else
+        } else
         {
             var progres;
             if (data.progres !== undefined)
@@ -840,8 +898,7 @@ function pubmedImport() {
                         }
                         $('#documentsError').append('<span>' + data.code + ', </span>');
                         errorFind++;
-                    }
-                    else {
+                    } else {
                         exitos++
                         $("#documentsSuccess").text(exitos);
                     }
@@ -871,8 +928,7 @@ function pubmedImport() {
                     }
                 });
             }
-        }
-        else
+        } else
         {
             swal({
                 title: "Incorrect operation",
@@ -904,8 +960,7 @@ function typesImport() {
             $('.types').each(function () {
                 $(this).prop('checked', true);
             });
-        }
-        else {
+        } else {
             $('.types').each(function () {
                 $(this).prop('checked', false);
             });
@@ -965,7 +1020,7 @@ function automaticRoundAnnotation()
             type: 'POST',
             data: {operation: 1, round_id: work.attr('data-round-id'), user_id: work.attr('data-user-id'), types: types},
         }).done(function (data) {
-            var redirect = $("#redirectJobs");           
+            var redirect = $("#redirectJobs");
             if (data.success)
             {
 
@@ -983,14 +1038,12 @@ function automaticRoundAnnotation()
                             if (redirect.length != 0)
                             {
                                 window.location.replace(redirect.attr("href"));
-                            }
-                            else
+                            } else
                             {
                                 location.reload();
                             }
                         });
-            }
-            else
+            } else
             {
                 swal({
                     title: "Ops!!",
@@ -1021,8 +1074,7 @@ function automaticRoundAnnotation()
             $("#checkAll").change(function () {
                 if ($(this).is(":checked")) {
                     $('.selectedTypes input').prop('checked', true);
-                }
-                else
+                } else
                 {
                     $('.selectedTypes input').prop('checked', false);
                 }
@@ -1034,6 +1086,24 @@ function automaticRoundAnnotation()
     });
 
 
+}
+
+/*=========================================*/
+/*              switch display             */
+/*=========================================*/
+function  displaySwitch($this) {
+
+    if ($this.prop('checked'))
+    {
+
+        $this.closest(".display-switch-container").find(".show-on-true").slideDown("slow")
+        $this.closest(".display-switch-container").find(".show-on-false").slideUp("slow")
+    } else
+    {
+
+        $this.closest(".display-switch-container").find(".show-on-true").slideUp("slow")
+        $this.closest(".display-switch-container").find(".show-on-false").slideDown("slow")
+    }
 }
 
 

@@ -116,7 +116,6 @@ class ConnectionsController extends AppController {
             throw new MethodNotAllowedException();
         } else {
             $redirect = $this->Session->read('redirect');
-
             $deleteCascade = Configure::read('deleteCascade');
             if ($deleteCascade) {
                 $conditions = array('1' => 1);
@@ -130,7 +129,6 @@ class ConnectionsController extends AppController {
                     $this->Session->setFlash(__('All Connections  have been deleted'), 'success');
                     $this->redirect($redirect);
                 }
-
                 $this->Session->setFlash(__("Connections haven't been deleted"));
                 $this->redirect($redirect);
             }

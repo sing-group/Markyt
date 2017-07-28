@@ -17,17 +17,12 @@ class User extends AppModel {
     public $displayField = 'full_name';
 
     public function beforeSave($options = array()) {
-
         if (!empty($this->data['User']['image'])) {
             if ($this->data['User']['image']['size'] != 0) {
                 $fileData = $this->resizeImage(512, $this->data['User']['image']['tmp_name']);
                 if (!isset($fileData)) {
                     $fileData = fread(fopen($this->data['User']['image']['tmp_name'], 'r'), $this->data['User']['image']['size']);
                 }
-
-//            debug($fileData);
-//            throw new Exception;
-
                 $this->data['User']['image_type'] = $this->data['User']['image']['type'];
                 $this->data['User']['image'] = $fileData;
             } else {
@@ -35,7 +30,6 @@ class User extends AppModel {
                 $this->data['User']['image_extension'] = null;
             }
         }
-
         //App::import('Component','Auth');
         //$AuthComponent = new AuthComponent(new ComponentCollection);
         //AuthComponent->password($this->data['User']['password'])
@@ -49,7 +43,7 @@ class User extends AppModel {
 
     public function isImage($field = array(), $name_field = null) {
         if ((!empty($this->data['User']['image']['type']) && strpos($this->data['User']['image']['type'], 'image') === true ||
-                strpos($this->data['User']['image']['type'], 'bmp') === false) && (number_format($this->data['User']['image']['size'] / 1048576, 2) < 8 || $this->data['User']['image']['size'] == 0 )) {
+            strpos($this->data['User']['image']['type'], 'bmp') === false) && (number_format($this->data['User']['image']['size'] / 1048576, 2) < 8 || $this->data['User']['image']['size'] == 0 )) {
             return true;
         } else {
             return false;
@@ -68,13 +62,11 @@ class User extends AppModel {
                     $image_save_func = 'imagejpeg';
                     $new_image_ext = 'jpg';
                     break;
-
                 case 'image/png':
                     $image_create_func = 'imagecreatefrompng';
                     $image_save_func = 'imagepng';
                     $new_image_ext = 'png';
                     break;
-
                 case 'image/gif':
                     if (!$allowGif) {
                         $image_create_func = 'imagecreatefromgif';
@@ -88,16 +80,12 @@ class User extends AppModel {
             if (isset($image_save_func) && function_exists('imap_open')) {
                 $img = $image_create_func($originalFile);
                 list($width, $height) = getimagesize($originalFile);
-
                 $newHeight = ($height / $width) * $newWidth;
                 $tmp = imagecreatetruecolor($newWidth, $newHeight);
                 $targetFile = $originalFile;
-
                 imageAlphaBlending($tmp, false);
                 imageSaveAlpha($tmp, true);
-
                 imagecopyresampled($tmp, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-
                 if (file_exists($targetFile)) {
                     unlink($targetFile);
                 }
@@ -119,97 +107,85 @@ class User extends AppModel {
      * @var array
      */
     public $validate = array(
-        'group_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-                'message' => 'This field cannot be empty',
-            //'message' => 'Your custom message here',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-        ),
-        'username' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'This field cannot be empty',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-            'noJokeName' => array(
-                'rule' => array('validateNameJoke', 'username'),
-                'message' => 'Invalid username',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-            'inUse' => array('rule' => array('isUnique', 'username'), 'message' => 'This user name is already in use please choose another')
-        ),
-        'surname' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'This field cannot be empty',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-        ),
-//        'subject' => array(
-//            'notempty' => array(
-////                'rule' => array('notempty'),
-////                'message' => 'This field cannot be empty',
-//            'allowEmpty' => true,
-//            'required' => true,
-//            //'last' => false, // Stop validation after this rule
-//            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-//            ),
-//        ),
-        'email' => array(
-            'email' => array(
-                'rule' => array('email'),
-                'message' => 'This email is incorrect Example:user@mail.com'
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-            'inUse' => array(
-                'rule' => array('isUnique', 'email'),
-                'message' => 'This email is already in use please choose another')
-        ),
-        'password' => array(
-            'length' => array(
-                'rule' => array('minLength', '6'),
-                'required' => true,
+          'group_id' => array(
+                'numeric' => array(
+                      'rule' => array('numeric'),
+                      'message' => 'This field cannot be empty',
+                //'message' => 'Your custom message here',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
+          'username' => array(
+                'notBlank' => array(
+                      'rule' => array('notBlank'),
+                      'message' => 'This field cannot be empty',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+                'noJokeName' => array(
+                      'rule' => array('validateNameJoke', 'username'),
+                      'message' => 'Invalid username',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+                'inUse' => array('rule' => array('isUnique', 'username'), 'message' => 'This user name is already in use please choose another')
+          ),
+          'surname' => array(
+                'notBlank' => array(
+                      'rule' => array('notBlank'),
+                      'message' => 'This field cannot be empty',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
+          'email' => array(
+                'email' => array(
+                      'rule' => array('email'),
+                      'message' => 'This email is incorrect Example:user@mail.com'
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+                'inUse' => array(
+                      'rule' => array('isUnique', 'email'),
+                      'message' => 'This email is already in use please choose another')
+          ),
+          'password' => array(
+                'length' => array(
+                      'rule' => array('minLength', '6'),
+                      'required' => true,
+                      'allowEmpty' => true,
+                      'message' => 'Password must have at least 6 characters'),
+          ),
+          'image' => array(
+                'rule' => array('isImage'),
                 'allowEmpty' => true,
-                'message' => 'Password must have at least 6 characters'),
-        ),
-        'image' => array(
-            'rule' => array('isImage'),
-            'allowEmpty' => true,
-            'message' => 'Image extension is not valid. Try with images gif, jpeg, png, jpg and size <8MB'),
+                'message' => 'Image extension is not valid. Try with images gif, jpeg, png, jpg and size <8MB'),
     );
-
     //The Associations below have been created with all possible keys, those that are not needed can be removed
-
     /**
      * belongsTo associations
      *
      * @var array
      */
     public $belongsTo = array(
-        'Group' => array(
-            'className' => 'Group',
-            'foreignKey' => 'group_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        )
+          'Group' => array(
+                'className' => 'Group',
+                'foreignKey' => 'group_id',
+                'conditions' => '',
+                'fields' => '',
+                'order' => ''
+          )
     );
 
     /**
@@ -218,61 +194,61 @@ class User extends AppModel {
      * @var array
      */
     public $hasMany = array(
-        'Annotation' => array(
-            'className' => 'Annotation',
-            'foreignKey' => 'user_id',
-            'dependent' => TRUE,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'Connection' => array(
-            'className' => 'Connection',
-            'foreignKey' => 'user_id',
-            'dependent' => TRUE,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'Post' => array(
-            'className' => 'Post',
-            'foreignKey' => 'user_id',
-            'dependent' => true,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'AnnotatedDocument' => array(
-            'className' => 'AnnotatedDocument',
-            'foreignKey' => 'user_id',
-            'conditions' => '',
-            'order' => '',
-            'limit' => '',
-            'dependent' => true
-        ),
-        'Job' => array(
-            'className' => 'Job',
-            'foreignKey' => 'user_id',
-            'conditions' => '',
-            'order' => '',
-            'limit' => '',
-            'dependent' => true
-        ),
+          'Annotation' => array(
+                'className' => 'Annotation',
+                'foreignKey' => 'user_id',
+                'dependent' => TRUE,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'Connection' => array(
+                'className' => 'Connection',
+                'foreignKey' => 'user_id',
+                'dependent' => TRUE,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'Post' => array(
+                'className' => 'Post',
+                'foreignKey' => 'user_id',
+                'dependent' => true,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'AnnotatedDocument' => array(
+                'className' => 'AnnotatedDocument',
+                'foreignKey' => 'user_id',
+                'conditions' => '',
+                'order' => '',
+                'limit' => '',
+                'dependent' => true
+          ),
+          'Job' => array(
+                'className' => 'Job',
+                'foreignKey' => 'user_id',
+                'conditions' => '',
+                'order' => '',
+                'limit' => '',
+                'dependent' => true
+          ),
     );
 
     /**
@@ -281,36 +257,35 @@ class User extends AppModel {
      * @var array
      */
     public $hasAndBelongsToMany = array(
-        'Project' => array(
-            'className' => 'Project',
-            'joinTable' => 'projects_users',
-            'foreignKey' => 'user_id',
-            'associationForeignKey' => 'project_id',
-            'unique' => 'keepExisting',
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'finderQuery' => '',
-            'deleteQuery' => '',
-            'insertQuery' => ''
-        ),
-        'Round' => array(
-            'className' => 'Round',
-            'joinTable' => 'users_rounds',
-            'foreignKey' => 'user_id',
-            'associationForeignKey' => 'round_id',
-            'unique' => 'keepExisting',
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'finderQuery' => '',
-            'deleteQuery' => '',
-            'insertQuery' => ''
-        )
+          'Project' => array(
+                'className' => 'Project',
+                'joinTable' => 'projects_users',
+                'foreignKey' => 'user_id',
+                'associationForeignKey' => 'project_id',
+                'unique' => 'keepExisting',
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'finderQuery' => '',
+                'deleteQuery' => '',
+                'insertQuery' => ''
+          ),
+          'Round' => array(
+                'className' => 'Round',
+                'joinTable' => 'users_rounds',
+                'foreignKey' => 'user_id',
+                'associationForeignKey' => 'round_id',
+                'unique' => 'keepExisting',
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'finderQuery' => '',
+                'deleteQuery' => '',
+                'insertQuery' => ''
+          )
     );
-
 }

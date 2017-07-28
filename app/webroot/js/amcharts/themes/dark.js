@@ -3,7 +3,7 @@ AmCharts.themes.dark = {
 	themeName: "dark",
 
 	AmChart: {
-		color: "#e7e7e7"
+		color: "#e7e7e7", backgroundColor: "#282828"
 	},
 
 	AmCoordinateChart: {
@@ -25,7 +25,7 @@ AmCharts.themes.dark = {
 	AmRectangularChart: {
 		zoomOutButtonColor: '#FFFFFF',
 		zoomOutButtonRollOverAlpha: 0.15,
-		zoomOutButtonImage: "lensWhite.png"
+		zoomOutButtonImage: "lensWhite"
 	},
 
 	AxisBase: {
@@ -123,12 +123,8 @@ AmCharts.themes.dark = {
 	},
 
 	ZoomControl: {
-		buttonRollOverColor: "#3c5bdc",
-		buttonFillColor: "#f15135",
-		buttonFillAlpha: 0.8,
-		buttonBorderColor: "#FFFFFF",
-		gridBackgroundColor: "#FFFFFF",
-		gridAlpha: 0.8
+		buttonFillAlpha:0.7,
+		buttonIconColor:"#494949"
 	},
 
 	SmallMap: {

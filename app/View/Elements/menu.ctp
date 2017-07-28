@@ -6,7 +6,7 @@ $controller = strtolower($this->params['controller']);
 $action = strtolower($this->params['action']);
 
 
-if (!(isset($annotationMenu))) {
+if (!isset($annotationMenu) && !isset($relationalMenu)) {
     ?>
     <div class="menu-profile ">
         <div class="profile-container">
@@ -32,19 +32,20 @@ if (!(isset($annotationMenu))) {
                 <div class="btn-group-justified">
                     <?php
                     echo $this->Html->link('<i class="fa fa-user fa-lg"></i>', array(
-                        'controller' => 'users', 'action' => 'view', $user_id), array(
-                        'escape' => false, "class" => "btn btn-xs btn-primary btn-outline dark"));
+                          'controller' => 'users', 'action' => 'view', $user_id), array(
+                          'escape' => false, "class" => "btn btn-xs btn-primary btn-outline dark"));
                     ?> 
                     <?php
                     echo $this->Html->link('<i class="fa fa-cog"></i>', array(
-                        'controller' => 'users', 'action' => 'edit', $user_id), array(
-                        'escape' => false,
-                        "class" => "btn btn-xs btn-warning btn-outline dark"));
+                          'controller' => 'users', 'action' => 'edit', $user_id), array(
+                          'escape' => false,
+                          "class" => "btn btn-xs btn-warning btn-outline dark"));
                     ?> 
                     <?php
                     echo $this->Html->link('<i class="fa fa-power-off"></i>', array(
-                        'controller' => 'users', 'action' => 'logout'), array('escape' => false,
-                        "class" => "btn btn-xs btn-danger btn-outline dark"));
+                          'controller' => 'users', 'action' => 'logout'), array(
+                          'escape' => false,
+                          "class" => "btn btn-xs btn-danger btn-outline dark"));
                     ?> 
                 </div>
 
@@ -67,17 +68,20 @@ if (!(isset($annotationMenu))) {
         ?>
         <div class="searchDiv ">           
             <?php
-            echo $this->Form->create($this->name, array('action' => 'search',
-                'id' => 'custom-search-form', "class" => ""));
+            echo $this->Form->create($this->name, array(
+                  'url' => array(
+                        'controller' => $this->name, 'action' => 'search'
+                  ),
+                  'id' => 'custom-search-form', "class" => ""));
             ?>
             <div class="input-group input-group-sm">
                 <span class="input-group-addon" id="sizing-addon3"><i class="fa fa-search"></i></span>
                 <?php
                 echo $this->Form->input('search', array('value' => $search, 'maxlength' => '50',
-                    "placeholder" => "Enter keyword",
-                    'label' => false, 'div' => false,
-                    'id' => 'searchBox',
-                    "class" => "search-query mac-style form-control"));
+                      "placeholder" => "Enter keyword",
+                      'label' => false, 'div' => false,
+                      'id' => 'searchBox',
+                      "class" => "search-query mac-style form-control"));
                 ?>
             </div>
             <?php
@@ -88,7 +92,7 @@ if (!(isset($annotationMenu))) {
     }
 
 
-    if (!isset($annotationMenu)) {
+    if (!(isset($annotationMenu) && !isset($relationalMenu))) {
         ?>
         <ul id="menu-content" class="menu-content collapse in">
             <?php
@@ -98,11 +102,11 @@ if (!(isset($annotationMenu))) {
                 echo $this->element('menuUser');
             }
             echo $this->Html->tag('li', $this->Html->link('<i class="fa fa-user fa-lg"></i>My profile', array(
-                        'controller' => 'users', 'action' => 'edit', $user_id), array(
-                        'escape' => false,)));
+                      'controller' => 'users', 'action' => 'edit', $user_id), array(
+                      'escape' => false,)));
             echo $this->Html->tag('li', $this->Html->link('<i class="fa fa-power-off"></i>Logout', array(
-                        'controller' => 'users', 'action' => 'logout'), array(
-                        'escape' => false)));
+                      'controller' => 'users', 'action' => 'logout'), array(
+                      'escape' => false)));
             ?>
         </ul>  
         <?php
@@ -118,5 +122,10 @@ if (isset($annotationMenu) && $annotationMenu) {
         echo $this->element('menuAnnotation');
     }
 }
+
+if (isset($relationalMenu) && $relationalMenu) {
+    echo $this->element('relationalMenu');
+}
+
 
     

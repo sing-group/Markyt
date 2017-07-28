@@ -1,14 +1,14 @@
 <?php
-//echo $this->Html->script('markyImportTypes.js', array('block' => 'scriptInView'));
-//echo $this->Html->css('../js/dataTables/css/jquery.dataTables', array('block' => 'cssInView'));
-//echo $this->Html->script('./dataTables/js/jquery.dataTables.min', array('block' => 'scriptInView'));
-//echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
+
+
+
+
 
 echo $this->Html->css('../js/Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array(
-    'block' => 'cssInView'));
+      'block' => 'cssInView'));
 echo $this->Html->script('Bootstrap/datatables/jquery.dataTables.min', array('block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 
 echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
 ?>
@@ -19,7 +19,7 @@ echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
             <tr>
                 <th><?php
                     echo $this->Form->input('All', array('type' => 'checkbox',
-                        'id' => 'selectAllTypes', 'div' => false, 'label' => false));
+                          'id' => 'selectAllTypes', 'div' => false, 'label' => false));
                     ?></th>
                 <th>Name</th>
                 <th>Colour</th>
@@ -32,8 +32,8 @@ echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
                 <tr>
                     <td class="tableId"><?php
                         echo $this->Form->input('', array('type' => 'checkbox',
-                            'value' => $type['Type']['id'], 'class' => 'types',
-                            'div' => false, 'label' => false));
+                              'value' => $type['Type']['id'], 'class' => 'types',
+                              'div' => false, 'label' => false));
                         ?>&nbsp;
                     </td>
                     <td><?php echo h($type['Type']['name']); ?>&nbsp;</td>
@@ -50,8 +50,8 @@ echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
                     <td class="actions">
                         <?php
                         echo $this->Html->link('<i class="fa fa-info-circle"></i>' . __('View'), array(
-                            'controller' => 'Types', 'action' => 'view', $type['Type']['id']), array(
-                            'class' => 'btn btn-primary', 'escape' => false, 'target' => '_blank'));
+                              'controller' => 'Types', 'action' => 'view', $type['Type']['id']), array(
+                              'class' => 'btn btn-primary', 'escape' => false, 'target' => '_blank'));
                         ?>
                     </td>
                 </tr>
@@ -64,16 +64,18 @@ echo $this->Html->script('markyShortTable', array('block' => 'scriptInView'));
             <div class="col-sm-4 table-actions">
                 <?php
                 echo $this->Form->create('Project', array('id' => 'typesImport'), array(
-                    'url' => array(
-                        'action' => 'importTypes', $project['Project']['id'])));
+                      'url' => array(
+                            'controller' => 'Projects',
+                            'action' => 'importTypes', $project['Project']['id']))
+                );
                 echo $this->Form->hidden('allTypes', array('id' => 'allTypes', 'name' => 'allTypes'));
                 echo $this->Form->button('<i class="fa fa-reply"></i>' . __('Import types'), array(
-                    'class' => 'btn btn-green',
-                    'escape' => false,
-                    "data-toggle" => "tooltip",
-                    "data-placement" => "top",
-                    'id' => 'importTypes',
-                    "data-original-title" => "Import selected types")
+                      'class' => 'btn btn-green',
+                      'escape' => false,
+                      "data-toggle" => "tooltip",
+                      "data-placement" => "top",
+                      'id' => 'importTypes',
+                      "data-original-title" => "Import selected types")
                 );
                 echo $this->Form->end();
                 ?>

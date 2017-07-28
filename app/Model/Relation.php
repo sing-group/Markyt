@@ -14,6 +14,9 @@ class Relation extends AppModel {
         if (isset($this->data[$this->name]['name'])) {
             $this->data[$this->name]['name'] = ucfirst($this->data[$this->name]['name']);
         }
+        if (!$this->data[$this->name]['is_directed']) {
+            unset($this->data[$this->name]['marker']);
+        }
     }
 
     var $actsAs = array('Containable');
@@ -31,53 +34,51 @@ class Relation extends AppModel {
      * @var array
      */
     public $validate = array(
-        'name' => array(
-            'notEmpty' => array(
-                'rule' => array('notEmpty'),
-            //'message' => 'Your custom message here',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-        ),
-        'colour' => array(
-            'notEmpty' => array(
-                'rule' => array('notEmpty'),
-            //'message' => 'Your custom message here',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-        ),
-        'project_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-            //'message' => 'Your custom message here',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-        ),
+          'name' => array(
+                'notBlank' => array(
+                      'rule' => array('notBlank'),
+                //'message' => 'Your custom message here',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
+          'colour' => array(
+                'notBlank' => array(
+                      'rule' => array('notBlank'),
+                //'message' => 'Your custom message here',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
+          'project_id' => array(
+                'numeric' => array(
+                      'rule' => array('numeric'),
+                //'message' => 'Your custom message here',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
     );
-
     //The Associations below have been created with all possible keys, those that are not needed can be removed
-
     /**
      * belongsTo associations
      *
      * @var array
      */
     public $belongsTo = array(
-        'Project' => array(
-            'className' => 'Project',
-            'foreignKey' => 'project_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        )
+          'Project' => array(
+                'className' => 'Project',
+                'foreignKey' => 'project_id',
+                'conditions' => '',
+                'fields' => '',
+                'order' => ''
+          )
     );
 
     /**
@@ -86,19 +87,18 @@ class Relation extends AppModel {
      * @var array
      */
     public $hasMany = array(
-        'AnnotationsInterRelations' => array(
-            'className' => 'AnnotationsInterRelations',
-            'foreignKey' => 'relation_id',
-            'dependent' => false,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        )
+          'AnnotationsInterRelations' => array(
+                'className' => 'AnnotationsInterRelations',
+                'foreignKey' => 'relation_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          )
     );
-
 }

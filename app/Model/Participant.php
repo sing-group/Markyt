@@ -46,36 +46,23 @@ class Participant extends AppModel {
     }
 
     public $validate = array(
-        'email' => array(
-//            'email' => array(
-////                'rule' => '^.+@ (?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil| biz|info|mobi|name|aero|asia|jobs|museum)$',
-//                'rule' => 'email',
-//                'message' => 'This email is incorrect Example:user@mail.com',
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-//            ),
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'This field cannot be empty',
-                'allowEmpty' => false,
-                'required' => true,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-//            'inUse' => array(
-//                'rule' => array('isUnique', 'email'),
-//                'message' => 'This email is already in use please choose another')
-        ),
-        'code' => array(
-//            'length' => array(
-////                'rule' => array('code', '4'),
-//                'required' => true,
-//                'allowEmpty' => false,
-//                'message' => 'Code must have at least 6 characters'),
-            'inUse' => array(
-                'rule' => array('isUnique', 'email'),
-                'message' => 'This code is already in use please choose another')
-        ),
+          'email' => array(
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                'notBlank' => array(
+                      'rule' => array('notBlank'),
+                      'message' => 'This field cannot be empty',
+                      'allowEmpty' => false,
+                      'required' => true,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
+          'code' => array(
+                'inUse' => array(
+                      'rule' => array('isUnique', 'email'),
+                      'message' => 'This code is already in use please choose another')
+          ),
     );
 
     /**
@@ -84,27 +71,20 @@ class Participant extends AppModel {
      * @var array
      */
     public $hasOne = array(
-        'GoldenAnnotation' => array(
-            'className' => 'GoldenAnnotation',
-            'foreignKey' => 'id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        ),
-        'GoldenProject' => array(
-            'className' => 'GoldenProject',
-            'foreignKey' => 'id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        ),
-//        'Document' => array(
-//            'className' => 'Document',
-//            'foreignKey' => 'document_id',
-//            'conditions' => '',
-//            'fields' => '',
-//            'order' => ''
-//        )
+          'GoldenAnnotation' => array(
+                'className' => 'GoldenAnnotation',
+                'foreignKey' => 'id',
+                'conditions' => '',
+                'fields' => '',
+                'order' => ''
+          ),
+          'GoldenProject' => array(
+                'className' => 'GoldenProject',
+                'foreignKey' => 'id',
+                'conditions' => '',
+                'fields' => '',
+                'order' => ''
+          ),
     );
 
     /**
@@ -113,101 +93,100 @@ class Participant extends AppModel {
      * @var array
      */
     public $hasMany = array(
-        'UploadedAnnotation' => array(
-            'className' => 'UploadedAnnotation',
-            'foreignKey' => 'participant_id',
-            'dependent' => false,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'PredictionFile' => array(
-            'className' => 'PredictionFile',
-            'foreignKey' => 'participant_id',
-            'dependent' => false,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'PredictionDocument' => array(
-            'className' => 'PredictionDocument',
-            'foreignKey' => 'participant_id',
-            'dependent' => false,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'ProjectsParticipant' => array(
-            'className' => 'ProjectsParticipant',
-            'foreignKey' => 'participant_id',
-            'dependent' => false,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'UploadLog' => array(
-            'className' => 'UploadLog',
-            'foreignKey' => 'participant_id',
-            'dependent' => false,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        ),
-        'FinalPrediction' => array(
-            'className' => 'FinalPrediction',
-            'foreignKey' => 'participant_id',
-            'dependent' => false,
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => ''
-        )
+          'UploadedAnnotation' => array(
+                'className' => 'UploadedAnnotation',
+                'foreignKey' => 'participant_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'PredictionFile' => array(
+                'className' => 'PredictionFile',
+                'foreignKey' => 'participant_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'PredictionDocument' => array(
+                'className' => 'PredictionDocument',
+                'foreignKey' => 'participant_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'ProjectsParticipant' => array(
+                'className' => 'ProjectsParticipant',
+                'foreignKey' => 'participant_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'UploadLog' => array(
+                'className' => 'UploadLog',
+                'foreignKey' => 'participant_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          ),
+          'FinalPrediction' => array(
+                'className' => 'FinalPrediction',
+                'foreignKey' => 'participant_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+          )
     );
     public $hasAndBelongsToMany = array(
-        'Project' => array(
-            'className' => 'Project',
-            'joinTable' => 'projects_participants',
-            'foreignKey' => 'participant_id',
-            'associationForeignKey' => 'project_id',
-            'unique' => 'keepExisting',
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'finderQuery' => '',
-            'deleteQuery' => '',
-            'insertQuery' => ''
-        ),
+          'Project' => array(
+                'className' => 'Project',
+                'joinTable' => 'projects_participants',
+                'foreignKey' => 'participant_id',
+                'associationForeignKey' => 'project_id',
+                'unique' => 'keepExisting',
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'finderQuery' => '',
+                'deleteQuery' => '',
+                'insertQuery' => ''
+          ),
     );
-
 }

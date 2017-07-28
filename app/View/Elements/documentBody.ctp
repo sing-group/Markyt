@@ -1,4 +1,6 @@
 <div id="documentBody">
+    <input type="hidden" id="interRelationsMap"  name="interRelationsMap" value='<?php echo json_encode($interRelationsMap) ?>'>
+
     <?php
     if (!$isMultiDocument) {
         echo $this->Session->flash();
@@ -35,8 +37,9 @@
             $document_annotated_id = $annotatedDocument['id'];
             $text = $annotatedDocument['text_marked'];
             ?>
+            <a name="<?php echo $document_id ?>" class="anchor" id="anchor-<?php echo $document_annotated_id ?>"  data-referer="<?php echo $document_annotated_id ?>">anchor-<?php echo $document_annotated_id ?></a>
+
             <div class="documentToAnnotate">
-                <a name="<?php echo $document_id ?>"></a>
                 <div>
                     <h2 id="title">
                         <?php

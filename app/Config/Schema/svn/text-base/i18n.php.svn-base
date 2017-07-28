@@ -19,7 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-// @codingStandardsIgnoreStart
+
 
 /*
  *
@@ -28,7 +28,7 @@
  */
 class i18nSchema extends CakeSchema {
 
-// @codingStandardsIgnoreEnd
+
 
 	public $name = 'i18n';
 

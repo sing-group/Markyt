@@ -11,7 +11,7 @@
  *
  * @author Sing-pc
  */
-//put your code here
+
 
 App::uses('Component', 'Controller');
 
@@ -38,7 +38,7 @@ class BioCExportComponent extends Component {
         $xml = new SimpleXMLElement("<?xml version=\"1.0\" encoding=\"utf-8\" ?><!DOCTYPE collection SYSTEM \"BioC.dtd\"><collection></collection>");
         $xml->addChild('source', 'Markyt');
         $xml->addChild('date', date("Y-m-d H:i:s"));
-//        $xml->addChild('infon', $source)->addAttribute("key", "retrievedFrom");
+
 
         $documentPassages = array();
 

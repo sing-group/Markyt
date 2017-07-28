@@ -19,7 +19,7 @@ class PostsController extends AppController {
     public function index($post = null) {
         $this->Post->recursive = -1;
         $this->Post->contain(false, array('User' => array('username', 'surname',
-                'id')));
+                    'id')));
         $this->paginate = array('fields' => array(' `Post`.`id`, `Post`.`title`, `Post`.`created`, `Post`.`modified`'));
         if ($post == null) {
             $this->Session->delete('data');
@@ -54,7 +54,6 @@ class PostsController extends AppController {
      * @return void
      */
     public function publicIndex() {
-       
         $id_user = $this->Session->read('user_id');
         if (!isset($id_user)) {
             $user = $this->Post->User->find('first', array('recursive' => -1));
@@ -64,30 +63,9 @@ class PostsController extends AppController {
             }
             $this->Post->recursive = -1;
             $this->Post->contain(false, array('User' => array('username', 'surname',
-                    'full_name', 'image', 'image_type',
-                    'id')));
+                        'full_name', 'image', 'image_type',
+                        'id')));
             $this->paginate = array('limit' => 5, 'order' => array('modified' => 'DESC'));
-            
-//            $this->set('search', '');
-//            $data = $this->Cookie->read('Post.search');
-//            if ($post == null && is_null($data)) {
-//                $this->Session->delete('data');
-//                $this->Session->delete('search');
-//            }//$post == null
-//            elseif ($post) {
-//                if (isset($data)) {
-//                    if (isset($data['search'])) {
-//                        $busqueda = $data['search'];
-//                        $conditions = array('conditions' => $data['data'], 'limit' => 5,
-//                            'order' => array('modified' => 'DESC'));
-//                        $this->paginate = $conditions;
-//                        $this->set('search', $busqueda);
-//                    } //isset($data['search'])
-//                }//isset($cookie)
-//                else {// Delete invalid Cookie
-//                    $this->Cookie->destroy('Post.search');
-//                }
-//            }
             //$post
             $name = strtolower($this->name);
             $this->set("login", true);
@@ -144,7 +122,7 @@ class PostsController extends AppController {
         }//!$this->Post->exists($id)
         $contain = array('User' => array('username', 'surname', 'id'));
         $options = array('recursive' => 0, 'contain' => $contain, 'conditions' => array(
-                'Post.' . $this->Post->primaryKey => $id));
+                    'Post.' . $this->Post->primaryKey => $id));
         $this->set('post', $this->Post->find('first', $options));
         $this->set('post_id', $id);
     }
@@ -206,22 +184,6 @@ class PostsController extends AppController {
     public function delete($id = null) {
         $this->CommonFunctions = $this->Components->load('CommonFunctions');
         $this->CommonFunctions->delete($id, 'title');
-//        $this->Post->id = $id;
-//        if (!$this->Post->exists()) {
-//            throw new NotFoundException(__('Invalid post'));
-//        }//!$this->Post->exists()
-//        $this->request->onlyAllow('post', 'delete');
-//        if ($this->Post->delete()) {
-//            if (!$this->request->is('ajax')) {
-//
-//                $this->Session->setFlash(__('Post selected has been  deleted'), 'success');
-//                $this->redirect(array('action' => 'index'));
-//            }
-//        }//$this->Post->delete()
-//        if (!$this->request->is('ajax')) {
-//            $this->Session->setFlash(__('Post was not deleted'));
-//            $this->redirect(array('action' => 'index'));
-//        }
     }
 
     /**
@@ -233,37 +195,6 @@ class PostsController extends AppController {
     public function deleteSelected() {
         $this->CommonFunctions = $this->Components->load('CommonFunctions');
         $this->CommonFunctions->deleteSelected('title');
-//        $this->autoRender = false;
-//        if (!$this->request->is('post')) {
-//            throw new MethodNotAllowedException();
-//        } else {
-//            $idPosts = json_decode($this->request->data['selected-items']);
-//            $redirect = $this->Session->read('redirect');
-//            $deleteCascade = Configure::read('deleteCascade');
-//            if ($deleteCascade) {
-//                $conditions = array('Post.id' => $idPosts);
-//                if ($this->Post->UpdateAll(array('title' => '\'Removing...\''), $conditions, -1)) {
-//                    $this->Session->setFlash(__('Selected posts are being deleted. Please be patient'), 'information');
-//                    $this->backGround($redirect);
-//                    $this->Post->deleteAll($conditions, $deleteCascade);
-//                }
-//            } else {
-//                if ($this->Post->deleteAll(array('Post.id' => $idPosts), $deleteCascade)) {
-//                    if (!$this->request->is('ajax')) {
-//                        $this->Session->setFlash(__('Posts selected have been deleted'), 'success');
-//                        $this->redirect($redirect);
-//                    } else {
-//                        return $this->correctResponseJson(array('success' => true));
-//                    }
-//                }
-//                if (!$this->request->is('ajax')) {
-//                    $this->Session->setFlash(__("Posts selected haven't been deleted"));
-//                    $this->redirect($redirect);
-//                } else {
-//                    throw new NotFoundException(__('Invalid question'));
-//                }
-//            }
-//        }
     }
 
 }

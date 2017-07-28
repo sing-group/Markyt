@@ -7,7 +7,7 @@ $group_id = $this->Session->read('group_id');
     <?php echo $this->Form->create('User', array('type' => 'file', 'role' => 'form')); ?>
     <fieldset>
         <h1>
-            <?php echo __('Add User'); ?>
+            <?php echo __('New User'); ?>
         </h1>
         <h3>Your image profile:</h3>
         <div class=" col-md-3">
@@ -35,7 +35,7 @@ $group_id = $this->Session->read('group_id');
         <div class="dataProfile col-md-6">      
             <?php
             echo $this->Form->input('group_id', array('required' => false, 'class' => "chosen-select group-selector"));
-//            echo $this->Form->input('allRounds', array('options' => array(0 => 'No', 2 => 'Yes'), 'selected' => 0, 'label' => 'Include by default in all rounds?', 'class' => 'no-chosen'));
+
             ?>
             <div class="only-for-user-group">
                 <div class="input">

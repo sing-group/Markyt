@@ -37,13 +37,13 @@ if ($noLogs || isset($_forced_from_dbo_)):
 	foreach ($sqlLogs as $source => $logInfo):
 		$text = $logInfo['count'] > 1 ? 'queries' : 'query';
 		printf(
-			'<table class="cake-sql-log table table-hover table-responsive" id="cakeSqlLog_%s" summary="Cake SQL Log" cellspacing="0">',
+			'<table class="cake-sql-log" id="cakeSqlLog_%s" summary="Cake SQL Log" cellspacing="0">',
 			preg_replace('/[^A-Za-z0-9_]/', '_', uniqid(time(), true))
 		);
 		printf('<caption>(%s) %s %s took %s ms</caption>', $source, $logInfo['count'], $text, $logInfo['time']);
 	?>
 	<thead>
-		<tr><th>Nr</th><th>Query</th><th class="error-query">Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>
+		<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>
 	</thead>
 	<tbody>
 	<?php
@@ -63,7 +63,7 @@ if ($noLogs || isset($_forced_from_dbo_)):
 				}
 				$i['query'] .= " , params[ " . rtrim($bindParam, ', ') . " ]";
 			}
-			printf('<tr><td>%d</td><td>%s</td><td class="error-query">%s</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td></tr>%s',
+			printf('<tr><td>%d</td><td>%s</td><td>%s</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td></tr>%s',
 				$k + 1,
 				h($i['query']),
 				$i['error'],

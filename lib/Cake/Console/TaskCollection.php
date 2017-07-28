@@ -43,7 +43,7 @@ class TaskCollection extends ObjectCollection {
 /**
  * Constructor
  *
- * @param Shell $Shell
+ * @param Shell $Shell The shell this task collection is attached to.
  */
 	public function __construct(Shell $Shell) {
 		$this->_Shell = $Shell;
@@ -53,18 +53,18 @@ class TaskCollection extends ObjectCollection {
  * Loads/constructs a task. Will return the instance in the registry if it already exists.
  *
  * You can alias your task as an existing task by setting the 'className' key, i.e.,
- * {{{
+ * ```
  * public $tasks = array(
  * 'DbConfig' => array(
  * 'className' => 'Bakeplus.DbConfigure'
  * );
  * );
- * }}}
+ * ```
  * All calls to the `DbConfig` task would use `DbConfigure` found in the `Bakeplus` plugin instead.
  *
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
- * @return Task A task object, Either the existing loaded task or a new one.
+ * @return AppShell A task object, Either the existing loaded task or a new one.
  * @throws MissingTaskException when the task could not be found
  */
 	public function load($task, $settings = array()) {

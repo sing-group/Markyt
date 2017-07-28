@@ -15,7 +15,6 @@ div.menu-list {
 
 }
 
-
 .submit {
     position: relative;
     top: -10%;
@@ -218,6 +217,7 @@ div.actions {
 }
 #textContent,.textContent { 
     text-align: justify;
+    line-height:2;
 }
 /*#textContent h1, #textContent h2, #textContent h3 {
 
@@ -251,9 +251,14 @@ div.actions {
 }
 
 #textContent mark, #textContent span[name=annotation],.textContent mark, .textContent span[name=annotation]{
-    cursor: cell !important;
-    cursor: -moz-cell !important;
+    /*    cursor: cell !important;
+        cursor: -moz-cell !important;*/
 }
+
+#content.loading *{
+    cursor:wait !important;
+}
+
 /*#textContent *, #textContent:hover *, #textContent:active * {
     cursor: url('../../img/highlighter_yellow.cur'), default;
 }*/
@@ -285,10 +290,16 @@ textarea {
     min-width: 500px;
 }
 
-.hasCommentary
+mark.hasCommentary
 {
     border-bottom: 3px dotted #000000;
 }
+mark.automatic.hasCommentary
+{
+    border-bottom: 3px dotted #000000;
+}
+
+
 .assessmentButton {
     float: left;
     position: fixed;
@@ -380,8 +391,21 @@ div#counterDesc.redTime{
 
 
 .mark, mark {
-    padding: 0 !important; 
+    padding: 0 ; 
 }
+
+.parentMark {
+    padding: 5px;
+    z-index: 1;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-bottom: 6px !important;
+}
+.parentMark >.parentMark > mark 
+{
+    line-height: 5;
+}
+
 
 #textContent  img{
     cursor: pointer !important;
@@ -482,6 +506,80 @@ div#counterDesc.redTime{
     font-weight: bold;
     text-shadow: 5px 5px 10px rgb(0, 0, 0);
 }
+
+/*.line-arrow{
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    border-right: 5px solid rgba(0, 0, 0, 0);
+    border-top: 15px solid;
+    position: relative;
+    top: 100%;
+    left: -3.9px;
+    transform: rotate(1deg);
+    border-top-color:#23272d;
+}
+.line-round{
+    border: 10px solid;
+    position: relative;
+    top: 99%;
+    left: -8.9px;
+    border-radius: 50px;
+    border-color:#23272d;
+}*/
+
+.jqSimpleConnect{
+    z-index: 1;
+
+}
+
+
+.line-directed {
+    position: relative;
+    top: 100%;
+    left: -29px;
+    margin-top: -14px;
+    z-index: 99;
+    width: 60px;
+    text-align: center;
+}
+
+.jqSimpleConnect.inline .line-directed.inverted img{
+    transform: rotate(90deg);
+    margin-top: 8px;
+    margin-left: 10px
+}
+
+.jqSimpleConnect.inline .line-directed.inverted{
+    left: -1%;
+    top: 0;
+    width: 0;
+}
+
+
+.jqSimpleConnect.inline .line-directed{
+    left: 100%;
+    top: 0;
+    width: 0;
+    margin-left: -11px;
+}
+.jqSimpleConnect.inline .line-directed img{
+    transform: rotate(-90deg);
+    margin-top: 6px;
+}
+
+
+
+.line-arrow.inverted,
+.line-round.inverted,
+.line-directed.inverted
+{
+    top: 0%;
+}
+
+.line-directed.inverted img{
+    transform: rotate(180deg);
+    margin-top: 11px;
+}
+
 .posibleAnnotation {
 
     color: #000;
@@ -727,6 +825,10 @@ mark.annotation{
     background-color: #FFE140;
 }
 
+#documentBodyContainer{
+    word-break: break-all;
+}
+
 
 #sidebar-menu{
     position: fixed;
@@ -739,7 +841,7 @@ mark.annotation{
 }
 
 
-#sidebar-menu .btn{
+#sidebar-menu .btn-group-vertical .btn{
     height: 58px;
     top:0;
 }
@@ -767,22 +869,24 @@ button#hideRelationsBar.btn {
 
 #relationsContainer
 {
-
+    padding: 0;
     height: 800px;
-    margin-top: 45px;  
 }
 
 .dataTables_scrollHeadInner,table.dataTable.no-footer{
 
     width: 100% !important;
 }
-
+#content
+{
+    margin-bottom: 450px;
+}
 #content.scrollableContent{ 
     width: 75%;
     height: 100%;
     overflow-y: scroll;
     position: fixed;
-    z-index: 2;
+    /*z-index: 99999999 !important;*/
 }
 
 div.tooltip-inner {
@@ -854,24 +958,24 @@ div.row-fluid {
 {
     -webkit-animation: pulsarAnime 1s linear 1s infinite alternate;
     animation: pulsarAnime 1s linear 1s infinite alternate;
-    color: red;
-    font-size: 18px;
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    color: #56ff2c;
+    /*font-size: 18px;*/
+    text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
 
 }
 
 @-webkit-keyframes pulsarAnime
 {
-    0%   { color: #000;}
-    50%  { color: #E42C2C;}
-    100% { color: red;}
+    0%   { color: #56ff2c;}
+    50%  { color: #003333;}
+    100% { color: #56ff2c;}
 }
 
 @keyframes pulsarAnime
 {
     0%   { color: #000;}
-    50%  { color: #E42C2C;}
-    100% { color: red;}
+    50%  { color: #003333;}
+    100% { color: #56ff2c;}
 }
 
 
@@ -885,7 +989,6 @@ div.row-fluid {
     }
     #content.scrollableContent{ 
         width: 65%;
-
     }
 
 }
@@ -916,4 +1019,250 @@ div.row-fluid {
 #dialog-createAssessment button.active {
     background: #BBB;
     border: solid 1px #8A8A8A;
+}
+
+
+mark.annotation.showRelation{
+    top: -10px;
+    position: relative;
+}
+
+span.label.label-checkbox {
+    padding-top: 7px;
+}
+
+
+/*=================================*/
+/*         background fade         */
+/*=================================*/
+@-webkit-keyframes fadeIt {
+    0%   { background-color: #c0a5a5; }
+    50%  { background-color: #d5c3c3; }
+    100% { background-color: #FFFFFF; }
+}
+@-moz-keyframes fadeIt {
+    0%   { background-color: #c0a5a5; }
+    50%  { background-color: #d5c3c3; }
+    100% { background-color: #FFFFFF; }
+}
+@-o-keyframes fadeIt {
+    0%   { background-color: #c0a5a5; }
+    50%  { background-color: #d5c3c3; }
+    100% { background-color: #FFFFFF; }
+}
+@keyframes fadeIt {
+    0%   { background-color: #c0a5a5; }
+    50%  { background-color: #d5c3c3; }
+    100% { background-color: #FFFFFF; }
+}
+
+.backgroundAnimated{    
+    background-image:none !important;
+    -webkit-animation: fadeIt 2s ease-in-out; 
+    -moz-animation: fadeIt 2s ease-in-out; 
+    -o-animation: fadeIt 2s ease-in-out; 
+    animation: fadeIt 2s ease-in-out; 
+}
+
+a.anchor {
+
+    visibility:hidden;
+    color:#ffF;
+} 
+
+mark.toRemove
+{
+    background-color: #909090 !important;
+    color: #c3c3c3;
+    padding: 2px !important;
+    border: 1px solid #ff1313;
+
+}
+
+
+li .arrow {
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration:0.3s;
+    transition-duration: 0.3s;
+
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+
+}
+
+li.collapsed .arrow {
+    -ms-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+
+/*==========================*/
+
+div.twitter-container{
+    font-family: Helvetica, Roboto, "Segoe UI", Calibri, sans-serif !important;
+    font-size:16px;
+    color:#1c2022;
+
+    padding-top: 14.4px;
+    border: 1px solid #e1e8ed;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+a.twitter {
+    padding: 5px 15px;
+    margin: 2px;
+    background: #fff;
+    color: #55acee;
+    border-radius: 3px;
+    text-decoration: none;
+    border: 1px solid #2b7bb9; 
+    font-size: 14px;
+    font-weight:bold;
+}
+a.twitter {
+    padding: 5px 15px;
+    margin: 2px;
+    background: #fff;
+    color: #55acee;
+    border-radius: 3px;
+    text-decoration: none;
+    border: 1px solid #2b7bb9; 
+}
+a.twitter:hover {
+    color: #55acee;
+
+}
+a.twitter span{
+    color: #55acee;
+
+}
+
+.twitter-container img {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+.twitter-container .certificate {
+    font-size: 12px;
+    color: #55acee;
+
+}
+.twitter-container .certificate .fa-certificate {
+    color: #55acee;
+}
+
+.twitter-container a .name
+{
+    color:#1c2022;
+    font-size: 16px;
+    font-weight:bold;
+    cursor: pointer;
+    font-weight: 700;
+
+}
+.twitter-container a .sub-name
+{
+    color: #697882;
+    margin-top: -16px;
+    cursor: pointer;
+
+}
+.twitter-container a:hover .name{
+    color: #55acee;
+
+}
+
+.twitter-footer a
+{
+    color: #697882;
+    margin-right: 15px;
+    cursor: pointer;
+}
+.twitter-footer a.reply:hover
+{
+    color: #1DA1F2;
+}
+.twitter-footer a.retwitt:hover
+{
+    color: #19CF86;
+
+}
+.twitter-footer a.heart:hover
+{
+    color: #E81C4F;;
+}
+
+.twitter-body h3{
+    display: none;
+}
+
+.twitter-container img {
+    width: 54px;
+    height: 54px;
+    border-radius: 8px;
+    margin: 0;
+    border: 1px solid #ececec;
+}
+.twitter-container>.twitter-header>.col-xs-1 {
+    padding: 0;
+}
+
+.twitter-time{
+    color:#9e9e9e;
+}
+.chem-option .label{
+    font-size: 60%;
+}
+
+.chem-option .checkbox label,
+.chem-option .radio label {
+    padding-left: 0px; 
+    height: 0;
+    margin: 0;
+}
+
+@media (max-width: 1600px){ 
+    .form-inline .checkbox, .form-inline .radio {
+        margin-left: 0px !important;
+    }
+    input.relation {
+        margin: 0;
+    }
+}
+@media (max-width: 1400px){ 
+
+    .chem-option .label {
+        font-size: 60%;
+        font-size: 9px;
+        color: #fff;
+        text-shadow: 1px 1px 0px #000000;
+        padding: 0;
+    }
+}
+
+
+
+iframe {
+    height: 500px;
+    min-height : 500px;
+    width: 625px;
+}
+.popover{
+    max-width: 90%; /* Max Width of the popover (depending on the container!) */
+}
+.modal.fade
+{
+    z-index: 9999;
+}
+
+.navbar-collapse ol
+{
+    padding: 0;
 }

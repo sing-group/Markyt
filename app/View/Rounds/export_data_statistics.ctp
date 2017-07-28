@@ -2,15 +2,14 @@
 echo $this->Html->script('./amcharts/amcharts.js', array('block' => 'scriptInView'));
 echo $this->Html->script('./amcharts/serial.js', array('block' => 'scriptInView'));
 echo $this->Html->script('./amcharts/pie.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/filesaver.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/amexport.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/canvg.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/rgbcolor.js', array('block' => 'scriptInView'));
+echo $this->Html->script('./amcharts/plugins/export/export.min.js', array('block' => 'scriptInView'));
+
 echo $this->Html->script('./jquery-hottie/jquery.hottie.js', array('block' => 'scriptInView'));
 
 echo $this->Html->script('Bootstrap/markyChart', array('block' => 'scriptInView'));
 echo $this->Html->script('markyExportDataRound.js', array('block' => 'scriptInView'));
-//echo $this->Html->css('print', array('block' => 'cssInView'));
+
+
 
 function random_color_part() {
     return str_pad(dechex(mt_rand(0, 255)), 2, '0', STR_PAD_LEFT);
@@ -27,11 +26,11 @@ function random_color() {
                 <div class="col-md-offset-11 col-md-1">
                     <?php
                     echo $this->Form->button('<i class="fa fa-print"></i>', array(
-                        'class' => 'btn btn-primary btn-info btn-print btn-lg',
-                        'escape' => false, "data-toggle" => "tooltip",
-                        "data-placement" => "top",
-                        "id"=>"printData",
-                        "data-original-title" => "Print this data"));
+                          'class' => 'btn btn-primary btn-info btn-print btn-lg',
+                          'escape' => false, "data-toggle" => "tooltip",
+                          "data-placement" => "top",
+                          "id" => "printData",
+                          "data-original-title" => "Print this data"));
                     ?>
                 </div>
             </div>
@@ -47,32 +46,32 @@ function random_color() {
                             <tbody>
                                 <tr>
                                     <td>
-                                        <?php echo __('Project'); ?>
+<?php echo __('Project'); ?>
                                     </td>  
                                     <td>
                                         <?php
                                         echo $this->Html->link($project['Project']['title'], array(
-                                            'controller' => 'projects', 'action' => 'view',
-                                            $project['Project']['id']));
+                                              'controller' => 'projects', 'action' => 'view',
+                                              $project['Project']['id']));
                                         ?>
                                     </td>  
                                 </tr>                           
                                 <tr>
                                     <td>
-                                        <?php echo __('Ends'); ?>
+<?php echo __('Ends'); ?>
 
                                     </td>  
                                     <td>                                    
-                                        <?php echo h($round['Round']['ends_in_date']); ?>
+<?php echo h($round['Round']['ends_in_date']); ?>
                                     </td>
                                 </tr>
                                 <tr> 
                                     <td>
-                                        <?php echo __('Number of annotators'); ?>
+<?php echo __('Number of annotators'); ?>
 
                                     </td>  
                                     <td>                                    
-                                        <?php echo sizeof($users) ?>
+<?php echo sizeof($users) ?>
                                     </td>
                                 </tr>
                                 <?php
@@ -80,7 +79,7 @@ function random_color() {
                                     ?>
                                     <tr>
                                         <td colspan="2">                                                                            
-                                            <?php echo ($round['Round']['description']); ?>
+    <?php echo ($round['Round']['description']); ?>
                                         </td>
 
                                     </tr>
@@ -106,7 +105,7 @@ function random_color() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($types as $type): ?>
+<?php foreach ($types as $type): ?>
                                     <tr>
                                         <td>
                                             <h4>
@@ -129,7 +128,7 @@ function random_color() {
                                         </td>
                                         <td><div class="type-color-box" style="background-color: rgba(<?php echo $type['Type']['colour']; ?>)"></div> </td>
                                     </tr>
-                                <?php endforeach; ?>
+<?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -190,9 +189,9 @@ function random_color() {
                             <table class="heatColour table table-hover table-responsive tableMap">
                                 <thead>
                                 <th>&nbsp;</th>
-                                <?php foreach ($users as $element): ?> 
+                                    <?php foreach ($users as $element): ?> 
                                     <th class="bold">
-                                        <?php echo h($element['User']['full_name']); ?>
+                                    <?php echo h($element['User']['full_name']); ?>
                                     </th>
                                     <?php
                                 endforeach;
@@ -219,7 +218,7 @@ function random_color() {
                                                     $arrayChart = array('GraficColumns' => $typeFil['User']['full_name'] . '-' . $typeCol['User']['full_name']);
                                                     $arrayChart['Hits'] = $num;
                                                     $arrayChart['Colour'] = '#' . random_color();
-                                                    $pure_hits+=$num;
+                                                    $pure_hits += $num;
                                                     $pos_in_relations++;
                                                 } else {
                                                     echo '<td>0</td>';
@@ -270,13 +269,13 @@ function random_color() {
 </div>
 
 
-<a href="<?php echo $this->webroot . 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
+<a href="<?php echo 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
 <?php
 echo $this->Html->media('BleepSound.mp3', array('fullBase' => true, 'autoplay'));
 echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'confrontationDual'), array(
-    'id' => 'endGoTo', 'class' => "hidden"));
+      'id' => 'endGoTo', 'class' => "hidden"));
 echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'getProgress',
-    true), array('id' => 'goTo', 'class' => "hidden"));
+      true), array('id' => 'goTo', 'class' => "hidden"));
 echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'view',
-    $project_id), array('id' => 'goToMail', 'class' => "hidden"));
+      $project_id), array('id' => 'goToMail', 'class' => "hidden"));
 

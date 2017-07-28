@@ -1,4 +1,4 @@
-<!-- Modal -->
+
 <div class="modal fade" id="helpDialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -11,7 +11,7 @@
                 <div id="mouseHelp">
                     <?php
                     echo $this->Html->image('mouse.jpg', array(
-                        'alt' => 'CakePHP', 'width' => "377", 'height' => "171"));
+                          'alt' => 'CakePHP', 'width' => "377", 'height' => "171"));
                     ?>
                 </div>
                 <div>
@@ -32,10 +32,10 @@
                 </div>
             </div>
         </div>
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- Modal -->
+    </div>
+</div>
+</div>
+
 <div class="modal fade lg" id="helpDialog2" role="dialog" aria-labelledby="helpDialog2" aria-hidden="true">
     <div class="modal-dialog large">
         <div class="modal-content">
@@ -58,7 +58,7 @@
                             <div id="mouseHelp">
                                 <?php
                                 echo $this->Html->image('mouse.jpg', array(
-                                    'alt' => 'CakePHP', 'width' => "377", 'height' => "171"));
+                                      'alt' => 'CakePHP', 'width' => "377", 'height' => "171"));
                                 ?>
                             </div>
                             <div>
@@ -89,11 +89,11 @@
                                 If you really want annotate that word (with the current type) you should press the button with the brush.
                                 <div class="searchDiv ">           
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Keyword to annotate" disabled>
+                                        <input type="text" class="form-control" placeholder="Term to be annotated" disabled>
                                         <div class="input-group-btn ">
                                             <?php
                                             echo $this->Form->button('<i class="fa fa-paint-brush">&nbsp;</i>', array(
-                                                'escape' => false, "class" => "btn  btn-success ladda-button",
+                                                  'escape' => false, "class" => "btn  btn-success ladda-button",
                                             ));
                                             ?>
                                         </div>
@@ -172,7 +172,7 @@
                                     <i class="fa fa-history"></i>
                                     Annotate this term (All documents) 
                                 </a>
-                                 <div>
+                                <div>
                                     Click this option to annotate all terms like selected in all documents
                                 </div>
                             </li>
@@ -180,22 +180,22 @@
                                 <a>
                                     <i class="fa fa-exchange yellow"></i>Change <label class="label label-default">selected type</label>
                                 </a>      
-                                    <div>
-                                        Click this option to modify the type of this annotation. 
-                                        The new type is the currently selected.
-                                    </div>
+                                <div>
+                                    Click this option to modify the type of this annotation. 
+                                    The new type is the currently selected.
+                                </div>
                             </li>
                             <li class="action">
                                 <a>
                                     <i class="fa fa-exchange yellow"></i>Change <label class="label label-default">selected type</label> (All documents)
                                 </a>      
-                                    <div>
-                                        Click this option to modify the type of all annotations that have the same text and same type as the selected annotation. 
-                                        The new type is the currently selected.
-                                    </div>
+                                <div>
+                                    Click this option to modify the type of all annotations that have the same text and same type as the selected annotation. 
+                                    The new type is the currently selected.
+                                </div>
                             </li>                            
                             <li class="action">
-                                    <a><i class="fa fa-trash red"></i>Delete</a>
+                                <a><i class="fa fa-trash red"></i>Delete</a>
                                 <div>
                                     Click this option to remove the selected annotation. 
                                     This notation will be permanently deleted.
@@ -203,7 +203,7 @@
                             </li>
                             <li class="action">
                                 <a>                                    
-                                    <i class="fa fa-trash red"></i>Delete All (with this <label class="label label-default">selected type</label>)
+                                    <i class="fa fa-trash red"></i>Delete all (with this <label class="label label-default">selected type</label>)
                                 </a>
                                 <div>
                                     Click this option to remove all annotations that have the same type and same text as the selected annotation. 
@@ -211,22 +211,22 @@
                                 </div>
                             </li>
                             <li class="action">
-                                    <a><i class="fa fa-trash red"></i>Delete (All documents)</a>
-                                    <div>
-                                        Click this option to remove all annotations that have the same text as the selected annotation. 
-                                        This notation will be permanently deleted.
-                                    </div>    
+                                <a><i class="fa fa-trash red"></i>Delete (All documents)</a>
+                                <div>
+                                    Click this option to remove all annotations that have the same text as the selected annotation. 
+                                    This notation will be permanently deleted.
+                                </div>    
                             </li>
                             <li class="action">
                                 <a><i class="fa fa-google"></i>Search in Google</a>
                                 <div>
-                                     Click this option to search selected annotation in Google
+                                    Click this option to search selected annotation in Google
                                 </div>   
                             </li>
                             <li class="action">
-                                <a tabindex="100"><i class="fa fa-database"></i>Search in Bio-Databases</a>    
+                                <a tabindex="100"><i class="fa fa-database"></i>Search in databases</a>    
                                 <div>
-                                     Click this option to search selected annotation in databases like Pubchem,Pubmet,etc.
+                                    Click this option to search selected annotation in databases like Pubchem,Pubmet,etc.
                                 </div> 
                             </li>
 
@@ -238,7 +238,7 @@
                             <li><a>Relations</a></li>
                             <li class="divider"></li>
                             <li class="dropdown-submenu ">
-                                <a tabindex="-1"><i class="fa fa-share-alt"></i>Create Relation</a>
+                                <a tabindex="-1"><i class="fa fa-share-alt"></i>Create relation</a>
                                 <div>
                                     Here you can find the kinds of relationships you can create.
                                 </div>  
@@ -254,23 +254,9 @@
                                 </div>
                             </li>
                             <li class="action">
-                                <a tabindex="7"><i class="fa fa-eye"></i>View Relation</a>
+                                <a tabindex="7"><i class="fa fa-eye"></i>View relation</a>
                                 <div>
                                     Click this button to see all the relations of an annotation for two seconds.
-                                </div>
-                            </li>
-                            <li class="action">
-                                <a tabindex="8"><i class="fa fa-eraser"></i>
-                                    Clear Relations (only <i class="fa fa-desktop"></i>) 
-                                </a>
-                                <div>
-                                    Click this button to clean all the relations in the screen.
-                                    <div class="alert alert-warning" role="alert">
-                                        <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
-                                        <span class="sr-only">warning:</span>
-                                        This option does not delete the relationship, if you want to delete an annotation relationships, delete the annotation.
-                                        or try restore last save with <span class="bold">F5</span> key 
-                                    </div>
                                 </div>
                             </li>
                         </ul>
@@ -287,21 +273,21 @@
                                     </div>
                                     <?php
                                     echo $this->Html->media(
-                                            array(
                                         array(
-                                            'src' => '../videos/annotationExample.ogv',
-                                            'type' => "video/ogg"
-                                        ),
-                                        array(
-                                            'src' => '../videos/annotationExample.webm',
-                                            'type' => "video/webm"
-                                        ),
-                                        array(
-                                            'src' => '../videos/annotationExample.mp4',
-                                            'type' => "video/mp4"
-                                        ),
-                                            ), array('controls', "preload" => "none",
-                                        'class' => 'video')
+                                          array(
+                                                'src' => '../videos/annotationExample.ogv',
+                                                'type' => "video/ogg"
+                                          ),
+                                          array(
+                                                'src' => '../videos/annotationExample.webm',
+                                                'type' => "video/webm"
+                                          ),
+                                          array(
+                                                'src' => '../videos/annotationExample.mp4',
+                                                'type' => "video/mp4"
+                                          ),
+                                        ), array('controls', "preload" => "none",
+                                          'class' => 'video')
                                     );
                                     ?>
                                 </div>
@@ -310,9 +296,9 @@
                     </div>
                 </div> 
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
 
 
 
@@ -355,9 +341,9 @@
                 </h4>
             </div>
 
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="dialog-form" role="dialog" aria-labelledby="dialog-form" aria-hidden="true">
     <div class="modal-dialog">
@@ -382,9 +368,9 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Close</button>
                 <button type="button" class="btn btn-primary save">Save</button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
 
 <div id="form-Template" class="hidden">
     <div class="input">
@@ -412,9 +398,9 @@
                     <div class="f_circleG" id="frotateG_08"></div>
                 </div>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
 
 
 <div class="modal fade" id="dialog-createAssessment" role="dialog" aria-labelledby="dialog-createAssessments" aria-hidden="true">
@@ -427,65 +413,67 @@
             <div class="modal-body center-block">
                 <?php
                 echo $this->Html->link(__('assessmentView'), array('controller' => 'DocumentsAssessments',
-                    'action' => 'view', $project_id, $user_id, $document_id), array(
-                    'id' => 'assessmentView',
-                    "class" => "hidden"));
+                      'action' => 'view', $project_id, $user_id, $document_id), array(
+                      'id' => 'assessmentView',
+                      "class" => "hidden"));
 
 
-                echo $this->Form->create('DocumentsAssessments', array('url' => array(
-                        'controller' => 'DocumentsAssessments', 'action' => 'save'),
-                    'id' => 'submitAssessment'));
+                echo $this->Form->create('DocumentsAssessments', array(
+                      'url' => array(
+                            'controller' => 'DocumentsAssessments', 'action' => 'save'
+                      ),
+                      'id' => 'submitAssessment'));
                 echo $this->Form->hidden('id', array('id' => "documentsAssessmentsId"));
                 echo $this->Form->hidden('project_id', array('value' => $project_id));
                 echo $this->Form->hidden('document_id', array('value' => $document_id,
-                    'class' => 'assement_document_id'));
+                      'class' => 'assement_document_id'));
                 echo $this->Form->hidden('user_id', array('value' => $user_id));
                 echo $this->Form->input('about_author', array('id' => 'about_author',
-                    "class" => "form-control"));
+                      "class" => "form-control"));
                 echo $this->Form->input('topic', array('id' => "topic", "class" => "form-control"));
                 echo $this->Form->input('note', array('type' => "textarea", 'id' => 'note',
-                    "class" => "form-control"));
+                      "class" => "form-control"));
                 ?>
                 <div class="btn-group btn-group-justified">
                     <div class="btn-group" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-smile-o fa-2"></i>', array(
-                            'escape' => false,
-                            "class" => "btn  btn-success",
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "top",
-                            "data-original-title" => "This document its good!",
-                            "type" => "button",
-                            "id" => "positive",
-                            "name" => "positive",
+                              'escape' => false,
+                              "class" => "btn  btn-success",
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "top",
+                              "data-original-title" => "This document its good!",
+                              "type" => "button",
+                              "id" => "positive",
+                              "name" => "positive",
                         ));
                         ?> 
                     </div>
                     <div class="btn-group" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-meh-o fa-2"></i>', array(
-                            'escape' => false,
-                            "class" => "btn  btn-warning",
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "top",
-                            "data-original-title" => "mmm difficult to decide..",
-                            "type" => "button",
-                            "id" => "neutral",
-                            "name" => "neutral",
+                              'escape' => false,
+                              "class" => "btn  btn-warning",
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "top",
+                              "data-original-title" => "mmm difficult to decide..",
+                              "type" => "button",
+                              "id" => "neutral",
+                              "name" => "neutral",
                         ));
                         ?> 
                     </div>
                     <div class="btn-group" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-frown-o fa-2"></i>', array(
-                            'escape' => false,
-                            "class" => "btn  btn-danger",
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "top",
-                            "data-original-title" => "This document is not good",
-                            "type" => "button",
-                            "id" => "negative",
-                            "name" => "negative",
+                              'escape' => false,
+                              "class" => "btn  btn-danger",
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "top",
+                              "data-original-title" => "This document is not good",
+                              "type" => "button",
+                              "id" => "negative",
+                              "name" => "negative",
                         ));
                         ?> 
                     </div>
@@ -501,8 +489,8 @@
                 <button type="button" class="btn btn-primary save">Save</button>
             </div>
         </div>
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+    </div>
+</div>
 
 
 <div id="dialog-delete-confirm" title="Delete Annotation?" class="hidden" >
@@ -546,8 +534,8 @@
                 <button type="button" class="btn btn-warning ok">OK</button>
             </div>
         </div>
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+    </div>
+</div>
 
 
 
@@ -584,8 +572,8 @@ echo $this->element('annotationContextMenu');
             <div class="f_circleG" id="frotateG_07"></div>
             <div class="f_circleG" id="frotateG_08"></div>
         </div>
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+    </div>
+</div>
 
 
 <div class="modal fade" id="javaModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -603,6 +591,20 @@ echo $this->element('annotationContextMenu');
             <div class="modal-footer">
                 <button type="button" id="cancelJavaJob" class="btn btn-warning"  aria-label="Close">Cancel!</button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>
+
+
+<script id="interRelationPopover" type="text/html">
+    <div class="col-md-12">
+        <b>{0}</b> - has a relation of <span class="label label-default" style="background-color:{2}">{1}</span> with <b>{3}</b>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-12 text-center" style="margin-top: 5px;margin-bottom: 5px">
+            <button type="button" class="btn btn-danger popover-remove-relation" data-a-id="{4}" data-b-id="{5}" data-inter-relation-id="{6}" data-toggle="tooltip" data-placement="top" title="Remove this relation">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</script>

@@ -4,12 +4,12 @@ echo $this->Html->script('./amcharts/amcharts.js', array('block' => 'scriptInVie
 echo $this->Html->script('./amcharts/serial.js', array('block' => 'scriptInView'));
 echo $this->Html->script('./amcharts/pie.js', array('block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/markyUpdateJobs', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 
 echo $this->Html->link("updateLink", array("controller" => "jobs", "action" => "getServerStat"), array(
-    "id" => "updateLink", "class" => "hidden"))
+      "id" => "updateLink", "class" => "hidden"))
 ?>
-<a href="<?php echo $this->webroot . 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
+<a href="<?php echo 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
 
 <div id="serverStatus">
     <?php
@@ -107,13 +107,8 @@ echo $this->Html->link("updateLink", array("controller" => "jobs", "action" => "
                 <tr>
                     <th><?php echo $this->Paginator->sort('user_id'); ?></th>
                     <th><?php echo $this->Paginator->sort('program'); ?></th>
-                    <!--<th><?php // echo $this->Paginator->sort('PID');                                               ?></th>-->
                     <th><?php echo $this->Paginator->sort('status'); ?></th>
                     <th><?php echo $this->Paginator->sort('percentage'); ?></th>
-    <!--                <th><?php echo $this->Paginator->sort('program'); ?></th>
-                    <th><?php echo $this->Paginator->sort('created'); ?></th>
-                    <th><?php echo $this->Paginator->sort('modified'); ?></th>
-                    <th><?php echo $this->Paginator->sort('coments'); ?></th>-->
                     <th><?php echo $this->Paginator->sort('exception'); ?></th>
                     <th class="actions"><?php echo __('Actions'); ?></th>
                 </tr>
@@ -138,8 +133,8 @@ echo $this->Html->link("updateLink", array("controller" => "jobs", "action" => "
                             <div class="text-center">
                                 <?php
                                 echo $this->Html->link($job['User']['username'] . " " . $job['User']['surname'], array(
-                                    'controller' => 'users', 'action' => 'view',
-                                    $job['User']['id']));
+                                      'controller' => 'users', 'action' => 'view',
+                                      $job['User']['id']));
                                 ?> 
                             </div>
                         </td>
@@ -171,7 +166,7 @@ echo $this->Html->link("updateLink", array("controller" => "jobs", "action" => "
                             $job['Job']['exception'] = "No error";
                         }
                         ?>
-                        <td data-toggle="popover"  data-container="body" data-placement="top" title="Popover title" data-content="<?php echo  substr($job["Job"]["exception"],0, 500) ?>">
+                        <td data-toggle="popover"  data-container="body" data-placement="top" title="Popover title" data-content="<?php echo substr($job["Job"]["exception"], 0, 500) ?>">
                             <?php
                             if ($job['Job']['exception'] != '' && $job['Job']['exception'] != 'No error') {
                                 ?>
@@ -187,22 +182,23 @@ echo $this->Html->link("updateLink", array("controller" => "jobs", "action" => "
                         <td class="actions">
                             <?php
                             echo $this->Html->link(__('<i class="fa fa-download"></i>Download'), array(
-                                'action' => 'export',
-                                $job['Job']['id']), array("class" => "btn btn-primary",
-                                'escape' => false,
-                                "data-toggle" => "tooltip",
-                                "data-placement" => "top",
-                                "data-original-title" => "Get more information")
+                                  'action' => 'export',
+                                  $job['Job']['id']), array("class" => "btn btn-primary",
+                                  'escape' => false,
+                                  "data-toggle" => "tooltip",
+                                  "data-placement" => "top",
+                                  'target' => '_blank',
+                                  "data-original-title" => "Get more information")
                             );
                             echo $this->Html->link(__('<i class="fa fa-times"></i>Cancel'), array(
-                                'action' => 'kill',
-                                $job['Job']['id']), array("class" => "btn btn-danger cancel-job",
-                                "title" => __('Are you sure you want to cancel this proccess?'),
-                                'escape' => false,
-                                "data-job-id" => $job['Job']['id'],
-                                "data-toggle" => "tooltip",
-                                "data-placement" => "top",
-                                "data-original-title" => "cancel")
+                                  'action' => 'kill',
+                                  $job['Job']['id']), array("class" => "btn btn-danger cancel-job",
+                                  "title" => __('Are you sure you want to cancel this proccess?'),
+                                  'escape' => false,
+                                  "data-job-id" => $job['Job']['id'],
+                                  "data-toggle" => "tooltip",
+                                  "data-placement" => "top",
+                                  "data-original-title" => "cancel")
                             );
                             ?>                       
                         </td>
@@ -213,23 +209,12 @@ echo $this->Html->link("updateLink", array("controller" => "jobs", "action" => "
         <p>
             <?php
             echo $this->Paginator->counter(array(
-                'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+                  'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
             ));
             ?>	
         </p>
         <div class="col-sm-12">
             <div class="col-sm-4 table-actions">
-                <!--            <div class="multiDelete col-sm-6 action">
-                <?php
-//                echo $this->Form->create('connections', array('id' => 'connectionsDeleteAll',
-//                    'class' => 'multiDeleteIndex', 'action' => 'deleteAll'));
-//                echo $this->Form->button('<i class="fa fa-exclamation-triangle "></i><i class="fa fa-trash-o"></i> Delete All', array(
-//                    'title' => 'Are you sure you want to delete all Connections?',
-//                    'class' => 'deleteButton deleteAll btn btn-danger delete-item',
-//                    'scape' => false, 'type' => 'submit'));
-//                echo $this->Form->end();
-                ?>
-                            </div>-->
             </div>
             <div class="col-sm-8 action">
                 <div class="pagination-large">

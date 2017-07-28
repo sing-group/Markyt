@@ -1,5 +1,5 @@
 <?php
-//echo $this->Html->script('markyMultiDelete.js', array('block' => 'scriptInView'));
+
 ?>
 <div class="posts index data-table">
     <h1><?php echo __('Posts'); ?></h1>

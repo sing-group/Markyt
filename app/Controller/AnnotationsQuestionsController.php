@@ -12,124 +12,95 @@ class AnnotationsQuestionsController extends AppController {
     public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('view');
-//        $this->Auth->allow('find');
     }
 
     public function find() {
         if ($this->request->is('get')) {
-
             $this->Annotation = $this->AnnotationsQuestion->Annotation;
             $this->Document = $this->Annotation->Document;
-
             $documents = array();
             $type_id = $this->request->query['type_id'];
             $query = $this->request->query['query'];
             $triada = $this->Session->read('triada');
-//            $only_review=false;
-//            if (isset($this->request->query['only_review']))
-                $only_review = $this->request->query['only_review'];
-            
-            
-            
-            
+            $only_review = $this->request->query['only_review'];
             $conditions = array(
-                'user_id' => $triada['user_id'],
-                'round_id' => $triada['round_id'],
-                'UPPER(annotated_text) LIKE' => "%" . strtoupper(trim($query)) . "%",
+                  'user_id' => $triada['user_id'],
+                  'round_id' => $triada['round_id'],
+                  'UPPER(annotated_text) LIKE' => "%" . strtoupper(trim($query)) . "%",
             );
-
             if (isset($type_id) && $type_id != -1) {
                 $conditions['type_id'] = $type_id;
             }
             if ($only_review) {
                 $conditions['mode'] = 2;
             }
-
             $this->Annotation->virtualFields['total'] = 'COUNT(Annotation.id)';
-
-
-
             $annotations = $this->Annotation->find('all', array(
-                'recursive' => -1, //int
-                'fields' => array('Annotation.id', 'Annotation.document_id'),
-                'conditions' => $conditions, //array of conditions
-                'order' => array('Annotation.document_id ASC'),
+                  'recursive' => -1, //int
+                  'fields' => array('Annotation.id', 'Annotation.document_id'),
+                  'conditions' => $conditions, //array of conditions
+                  'order' => array('Annotation.document_id ASC'),
             ));
-//            $ocurrences = array_sum($documents);
-//            $ocurrences = Set::apply('total', $documents, 'array_sum');
-//            $ocurrences = $this->Annotation->find('count', array(
-//                'recursive' => -1, //int
-//                'fields' => array('Annotation.id', 'Annotation.document_id'),
-//                'conditions' => $conditions, //array of conditions
-//                'order' => array('Annotation.document_id ASC'),
-//                'group' => array('Annotation.document_id'), //fields to GROUP BY
-//            ));
-//            
             return $this->correctResponseJson(json_encode(array(
-                        'success' => true,
-                        'annotations' => $annotations,
-                        'query' => $query,
-                        'ocurrences' => count($annotations),
+                      'success' => true,
+                      'annotations' => $annotations,
+                      'query' => $query,
+                      'ocurrences' => count($annotations),
             )));
         }
     }
 
     public function view($id = null) {
-
         $this->Question = $this->AnnotationsQuestion->Question;
         $this->Type = $this->Question->Type;
         $this->Participant = $this->AnnotationsQuestion->Annotation->Round->Project->Participant;
         $this->Annotation = $this->AnnotationsQuestion->Annotation;
         $this->GoldenProject = $this->Participant->GoldenProject;
-
         //si la anotacion no existe
         if (!isset($id)) {
             $id = $this->request->query['type_id'];
             $this->Type->id = $id;
-
             if (!$this->Type->exists()) {
                 return $this->correctResponseJson(json_encode(array(
-                            'success' => false,
-                            'message' => "This type doesnt exist")));
+                          'success' => false,
+                          'message' => "This type doesnt exist")));
             } else {
                 $questions = $this->Question->find('all', array(
-                    'recursive' => -1,
-                    'contain' => array(
-                        'Question'),
-                    'fields' => array(
-                        'id as question_id',
-                        'question'),
-                    'order' => 'id ASC',
-                    'conditions' => array(
-                        "type_id" => $id,
-                    )
+                      'recursive' => -1,
+                      'contain' => array(
+                            'Question'),
+                      'fields' => array(
+                            'id as question_id',
+                            'question'),
+                      'order' => 'id ASC',
+                      'conditions' => array(
+                            "type_id" => $id,
+                      )
                 ));
-
                 $lastAnnotation = $this->getTypeOfWord($this->request->query['text']);
                 return $this->correctResponseJson(json_encode(array(
-                            'success' => true,
-                            'AnnotationsQuestion' => $questions,
-                            'lastAnnotation' => $lastAnnotation)));
+                          'success' => true,
+                          'AnnotationsQuestion' => $questions,
+                          'lastAnnotation' => $lastAnnotation)));
             }
         } else {
             //si la anotacion existe
             $group_id = $this->Session->read('group_id');
             $conditions = array(
-                'id' => $id);
+                  'id' => $id);
             $openAnnotatedDocs = Configure::read('openAnnotatedDocs');
-
             if (isset($group_id)) {
                 if ($group_id > 1) {
                     $triada = $this->Session->read('triada');
                     $conditions = array(
-                        'id' => $id,
-                        'user_id' => $triada['user_id'],
-                        'round_id' => $triada['round_id'],
-                        'document_id' => $triada['document_id'],
+                          'id' => $id,
+                          'user_id' => $triada['user_id'],
+                          'round_id' => $triada['round_id'],
+                          'document_id' => $triada['document_id'],
                     );
                 } else {
                     $conditions = array(
-                        'id' => $id,
+                          'id' => $id,
                     );
                 }
                 $documentsPerPage = Configure::read('documentsPerPage');
@@ -139,104 +110,85 @@ class AnnotationsQuestionsController extends AppController {
             } else if ($openAnnotatedDocs) {
                 //poder ver respuestas en la parte publica
                 $goldenRounds = $this->GoldenProject->find('list', array(
-                    'recursive' => -1,
-                    'fields' => array(
-                        'id',
-                        'round_id'),
-//                    'conditions' => array('project_id' => $project_id),
+                      'recursive' => -1,
+                      'fields' => array(
+                            'id',
+                            'round_id'),
                 ));
                 $goldenUsers = $this->GoldenProject->find('list', array(
-                    'recursive' => -1,
-                    'fields' => array(
-                        'id',
-                        'user_id'),
-//                    'conditions' => array('project_id' => $project_id),
+                      'recursive' => -1,
+                      'fields' => array(
+                            'id',
+                            'user_id'),
                 ));
-
                 if (!empty($goldenUsers) && !empty($goldenRounds)) {
                     $conditions = array(
-                        'id' => $id,
-                        'user_id' => $goldenUsers,
-                        'round_id' => $goldenRounds,
+                          'id' => $id,
+                          'user_id' => $goldenUsers,
+                          'round_id' => $goldenRounds,
                     );
                 } else {
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => false,
-                                'message' => "This annotation doesnt exist in database")));
+                              'success' => false,
+                              'message' => "This annotation doesnt exist in database")));
                 }
             } else {
                 //si no esta resgistrado y no es un round abierto ¿Qué hace aquí?
                 exit();
             }
-
-
-
-
             if (!$this->Annotation->hasAny($conditions)) {
                 //do something
-
                 return $this->correctResponseJson(json_encode(array(
-                            'success' => false,
-                            'message' => "This annotation doesnt exist in database")));
+                          'success' => false,
+                          'message' => "This annotation doesnt exist in database")));
             } else {
-
                 $typeId = $this->request->query['type_id'];
                 $this->Type->id = $typeId;
-
                 if (!$this->Type->exists()) {
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => false,
-                                'message' => "Type $typeId doesnt exist")));
+                              'success' => false,
+                              'message' => "Type $typeId doesnt exist")));
                 }
-
-
-
                 $answers = $this->AnnotationsQuestion->find('all', array(
-                    'recursive' => -1,
-                    'contain' => array(
-                        'Question'),
-                    'fields' => array(
-                        'id',
-                        'Question.id as question_id',
-                        'AnnotationsQuestion.answer',
-                        'Question.question'
-                    ),
-                    'order' => 'AnnotationsQuestion.question_id ASC',
-                    'conditions' => array(
-                        'OR' => array(
-                            "AnnotationsQuestion.annotation_id" => $id,
-                        ),
-                    )
+                      'recursive' => -1,
+                      'contain' => array(
+                            'Question'),
+                      'fields' => array(
+                            'id',
+                            'Question.id as question_id',
+                            'AnnotationsQuestion.answer',
+                            'Question.question'
+                      ),
+                      'order' => 'AnnotationsQuestion.question_id ASC',
+                      'conditions' => array(
+                            'OR' => array(
+                                  "AnnotationsQuestion.annotation_id" => $id,
+                            ),
+                      )
                 ));
-
-
                 $questionList = Hash::combine($answers, '{n}.Question.id', '{n}.Question.id');
-
                 $answers = Hash::combine($answers, '{n}.Question.id', '{n}');
-
                 $questions = $this->Question->find('all', array(
-                    'recursive' => -1,
-                    'fields' => array(
-                        'id as question_id',
-                        'question'),
-                    'order' => 'id ASC',
-                    'conditions' => array(
-                        'NOT' => array(
-                            'id' => $questionList),
-                        "type_id" => $typeId,
-                    )
+                      'recursive' => -1,
+                      'fields' => array(
+                            'id as question_id',
+                            'question'),
+                      'order' => 'id ASC',
+                      'conditions' => array(
+                            'NOT' => array(
+                                  'id' => $questionList),
+                            "type_id" => $typeId,
+                      )
                 ));
-
                 for ($index = 0; $index < count($questions); $index++) {
                     $questions[$index]['AnnotationsQuestion'] = array();
                 }
-
                 $questions = Hash::combine($questions, '{n}.Question.question_id', '{n}');
                 $answers = Hash::merge($answers, $questions);
                 return $this->correctResponseJson(json_encode(array(
-                            'success' => true,
-                            'AnnotationsQuestion' => $answers,
-                            'lastAnnotation' => array())));
+                          'success' => true,
+                          'AnnotationsQuestion' => $answers,
+                          'lastAnnotation' => array())));
             }
         }
     }
@@ -253,116 +205,91 @@ class AnnotationsQuestionsController extends AppController {
         $this->Type = $this->Annotation->Type;
         $this->Document = $this->Annotation->Document;
         $this->User = $this->Annotation->User;
-
-
         if ($this->request->is('post') || $this->request->is('put')) {
             //variable que contiene User.round.Document.user_round_id
             $triada = $this->Session->read('triada');
             $modes = Configure::read('annotationsModes');
-
             $newAnnotation = array(
-                'annotated_text' => $this->request->data['text'],
-                'document_id' => $triada['document_id'],
-                'type_id' => $this->request->data['type_id'],
-                'round_id' => $triada['round_id'],
-                'user_id' => $triada['user_id'],
-                'mode' => $modes["MANUAL"],
-//                'init' => $this->request->data['start'],
-//                'end' =>$this->request->data['end'],
+                  'annotated_text' => $this->request->data['text'],
+                  'document_id' => $triada['document_id'],
+                  'type_id' => $this->request->data['type_id'],
+                  'round_id' => $triada['round_id'],
+                  'user_id' => $triada['user_id'],
+                  'mode' => $modes["MANUAL"],
             );
-
             $documentsPerPage = Configure::read('documentsPerPage');
             if (isset($documentsPerPage) && $documentsPerPage > 1) {
-
-
                 if (!isset($this->request->data['document_id'])) {
                     $this->request->data['document_id'] = -1;
                 }
                 $newAnnotation['document_id'] = $this->request->data['document_id'];
                 $triada['document_id'] = $this->request->data['document_id'];
-
-
                 $conditions = array(
-                    'id' => $this->request->data['document_annotated_id'],
-                    'document_id' => $this->request->data['document_id'],
-                    'user_id' => $triada['user_id'],
-                    'round_id' => $triada['round_id']);
-
+                      'id' => $this->request->data['document_annotated_id'],
+                      'document_id' => $this->request->data['document_id'],
+                      'user_id' => $triada['user_id'],
+                      'round_id' => $triada['round_id']);
                 if (!isset($this->request->data['document_annotated_id']) && !isset($this->request->data['document_id'])) {
-
                     $this->log("[ANNOTATION] Request data not received in annotation mode " .
-                            ' document_annotated_id =>' . $this->request->data['document_annotated_id'] .
-                            ', document_id =>' . $this->request->data['document_id']
+                        ' document_annotated_id =>' . $this->request->data['document_annotated_id'] .
+                        ', document_id =>' . $this->request->data['document_id']
                     );
-
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => false,
-                                'message' => "Ops! This annotation could not be saved. Request data not received "
+                              'success' => false,
+                              'message' => "Ops! This annotation could not be saved. Request data not received "
                     )));
                 }
                 if (!$this->AnnotatedDocument->hasAny($conditions)) {
-
                     $this->log("[ANNOTATION]  404 Annotatd document not found in annotation mode " .
-                            ' id =>' . $this->request->data['document_annotated_id'] .
-                            ', document_id =>' . $this->request->data['document_id'] .
-                            ', user_id =>' . $triada['user_id'] .
-                            ', round_id=>' . $triada['round_id']);
-
+                        ' id =>' . $this->request->data['document_annotated_id'] .
+                        ', document_id =>' . $this->request->data['document_id'] .
+                        ', user_id =>' . $triada['user_id'] .
+                        ', round_id=>' . $triada['round_id']);
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => false,
-                                'message' => "Ops! This annotation could not be saved. 404 Annotatd document not found"
+                              'success' => false,
+                              'message' => "Ops! This annotation could not be saved. 404 Annotatd document not found"
                     )));
                 }
             } else {
                 $conditions = array(
-                    'id' => $this->request->data['document_annotated_id'],
-                    'document_id' => $triada['document_id'],
-                    'round_id' => $triada['round_id'],
-                    'user_id' => $triada['user_id'],
+                      'id' => $this->request->data['document_annotated_id'],
+                      'document_id' => $triada['document_id'],
+                      'round_id' => $triada['round_id'],
+                      'user_id' => $triada['user_id'],
                 );
             }
-
-
             if (isset($this->request->data['section']) && $this->request->data['section'] !== '') {
                 $newAnnotation['section'] = $this->request->data['section'];
             } else {
                 $newAnnotation['section'] = null;
             }
-
             $this->Type->id = $this->request->data['type_id'];
             $this->Round->id = $triada['round_id'];
             $this->Document->id = $triada['document_id'];
             $this->User->id = $triada['user_id'];
-
-
             if ($this->Type->exists() && $this->Round->exists() && $this->Document->exists() && $this->User->exists()) {
-
                 $this->Annotation->annotated_text = $this->request->data['text'];
                 $lastAnnotation = $this->getTypeOfWord($this->request->data['text']);
                 if ($this->Annotation->save($newAnnotation)) {
-
-                    $this->updateElapsedTime($conditions);
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => true,
-                                'id' => $this->Annotation->id,
-                                'lastAnnotation' => $lastAnnotation,)));
+                              'success' => true,
+                              'id' => $this->Annotation->id,
+                              'lastAnnotation' => $lastAnnotation,)));
                 }
             }
-
             $this->log("[ANNOTATION] annotation could not be saved. " .
-                    ' Type =>' . $this->Type->exists() .
-                    ', Round =>' . $this->Round->exists() .
-                    ', Document =>' . $this->Document->exists() .
-                    ', User =>' . $this->User->exists()
+                ' Type =>' . $this->Type->exists() .
+                ', Round =>' . $this->Round->exists() .
+                ', Document =>' . $this->Document->exists() .
+                ', User =>' . $this->User->exists()
             );
-
             return $this->correctResponseJson(json_encode(array(
-                        'success' => false,
-                        'message' => "This annotation could not be saved. On save error")));
+                      'success' => false,
+                      'message' => "This annotation could not be saved. On save error")));
         }
         return $this->correctResponseJson(json_encode(array(
-                    'success' => false,
-                    'message' => "GET???")));
+                  'success' => false,
+                  'message' => "GET???")));
     }
 
     /*
@@ -371,7 +298,6 @@ class AnnotationsQuestionsController extends AppController {
      * */
 
     public function save() {
-
         $isEnd = $this->Session->read('isEnd');
         if (!$isEnd) {
             if ($this->request->is('post')) {
@@ -379,88 +305,72 @@ class AnnotationsQuestionsController extends AppController {
                 $answers = json_decode($this->request->data['answers'], true);
                 $isEnableAnswerPropagation = Configure::read('enableAnswerPropagation');
                 if ($isEnableAnswerPropagation) {
-
                     App::uses('Sanitize', 'Utility');
                     $answersCopy = array();
                     foreach ($answers as $answer) {
                         $question_id = $answer["question_id"];
                         $answersCopy[$question_id] = $answer["answer"];
                     }
-
                     $annotation_id = $this->request->data["annotation_id"];
                     $triada = $this->Session->read('triada');
                     $this->Annotation = $this->AnnotationsQuestion->Annotation;
-
                     $db = $this->AnnotationsQuestion->getDataSource();
                     $alias = $this->Annotation->table . "_A";
-
-
                     $this->Annotation->id = $annotation_id;
                     $annotated_text = $this->Annotation->field('annotated_text');
-
                     $options = array(
-                        'fields' => array(
-                            "$alias.id"
-                        ),
-                        'table' => $this->Annotation->table,
-                        'alias' => $alias,
-                        'conditions' => array(
-                            "$alias.annotated_text" => $annotated_text,
-                            "$alias.round_id" => $triada['round_id'],
-                            "$alias.user_id" => $triada['user_id'],),
+                          'fields' => array(
+                                "$alias.id"
+                          ),
+                          'table' => $this->Annotation->table,
+                          'alias' => $alias,
+                          'conditions' => array(
+                                "$alias.annotated_text" => $annotated_text,
+                                "$alias.round_id" => $triada['round_id'],
+                                "$alias.user_id" => $triada['user_id'],),
                     );
-
-
                     $subQuery = $db->buildStatement($options, $this->Annotation);
-
-
                     $ids = $this->Annotation->find('list', array(
-                        'fields' => array(
-                            "id", "id"
-                        ),
-                        'recursive' => -1,
-                        'conditions' => array(
-                            "annotated_text" => $annotated_text,
-                            "round_id" => $triada['round_id'],
-                            "user_id" => $triada['user_id'],
-                        )
+                          'fields' => array(
+                                "id", "id"
+                          ),
+                          'recursive' => -1,
+                          'conditions' => array(
+                                "annotated_text" => $annotated_text,
+                                "round_id" => $triada['round_id'],
+                                "user_id" => $triada['user_id'],
+                          )
                     ));
-
                     $annotationsWithAnswers = $this->AnnotationsQuestion->find('list', array(
-                        'fields' => array(
-                            "annotation_id", "annotation_id"
-                        ),
-                        'recursive' => -1,
-                        'conditions' => array(
-                            "annotation_id IN ($subQuery)"
-                        )
+                          'fields' => array(
+                                "annotation_id", "annotation_id"
+                          ),
+                          'recursive' => -1,
+                          'conditions' => array(
+                                "annotation_id IN ($subQuery)"
+                          )
                     ));
-
-
                     $annotationsWithoutAnswers = array_diff($ids, $annotationsWithAnswers);
-
                     $db->begin();
                     $this->AnnotationsQuestion->recursive = -1;
                     $size = count($annotationsWithoutAnswers);
                     $insert = "INSERT INTO " . $this->AnnotationsQuestion->table . " (annotation_id, question_id, answer) VALUES ";
                     foreach ($answersCopy as $question_id => $answer) {
                         if (!empty($annotationsWithAnswers) && !$this->AnnotationsQuestion->updateAll(array(
-                                    "answer" => "'" . Sanitize::paranoid($answer) . "'"), array(
-                                    "annotation_id" => $annotationsWithAnswers, "question_id" => $question_id))) {
+                                  "answer" => "'" . Sanitize::paranoid($answer) . "'"), array(
+                                  "annotation_id" => $annotationsWithAnswers, "question_id" => $question_id))) {
                             $db->rollback();
-
                             $this->log("[ANNOTATION] Update all answers error ");
                             return $this->correctResponseJson(json_encode(array(
-                                        'success' => false,
-                                        'message' => "Ops! Annotation could not be saved. [Update all answers error]")));
+                                      'success' => false,
+                                      'message' => "Ops! Annotation could not be saved. [Update all answers error]")));
                         }
                         if ($size > 0) {
                             foreach ($annotationsWithoutAnswers as $id) {
-                                $insert.= "(" . $id . "," . $question_id . ",'" . Sanitize::paranoid($answer) . "'),";
+                                $insert .= "(" . $id . "," . $question_id . ",'" . Sanitize::paranoid($answer) . "'),";
                             }
                         }
                     }
-
                     if ($size > 0) {
                         $insert = substr($insert, 0, -1) . ";";
                         $result = $this->AnnotationsQuestion->query($insert);
@@ -468,81 +378,36 @@ class AnnotationsQuestionsController extends AppController {
                             $db->rollback();
                             $this->log("[ANNOTATION] Annotation could not be saved. [insert all answers fail");
                             return $this->correctResponseJson(json_encode(array(
-                                        'success' => false,
-                                        'message' => "Ops! Annotation could not be saved. [insert all answers error]")));
+                                      'success' => false,
+                                      'message' => "Ops! Annotation could not be saved. [insert all answers error]")));
                         }
                     }
                     $db->commit();
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => true)));
-
-//                    $annotations = $this->AnnotationsQuestion->find('list', array(
-//                        'recursive' => -1, //int
-//                        'fields' => array('id', 'answer'),
-////                        'conditions' => array('Job.field' => $thisValue), //array of conditions
-//                        'joins' => array(
-//                            array(
-//                                'table' => 'annotations',
-//                                'alias' => 'Annotation',
-//                                'type' => 'LEFT',
-//                                'conditions' => array(
-//                                    'AnnotationsQuestion.annotation_id = Annotation.id',
-//                                    'Annotation.annotated_text' => $this->request->data['annotation'],
-//                                    'Annotation.round_id' => $triada['round_id'],
-//                                    'Annotation.user_id' => $triada['user_id'],
-//                                )
-//                            )
-//                        ),
-//                    ));
+                              'success' => true)));
                 }
                 if (!empty($answers)) {
                     if ($this->AnnotationsQuestion->saveAll($answers)) {
                         return $this->correctResponseJson(json_encode(array(
-                                    'success' => true)));
+                                  'success' => true)));
                     } else {
                         $this->log("[ANNOTATION] Annotation could not be saved. [insert answers (simple) error]");
                         return $this->correctResponseJson(json_encode(array(
-                                    'success' => false,
-                                    'message' => "Ops! Annotation could not be saved. [insert answers (simple) error]")));
+                                  'success' => false,
+                                  'message' => "Ops! Annotation could not be saved. [insert answers (simple) error]")));
                     }
                 } else {
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => true)));
+                              'success' => true)));
                 }
-
                 //devolvemos el id de la nueva anotacion
             }
         }
     }
 
-    private function updateElapsedTime($conditions) {
-
-        $this->AnnotatedDocument = $this->Round->AnnotatedDocument;
-
-
-
-        $lastDate = $this->Session->read('start_step');
-        $elapsed = $lastDate->diff(new DateTime(''));
-        $elapsed_seconds = $elapsed->s;
-        $elapsed_minutes = round($elapsed_seconds / 60, 2);
-
-        if ($this->AnnotatedDocument->hasAny($conditions)) {
-            $this->AnnotatedDocument->id = $conditions['id'];
-            $databaseTime = $this->AnnotatedDocument->field('annotation_minutes');
-            $total = $elapsed_minutes + $databaseTime;
-
-
-            $this->AnnotatedDocument->saveField('annotation_minutes', $total);
-            $this->Session->write('start_step', new DateTime(''));
-        }
-    }
-
     function questionsAnswersView($id = null) {
-
         $this->Annotation = $this->AnnotationsQuestion->Annotation;
         $this->Question = $this->Annotation->Question;
-
-
         $this->Annotation->id = $id;
         if ($this->request->is('post')) {
             throw new MethodNotAllowedException();
@@ -550,27 +415,24 @@ class AnnotationsQuestionsController extends AppController {
             $data = $this->Session->read('confrontationPostedData');
             $this->Annotation->id = $id;
             if ($this->Annotation->exists()) {
-
                 $user_id = $this->Session->read('user_id');
                 $group_id = $this->Session->read('group_id');
-
                 $annotation = $this->Annotation->find('first', array(
-                    'recursive' => -1,
-                    'conditions' => array(
-                        'Annotation.id' => $id
-                    )
+                      'recursive' => -1,
+                      'conditions' => array(
+                            'Annotation.id' => $id
+                      )
                 ));
                 if ($group_id != 1 && $annotation['Annotation']['user_id'] != $user_id) {
                     $this->Session->setFlash(__('Do not try to spy on the responses of other scorers. Not a good practice'));
                     $redirect = $this->Session->read('redirect');
                     $this->redirect($redirect);
                 }
-
                 $AnnotationsQuestions = $this->AnnotationsQuestion->find('all', array(
-                    'recursive' => -1,
-                    'conditions' => array(
-                        'AnnotationsQuestion.annotation_id' => $id
-                    )
+                      'recursive' => -1,
+                      'conditions' => array(
+                            'AnnotationsQuestion.annotation_id' => $id
+                      )
                 ));
                 $question_id = array();
                 $question_answer = array();
@@ -579,10 +441,10 @@ class AnnotationsQuestionsController extends AppController {
                     $question_answer[$AnnotationsQuestion['AnnotationsQuestion']['question_id']] = $AnnotationsQuestion['AnnotationsQuestion']['answer'];
                 }
                 $questions = $this->Question->find('all', array(
-                    'recursive' => -1,
-                    'conditions' => array(
-                        'Question.id' => $question_id
-                    )
+                      'recursive' => -1,
+                      'conditions' => array(
+                            'Question.id' => $question_id
+                      )
                 ));
                 $this->set('questions', $questions);
                 $this->set('question_answer', $question_answer);
@@ -598,8 +460,6 @@ class AnnotationsQuestionsController extends AppController {
 
     function updateSection($id = null) {
         $this->Annotation = $this->AnnotationsQuestion->Annotation;
-
-
         $debug = Configure::read('debug');
         if ($debug == 2) {
             $id = $this->request->data['id'];
@@ -609,12 +469,11 @@ class AnnotationsQuestionsController extends AppController {
             } else {
                 $this->Annotation->id = $id;
                 if ($this->Annotation->exists()) {
-
                     $user_id = $this->Session->read('user_id');
                     $group_id = $this->Session->read('group_id');
                     $this->Annotation->saveField('section', trim($this->request->data['section']));
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => true)));
+                              'success' => true)));
                 }
             }
         }
@@ -628,10 +487,6 @@ class AnnotationsQuestionsController extends AppController {
     public function ajaxMultiAdd() {
         $this->Annotation = $this->AnnotationsQuestion->Annotation;
         $this->Question = $this->Annotation->Question;
-//        $this->Round = $this->Annotation->Round;
-//        $this->UsersRound = $this->Round->UsersRound;
-//        $this->AnnotatedDocument = $this->Round->AnnotatedDocument;
-//        
         //no mostrar vista
         $this->autoRender = false;
         $isEnd = $this->Session->read('isEnd');
@@ -641,38 +496,28 @@ class AnnotationsQuestionsController extends AppController {
             if ($this->request->is('post')) {
                 //variable que contiene User.round.Document.user_round_id
                 $triada = $this->Session->read('triada');
-//                $isTriada = $this->request->data['user_id'] . $this->request->data['round_id'] . $this->request->data['document_id'] . $this->request->data['users_round_id'];
-//                //si el id del usuario se ha modificado, se trata de un hacker o un chistoso
-//                //por ello abortamos la ejecucion
-//                if ($triada != $isTriada) {
-//                    return $this->correctResponseJson(json_encode(array(
-//                                'success' => false,
-//                                'message' => "ErrorAbort")));
-//                }
                 $answers = $this->request->data['answers'];
                 $newAnnotation = array(
-                    'annotated_text' => $this->request->data['text'],
-                    'document_id' => $this->request->data['document_id'],
-                    'users_round_id' => $triada['users_round_id'],
-                    'type_id' => $this->request->data['type_id'],
-                    'round_id' => $triada['round_id'],
-                    'user_id' => $triada['user_id']
+                      'annotated_text' => $this->request->data['text'],
+                      'document_id' => $this->request->data['document_id'],
+                      'users_round_id' => $triada['users_round_id'],
+                      'type_id' => $this->request->data['type_id'],
+                      'round_id' => $triada['round_id'],
+                      'user_id' => $triada['user_id']
                 );
                 $actualNumQuestions = $this->Question->find('count', array(
-                    'recursive' => -1,
-                    'conditions' => array(
-                        "Question.type_id" => $this->request->data['type_id']
-                    )
+                      'recursive' => -1,
+                      'conditions' => array(
+                            "Question.type_id" => $this->request->data['type_id']
+                      )
                 ));
-
                 if ($this->request->data['numberOfQuestions'] != $actualNumQuestions) {
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => false,
-                                'message' => "alert questions")));
+                              'success' => false,
+                              'message' => "alert questions")));
                     //se produce cuando el numero de preguntas es distinto al numero de respuestas
                     //generalmente cuando se borra o se crea una pregunta mientras estas en la ejecucion de un round
                 } else {
-
                     $db = $this->AnnotationsQuestion->getDataSource();
                     $db->begin();
                     //si se produce un error en alguna parte se producira un reload de la pagina y la anotacion sera borada al no tener
@@ -683,7 +528,6 @@ class AnnotationsQuestionsController extends AppController {
                         $commit = $commit & $this->Annotation->save($newAnnotation);
                         array_push($annotationIds, $this->Annotation->getLastInsertID());
                     }
-
                     if ($answers != 'empty') {
                         foreach ($annotationIds as $id) {
                             $answersCopy = str_replace('#M#', $id, $answers);
@@ -694,17 +538,16 @@ class AnnotationsQuestionsController extends AppController {
                             //throw new Exception;
                             if (!empty($answers) && !$commit) {
                                 return $this->correctResponseJson(json_encode(array(
-                                            'success' => false,
-                                            'message' => "ErrorSave. Because it has one error in Answer save ")));
+                                          'success' => false,
+                                          'message' => "ErrorSave. Because it has one error in Answer save ")));
                                 break;
                             }
                         }
                     }
-
                     if ($commit) {
                         return $this->correctResponseJson(json_encode(array(
-                                    'success' => false,
-                                    'annotation_ids' => $annotationIds)));
+                                  'success' => false,
+                                  'annotation_ids' => $annotationIds)));
                         $db->commit();
                     } else {
                         $db->rollback();
@@ -713,8 +556,8 @@ class AnnotationsQuestionsController extends AppController {
                 }
             } else {
                 return $this->correctResponseJson(json_encode(array(
-                            'success' => false,
-                            'message' => "Error in Post Marky ")));
+                          'success' => false,
+                          'message' => "Error in Post Marky ")));
             }
         }
     }
@@ -728,39 +571,28 @@ class AnnotationsQuestionsController extends AppController {
         $this->UsersRound = $this->Round->UsersRound;
         $this->Document = $this->UsersRound->Document;
         $this->AnnotatedDocument = $this->Round->AnnotatedDocument;
-
-
         //no mostrar vista
         $isEnd = $this->Session->read('isEnd');
         $commit = true;
         $annotationIds = array();
         $annotationIdsMap = array(
-            'A' => array(),
-            'T' => array());
+              'A' => array(),
+              'T' => array());
         $isMultiDocument = Configure::read('documentsPerPage') > 1;
-
         if (!$isEnd) {
             if ($this->request->is('post') || $this->request->is('put')) {
                 //variable que contiene User.round.Document.user_round_id
                 $triada = $this->Session->read('triada');
-
-
-
                 $newAnnotation = array(
-                    'annotated_text' => $this->request->data['text'],
-                    'type_id' => $this->request->data['type_id'],
-                    'round_id' => $triada['round_id'],
-                    'user_id' => $triada['user_id'],
+                      'annotated_text' => $this->request->data['text'],
+                      'type_id' => $this->request->data['type_id'],
+                      'round_id' => $triada['round_id'],
+                      'user_id' => $triada['user_id'],
                 );
-
-
                 $this->Type->id = $this->request->data['type_id'];
                 $this->Round->id = $triada['round_id'];
                 $this->User->id = $triada['user_id'];
-
-
                 if ($isMultiDocument || $this->Type->exists() && $this->Round->exists() && $this->UsersRound->exists() && $this->User->exists()) {
-
                     $db = $this->AnnotationsQuestion->getDataSource();
                     $db->begin();
                     //si se produce un error en alguna parte se producira un reload de la pagina y la anotacion sera borada al no tener
@@ -777,37 +609,28 @@ class AnnotationsQuestionsController extends AppController {
                                 if (isset($anntationsMap[$index]['section'])) {
                                     $newAnnotation['section'] = $anntationsMap[$index]['section'];
                                 }
-
                                 $newAnnotation['document_id'] = $anntationsMap[$index]['document_id'];
-
                                 $conditions = array(
-                                    'id' => $anntationsMap[$index]['document_annotated_id'],
-                                    'document_id' => $newAnnotation['document_id'],
-                                    'user_id' => $newAnnotation['user_id'],
-                                    'round_id' => $newAnnotation['round_id']);
-
+                                      'id' => $anntationsMap[$index]['document_annotated_id'],
+                                      'document_id' => $newAnnotation['document_id'],
+                                      'user_id' => $newAnnotation['user_id'],
+                                      'round_id' => $newAnnotation['round_id']);
                                 if (!$this->AnnotatedDocument->hasAny($conditions)) {
                                     $this->log("[ANNOTATION Multiannotation] This Annotated Document doesnt exist in database " .
-                                            ' id =>' . $this->request->data['document_annotated_id'] .
-                                            ', document_id =>' . $this->request->data['document_id'] .
-                                            ', user_id =>' . $triada['user_id'] .
-                                            ', round_id=>' . $triada['round_id']);
-
-
+                                        ' id =>' . $this->request->data['document_annotated_id'] .
+                                        ', document_id =>' . $this->request->data['document_id'] .
+                                        ', user_id =>' . $triada['user_id'] .
+                                        ', round_id=>' . $triada['round_id']);
                                     return $this->correctResponseJson(json_encode(array(
-                                                'success' => false,
-                                                'message' => "Ops! This annotation could not be saved. Multiannotation 404, annotated document error " . json_encode($conditions))));
+                                              'success' => false,
+                                              'message' => "Ops! This annotation could not be saved. Multiannotation 404, annotated document error " . json_encode($conditions))));
                                 }
                                 $commit = $commit & $this->Annotation->save($newAnnotation);
                                 array_push($annotationIds, $this->Annotation->id);
                                 array_push($annotationIdsMap, array(
-                                    'document_id' => $this->Annotation->field('document_id'),
-                                    'id' => $this->AnnotationsQuestion->Annotation->id));
+                                      'document_id' => $this->Annotation->field('document_id'),
+                                      'id' => $this->AnnotationsQuestion->Annotation->id));
                             }
-
-//                            foreach ($usersRounds as $value) {
-//                                $this->updateElapsedTime($value);
-//                            }
                         } else {
                             $total = $anntationsMap['T'];
                             for ($index = 0; $index < $total; $index++) {
@@ -833,12 +656,9 @@ class AnnotationsQuestionsController extends AppController {
                             array_push($annotationIds, $this->Annotation->id);
                         }
                     }
-
-
                     if (!empty($this->request->data['answers'])) {
                         $answers = $this->request->data['answers'];
                         $answersSize = count($answers);
-
                         foreach ($annotationIds as $id) {
                             for ($index = 0; $index < $answersSize; $index++) {
                                 $answers[$index]['annotation_id'] = $id;
@@ -846,112 +666,97 @@ class AnnotationsQuestionsController extends AppController {
                             $commit = $commit & $this->AnnotationsQuestion->saveAll($answers);
                             if (!empty($answers) && !$commit) {
                                 return $this->correctResponseJson(json_encode(array(
-                                            'success' => false,
-                                            'message' => "Ops! This annotation could not be saved.")));
+                                          'success' => false,
+                                          'message' => "Ops! This annotation could not be saved.")));
                             }
                         }
                     }
-
-
-//                    debug($this->request->data['answers']);
-//                    throw new Exception;
                     if ($commit) {
                         $db->commit();
-//                        if (!$multiDocument) {
-//                            $this->updateElapsedTime($conditions);
-//                        }
-
                         return $this->correctResponseJson(json_encode(array(
-                                    'success' => true,
-                                    'annotation_ids' => $annotationIds,
-                                    'annotationIdsMap' => $annotationIdsMap)));
+                                  'success' => true,
+                                  'annotation_ids' => $annotationIds,
+                                  'annotationIdsMap' => $annotationIdsMap)));
                     } else {
                         $db->rollback();
                         return $this->correctResponseJson(json_encode(array(
-                                    'success' => false,
-                                    'message' => "Ops! This annotation could not be saved. No commit")));
+                                  'success' => false,
+                                  'message' => "Ops! This annotation could not be saved. No commit")));
                     }
                 } else {
                     return $this->correctResponseJson(json_encode(array(
-                                'success' => false,
-                                'message' => "Ops! This annotation could not be saved")));
+                              'success' => false,
+                              'message' => "Ops! This annotation could not be saved")));
                 }
             }
         }
     }
 
     function getPrediction() {
-
         $isEnd = $this->Session->read('isEnd');
         $triada = $this->Session->read('triada');
-
         if (!$isEnd) {
             if ($this->request->is('get') && $this->request->is('ajax')) {
                 $query = "";
                 if (strlen($this->request->query['q']) > 2) {
                     $query = $this->request->query['q'];
                 }
-
                 $conditions = array(
-                    'upper(answer) LIKE' => '%' . strtolower($query) . '%',
-//                    'round_id' => $triada['round_id'],
-                    'user_id' => $triada['user_id'],
-                    'round_id' => $triada['round_id'],
-                    'annotated_text' => $this->request->query['selectedText']
+                      'upper(answer) LIKE' => '%' . strtolower($query) . '%',
+                      'user_id' => $triada['user_id'],
+                      'round_id' => $triada['round_id'],
+                      'annotated_text' => $this->request->query['selectedText']
                 );
                 $answers = $this->AnnotationsQuestion->find('list', array(
-                    'recursive' => -1,
-                    'conditions' => $conditions,
-                    'contain' => 'Annotation',
-                    'fields' => array(
-                        'AnnotationsQuestion.id',
-                        'AnnotationsQuestion.answer'),
-                    'group' => 'answer',
-                    'order' => 'answer ASC'
+                      'recursive' => -1,
+                      'conditions' => $conditions,
+                      'contain' => 'Annotation',
+                      'fields' => array(
+                            'AnnotationsQuestion.id',
+                            'AnnotationsQuestion.answer'),
+                      'group' => 'answer',
+                      'order' => 'answer ASC'
                 ));
                 return $this->correctResponseJson(json_encode(array(
-                            'lastAnswers' => array_values($answers),
-                            'success' => true)));
+                          'lastAnswers' => array_values($answers),
+                          'success' => true)));
             }
         }
     }
 
     function getTypeOfSelection() {
-
         $isEnd = $this->Session->read('isEnd');
         if (!$isEnd) {
             if ($this->request->is('get') && $this->request->is('ajax')) {
                 $lastAnnotation = $this->getTypeOfWord($this->request->query['selectedText']);
                 return $this->correctResponseJson(json_encode(array(
-                            'lastAnnotation' => $lastAnnotation,
-                            'success' => true)));
+                          'lastAnnotation' => $lastAnnotation,
+                          'success' => true)));
             }
         }
     }
 
     private function getTypeOfWord($selectedText) {
         $this->Annotation = $this->AnnotationsQuestion->Annotation;
-
         $triada = $this->Session->read('triada');
         if (strlen($selectedText) < 2) {
             return array();
         } else {
             $conditions = array(
-                'upper(annotated_text) LIKE' => strtolower($selectedText),
-//                    'round_id' => $triada['round_id'],
-                'user_id' => $triada['user_id'],
-                'init is NOT NULL',
-                'end is NOT NULL',
-                'round_id' => $triada['round_id'],
+                  'upper(annotated_text) LIKE' => strtolower($selectedText),
+                  'user_id' => $triada['user_id'],
+                  'init is NOT NULL',
+                  'end is NOT NULL',
+                  'round_id' => $triada['round_id'],
             );
             $answers = $this->Annotation->find('list', array(
-                'recursive' => -1,
-                'conditions' => $conditions,
-                'fields' => array(
-                    'Annotation.type_id',
-                    'Annotation.type_id'),
-                'group' => array(
-                    'Annotation.type_id'),
+                  'recursive' => -1,
+                  'conditions' => $conditions,
+                  'fields' => array(
+                        'Annotation.type_id',
+                        'Annotation.type_id'),
+                  'group' => array(
+                        'Annotation.type_id'),
             ));
             return array_keys($answers);
         }
@@ -962,49 +767,40 @@ class AnnotationsQuestionsController extends AppController {
         $this->Round = $this->Annotation->Round;
         $this->UsersRound = $this->Round->UsersRound;
         $this->AnnotatedDocument = $this->Round->AnnotatedDocument;
-
-
-
         if ($this->request->is('post') || $this->request->is('put')) {
             //variable que contiene User.round.Document.user_round_id
             $triada = $this->Session->read('triada');
             $isEnd = $this->Session->read('isEnd');
-
             $this->Annotation->id = $this->request->data['id'];
             if ($this->Annotation->exists() && !$isEnd) {
                 $annotation = array(
-                    'id' => $this->Annotation->id,
-                    'round_id' => $triada['round_id'],
-                    'user_id' => $triada['user_id'],
-                    'document_id' => $this->request->data['document_id']
+                      'id' => $this->Annotation->id,
+                      'round_id' => $triada['round_id'],
+                      'user_id' => $triada['user_id'],
+                      'document_id' => $this->request->data['document_id']
                 );
                 if ($this->Annotation->hasAny($annotation)) {
-
                     $db = $this->UsersRound->getDataSource();
                     $db->begin();
                     $annotation['type_id'] = $this->request->data['to_type'];
                     $commit = $this->Annotation->save($annotation);
-
                     $conditions = array(
-                        'id' => $this->request->data['annotated_document_id'],
-                        'document_id' => $this->request->data['document_id'],
-                        'user_id' => $triada['user_id'],
-                        'round_id' => $triada['round_id'],
+                          'id' => $this->request->data['annotated_document_id'],
+                          'document_id' => $this->request->data['document_id'],
+                          'user_id' => $triada['user_id'],
+                          'round_id' => $triada['round_id'],
                     );
-
                     if ($commit)
                         $commit = $commit && $this->AnnotatedDocument->hasAny($conditions);
                     if ($commit) {
                         $this->AnnotatedDocument->id = $this->request->data['annotated_document_id'];
                         $commit = $commit && $this->AnnotatedDocument->save(array(
-                                    'text_marked' => trim($this->request->data['html'])));
+                                  'text_marked' => trim($this->request->data['html'])));
                     }
-
                     if ($commit) {
-                        $this->updateElapsedTime(array('id' => $this->request->data['annotated_document_id']));
                         $db->commit();
                         return $this->correctResponseJson(json_encode(array(
-                                    'success' => true)));
+                                  'success' => true)));
                     } else {
                         $db->rollback();
                     }
@@ -1012,22 +808,19 @@ class AnnotationsQuestionsController extends AppController {
             }
         }
         return $this->correctResponseJson(json_encode(array(
-                    'success' => false,
-                    'message' => "This type doesnt changed")));
+                  'success' => false,
+                  'message' => "This type doesnt changed")));
     }
 
     function javaAction() {
         $triada = $this->Session->read('triada');
-
         $isEnd = $this->Session->read('isEnd');
         $this->Job = $this->AnnotationsQuestion->Annotation->User->Job;
         $this->Round = $this->AnnotationsQuestion->Annotation->Round;
         $this->UsersRound = $this->Round->UsersRound;
         $enableJavaActions = Configure::read('enableJavaActions');
-
         if ($this->request->is('post') && $enableJavaActions) {
             $this->UsersRound->id = $triada['users_round_id'];
-//            $this->Job->find->hasAny(array('user_id'))
             $operation = "";
             if (isset($this->request->data['operation'])) {
                 $operation = $this->request->data['operation'];
@@ -1040,8 +833,8 @@ class AnnotationsQuestionsController extends AppController {
                         $round_id = $triada['round_id'];
                         $this->Job->create();
                         $data = array('user_id' => $user_id, 'round_id' => $round_id,
-                            'percentage' => 0,
-                            'status' => 'Starting...');
+                              'percentage' => 0,
+                              'status' => 'Starting...');
                         if ($this->Job->save($data)) {
                             $id = $this->Job->id;
                             switch ($operation) {
@@ -1101,8 +894,8 @@ class AnnotationsQuestionsController extends AppController {
                                     break;
                                 default:
                                     return $this->correctResponseJson(json_encode(array(
-                                                'success' => false,
-                                                'message' => "Undefined operation")));
+                                              'success' => false,
+                                              'message' => "Undefined operation")));
                                     break;
                             }
                             return $this->sendJob($id, $programName, $arguments);
@@ -1111,18 +904,17 @@ class AnnotationsQuestionsController extends AppController {
                 }
             } else {
                 return $this->correctResponseJson(json_encode(array(
-                            'success' => false,
-                            'message' => "The task could not be performed successfully. Other operation is in progress. ")));
+                          'success' => false,
+                          'message' => "The task could not be performed successfully. Other operation is in progress. ")));
             }
         }
         return $this->correctResponseJson(json_encode(array(
-                    'success' => false,
-                    'message' => "The task could not be performed successfully ")));
+                  'success' => false,
+                  'message' => "The task could not be performed successfully ")));
     }
 
     function getJavaState() {
         $this->Job = $this->AnnotationsQuestion->Annotation->User->Job;
-
         if ($this->request->is('post') || $this->request->is('put')) {
             $user_id = $this->Session->read('user_id');
             $this->Job->create();
@@ -1134,7 +926,6 @@ class AnnotationsQuestionsController extends AppController {
             if ($percent == 100) {
                 $json = $this->Job->field('comments');
                 $json = json_decode($json, true);
-
                 if (isset($json["totalNewAnnotations"])) {
                     $message = $json["totalNewAnnotations"] . " terms annotated!";
                     $action = "create";
@@ -1144,17 +935,16 @@ class AnnotationsQuestionsController extends AppController {
                     $action = "remove";
                 }
             }
-
             return $this->correctResponseJson(json_encode(array(
-                        'success' => true,
-                        'percent' => $percent,
-                        'message' => $message,
-                        'action' => $action,
+                      'success' => true,
+                      'percent' => $percent,
+                      'message' => $message,
+                      'action' => $action,
             )));
         }
         return $this->correctResponseJson(json_encode(array(
-                    'success' => false,
-                    'message' => "The task could not be performed successfully")));
+                  'success' => false,
+                  'message' => "The task could not be performed successfully")));
     }
 
 }

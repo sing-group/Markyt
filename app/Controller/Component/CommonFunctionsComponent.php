@@ -18,26 +18,26 @@ class CommonFunctionsComponent extends Component {
         parent::__construct($collection, $settings);
     }
 
-//    public function initialize(Controller $controller) {
-//        $this->Controller = $controller;
-//        $this->Model = $this->Controller->{$this->Controller->modelClass};
-//        $this->modelAlias = $this->Model->alias;
-//        parent::initialize($controller);
-//    }
-//
-//    function startup(Controller $controller) {
-//        $this->Controller = $controller;
-//        $this->Model = $this->Controller->{$this->Controller->modelClass};
-//        $this->modelAlias = $this->Model->alias;
-//        parent::initialize($controller);
-//    }
-//    public function initialize(&$controller, $settings = array()) {
-//        $this->controller = $controller;
-//    }
 
 
 
-    public function delete($id = null,$column = '', $messageError = "Unknown error") {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function delete($id = null, $column = '', $messageError = "Unknown error") {
         $redirect = $this->Session->read('redirect');
         $this->request = $this->Controller->request;
         if (!$this->request->is('post')) {
@@ -62,9 +62,9 @@ class CommonFunctionsComponent extends Component {
             if ($this->Model->delete($id, $deleteCascade)) {
                 if (!$this->request->is('ajax')) {
                     $this->Session->setFlash($this->modelAlias . __(' selected has been deleted'), 'success');
-//                    if ($redirect['controller'] == 'documents') {
-//                        $redirect = array('controller' => 'documents', 'action' => 'index');
-//                    }
+
+
+
                     $this->Controller->redirect($redirect);
                 } else {
                     return $this->Controller->correctResponseJson(array('success' => true));
@@ -76,12 +76,14 @@ class CommonFunctionsComponent extends Component {
             $this->Controller->redirect($redirect);
         } else {
 
-            return $this->Controller->correctResponseJson(array('success' => false, 'error' => $messageError));
+            return $this->Controller->correctResponseJson(array('success' => false,
+                      'error' => $messageError));
         }
         return;
     }
 
     public function deleteSelected($column = '', $messageError = "Unknown error") {
+
         $redirect = $this->Session->read('redirect');
         $this->request = $this->Controller->request;
 
@@ -89,6 +91,13 @@ class CommonFunctionsComponent extends Component {
             throw new MethodNotAllowedException();
         } else {
             $ids = json_decode($this->request->data['selected-items']);
+
+            if (!isset($ids[0])) {
+                return $this->Controller->correctResponseJson(array('success' => false,
+                          'error' => __($this->modelAlias . "s selected could not be deleted [Empty id error]"),
+                          'message' => __($this->modelAlias . "s selected could not be deleted [Empty id error]"),
+                ));
+            }
             $deleteCascade = Configure::read('deleteCascade');
             if ($deleteCascade) {
                 $conditions = array($this->modelAlias . '.id' => $ids);
@@ -102,7 +111,7 @@ class CommonFunctionsComponent extends Component {
                     }
                 }
             } else {
-
+                session_write_close();
                 if ($this->Model->deleteAll(array($this->modelAlias . '.id' => $ids), $deleteCascade)) {
                     if (!$this->request->is('ajax')) {
                         $this->Session->setFlash($this->modelAlias . __('s selected have been deleted'), 'success');
@@ -115,7 +124,10 @@ class CommonFunctionsComponent extends Component {
                     $this->Session->setFlash(__($this->modelAlias . "s selected haven't been deleted"));
                     $this->Controller->redirect($redirect);
                 } else {
-                    return $this->Controller->correctResponseJson(array('success' => false, 'error' => $messageError));
+                    return $this->Controller->correctResponseJson(array('success' => false,
+                              'error' => $messageError,
+                              'message' => $messageError,
+                    ));
                 }
             }
         }

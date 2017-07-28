@@ -1,4 +1,7 @@
+
 <?php
+ini_set('max_execution_time', 300); //300 seconds = 5 minutes
+
 if (!isset($trim_helper)) {
     $trim_helper = false;
 }
@@ -9,110 +12,111 @@ if (!isset($punctuation_helper)) {
     $punctuation_helper = false;
 }
 
-echo $this->Html->css('markyAnnotation', array(
-    'block' => 'cssInView'));
+$this->Html->css('markyAnnotation', array('block' => 'cssInView'));
+$this->Html->css('print', array('block' => 'cssInView'));
 
 $is_ie = (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false));
 if ($is_ie)
-    echo $this->Html->css('markyAnnotation_onlyIE.css', array(
-        'block' => 'cssInView'));
+    $this->Html->css('markyAnnotation_onlyIE.css', array(
+          'block' => 'cssInView'));
 
-//            echo $this->Html->css('pubmed');
-echo $this->Html->css('jquery.countdown.min', array(
-    'block' => 'cssInView'));
 
-//            echo $this->Html->script('./rangy/rangy-core.js');
-//            echo $this->Html->script('./rangy/rangy-textrange.js');
-//            echo $this->Html->script('./rangy/rangy-serializer.js');
-//            echo $this->Html->script('./rangy/rangy-classapplier.js');
-//            echo $this->Html->script('./rangy/rangy-selectionsaverestore.js');
-//            echo $this->Html->script('./rangy/rangy-highlighter.js');
+
+
+
+
+
+
+
+
 
 
 /* ============================================ */
 /* ================Rangy======================= */
 /* ============================================ */
-echo $this->Html->script('./rangy/rangy-core.min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('./rangy/rangy-textrange.min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('./rangy/rangy-serializer.min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('./rangy/rangy-classapplier.min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('./rangy/rangy-selectionsaverestore.min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('./rangy/rangy-highlighter.min', array(
-    'block' => 'scriptInView'));
+$this->Html->script('./rangy/rangy-core.min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('./rangy/rangy-textrange.min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('./rangy/rangy-serializer.min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('./rangy/rangy-classapplier.min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('./rangy/rangy-selectionsaverestore.min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('./rangy/rangy-highlighter.min', array(
+      'block' => 'scriptInView'));
 
 
 /* ============================================ */
 /* ================Plugins===================== */
 /* ============================================ */
-echo $this->Html->script('./jquery-countdown/jquery.plugin.min.js', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('./jquery-countdown/jquery.countdown.min.js', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('./jss-master/jss.min.js', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('Bootstrap/typeahead/bootstrap3-typeahead.min', array(
-    'block' => 'scriptInView'));
+$this->Html->script('./jquery-countdown/jquery.plugin.min.js', array(
+      'block' => 'scriptInView'));
+$this->Html->script('./jquery-countdown/jquery.countdown.min.js', array(
+      'block' => 'scriptInView'));
+$this->Html->script('./jss-master/jss.min.js', array(
+      'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/typeahead/bootstrap3-typeahead.min', array(
+      'block' => 'scriptInView'));
 
 /* ============================================ */
 /* ================Relations=================== */
 /* ============================================ */
-echo $this->Html->script('Bootstrap/bootstrap-contextmenu/bootstrap-contextmenu', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('Bootstrap/jqSimpleConnect-1.0.min', array(
-    'block' => 'scriptInView'));
-
+$this->Html->script('Bootstrap/bootstrap-contextmenu/bootstrap-contextmenu', array(
+      'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/jqSimpleConnect-1.0', array(
+      'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/markyRelationsComponent', array(
+      'block' => 'scriptInView'));
 
 
 /* ============================================ */
 /* ================Regex=================== */
 /* ============================================ */
 
-echo $this->Html->script('Bootstrap/xregexp/xregexp-min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('Bootstrap/xregexp/unicode-base.min', array(
-    'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/xregexp/xregexp-min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/xregexp/unicode-base.min', array(
+      'block' => 'scriptInView'));
 
-echo $this->Html->script('Bootstrap/xregexp/unicode-scripts.min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('Bootstrap/xregexp/myUnicode-regex', array(
-    'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/xregexp/unicode-scripts.min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/xregexp/myUnicode-regex', array(
+      'block' => 'scriptInView'));
 
 
 /* ============================================ */
 /* ================Datatable=================== */
 /* ============================================ */
-echo $this->Html->css('../js/Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array(
-    'block' => 'cssInView'));
-echo $this->Html->css('../js/Bootstrap/datatables/bootstrap/3/dataTables.responsive.min', array(
-    'block' => 'cssInView'));
-echo $this->Html->script('Bootstrap/datatables/jquery.dataTables.min', array('block' => 'scriptInView'));
-echo $this->Html->script('Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array(
-    'block' => 'scriptInView'));
-echo $this->Html->script('Bootstrap/datatables/bootstrap/3/dataTables.responsive.min', array(
-    'block' => 'scriptInView'));
+$this->Html->css('../js/Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array(
+      'block' => 'cssInView'));
+$this->Html->css('../js/Bootstrap/datatables/bootstrap/3/dataTables.responsive.min', array(
+      'block' => 'cssInView'));
+$this->Html->script('Bootstrap/datatables/jquery.dataTables.min', array('block' => 'scriptInView'));
+$this->Html->script('Bootstrap/datatables/bootstrap/3/dataTables.bootstrap.min', array(
+      'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/datatables/bootstrap/3/dataTables.responsive.min', array(
+      'block' => 'scriptInView'));
 
 /* ============================================ */
 /* ===========Notification plugin============== */
 /* ============================================ */
-echo $this->Html->css('../js/Bootstrap/notification-Plugin/dist/jquery.sticky.custom.min', array(
-    'block' => 'cssInView'));
-echo $this->Html->css('../js/Bootstrap/notification-Plugin/dist/animate.min', array(
-    'block' => 'cssInView'));
-echo $this->Html->script('Bootstrap/notification-Plugin/dist/jquery.sticky.custom.min', array(
-    'block' => 'scriptInView'));
+$this->Html->css('../js/Bootstrap/notification-Plugin/dist/jquery.sticky.custom.min', array(
+      'block' => 'cssInView'));
+$this->Html->css('../js/Bootstrap/notification-Plugin/dist/animate.min', array(
+      'block' => 'cssInView'));
+$this->Html->script('Bootstrap/notification-Plugin/dist/jquery.sticky.custom.min', array(
+      'block' => 'scriptInView'));
 
+$this->Html->script('Bootstrap/markytSaveLastPosition', array(
+      'block' => 'scriptInView'));
 
-
-echo $this->Html->script('Bootstrap/marky', array(
-    'block' => 'scriptInView'));
+$this->Html->script('Bootstrap/marky', array(
+      'block' => 'scriptInView'));
 
 $this->startIfEmpty('cssInline');
-//{0 = no highlight, 1 = highlight manual, 2 = highlight automatic}
+
 switch ($highlight) {
     case 1:
         echo 'mark:not(.automatic) {
@@ -145,6 +149,7 @@ $this->end();
 <input type="hidden" id="whole_word_helper"  name="whole_word_helper" value='<?php echo $whole_word_helper ?>'>
 <input type="hidden" id="punctuation_helper"  name="punctuation_helper" value='<?php echo $punctuation_helper ?>'>
 <input type="hidden" id="isEnd"  name="isEnd" value='<?php echo json_encode($isEnd) ?>'>
+<input type="hidden" id="relationsMap"  name="relationsMap" value='<?php echo json_encode($relationsMap) ?>'>
 <input type="hidden" id="ischangedBar"  name="ischangedBar" value='<?php
 $changeBar = $this->Session->read("changeBar");
 echo json_encode($changeBar)
@@ -178,69 +183,57 @@ if (strlen($parseKey) === 0) {
 if (!$changeBar) {
     ?>
     <div class="col-xs-1" id="sidebar-menu-container">
-        <div id="popoverContainer"></div>
         <div class="" id="sidebar-menu">
+            <div id="popoversContainer" ></div>
             <div class="btn-group-vertical">
                 <div class="btn-group" role="group">
                     <?php
                     $group_id = $this->Session->read('group_id');
                     if ($group_id == 1) {
                         $action = array(
-                            'controller' => 'rounds',
-                            'action' => 'view', $round_id);
+                              'controller' => 'rounds',
+                              'action' => 'view', $round_id);
                     } else if ($group_id > 1) {
                         $action = array(
-                            'controller' => 'rounds',
-                            'action' => 'index');
+                              'controller' => 'rounds',
+                              'action' => 'index');
                     } else {
                         $action = '/';
                     }
                     echo $this->Html->link('<i class="fa fa-home"></i>', $action, array(
-                        'escape' => false,
-                        "class" => "btn  btn-danger btn-outline",
-                        "data-toggle" => "tooltip",
-                        "data-placement" => "left",
-                        "data-original-title" => "Return?",
-                        'id' => 'comeBack'
+                          'escape' => false,
+                          "class" => "btn  btn-danger btn-outline",
+                          "data-toggle" => "tooltip",
+                          "data-placement" => "left",
+                          "data-original-title" => "Return?",
+                          'id' => 'comeBack'
                     ));
                     ?> 
                 </div>
                 <div class="btn-group" role="group">
                     <?php
                     echo $this->Form->button('<i class="fa fa-life-ring"></i>', array(
-                        'escape' => false, "class" => "btn  btn-success btn-outline",
-                        'id' => 'helpButton',
-                        "data-toggle" => "tooltip",
-                        "data-placement" => "left",
-                        "data-original-title" => "Need Help?",
-                        "data-container" => "body",
+                          'escape' => false, "class" => "btn  btn-success btn-outline",
+                          'id' => 'helpButton',
+                          "data-toggle" => "tooltip",
+                          "data-placement" => "left",
+                          "data-original-title" => "Need Help?",
+                          "data-container" => "body",
                     ));
                     ?> 
                 </div>
-                <!--                <div class="btn-group" role="group">
-                <?php
-//                    echo $this->Form->button('<i class="fa fa-level-up"></i>', array(
-//                        'escape' => false, "class" => "btn  btn-primary btn-outline",
-//                        'id' => 'toUpBar',
-//                        "data-toggle" => "tooltip",
-//                        "data-placement" => "left",
-//                        "data-container" => "body",
-//                        "data-original-title" => "Change annotation bar to horizontal?"
-//                    ));
-                ?> 
-                                </div>-->
                 <?php
                 if (!$isMultiDocument) {
                     ?>
                     <div class="btn-group" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-star"></i>', array(
-                            'escape' => false, "class" => "btn  btn-primary btn-outline",
-                            'id' => "assessmentButton",
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "What is the rate of this document?"
+                              'escape' => false, "class" => "btn  btn-primary btn-outline",
+                              'id' => "assessmentButton",
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "What is the rate of this document?"
                         ));
                         ?> 
                     </div>
@@ -250,26 +243,26 @@ if (!$changeBar) {
                     <div class="btn-group" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-bookmark"></i>', array(
-                            'escape' => false, "class" => "btn  btn-primary btn-outline",
-                            'id' => 'jumpTo',
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "Go to one document?",
-                            "data-trigger" => "manual"
+                              'escape' => false, "class" => "btn  btn-primary btn-outline",
+                              'id' => 'jumpTo',
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "Go to document?",
+                              "data-trigger" => "manual"
                         ));
                         ?> 
                     </div>            
                     <div class="btn-group" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-search"></i>', array(
-                            'escape' => false, "class" => "btn  btn-primary btn-outline",
-                            'id' => 'findAnnotation',
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "Find one annotation?",
-                            "data-trigger" => "manual"
+                              'escape' => false, "class" => "btn  btn-primary btn-outline",
+                              'id' => 'findAnnotation',
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "Find one annotation?",
+                              "data-trigger" => "manual"
                         ));
                         ?> 
                     </div>
@@ -279,30 +272,44 @@ if (!$changeBar) {
                 <div class="btn-group" role="group">
                     <?php
                     echo $this->Form->button('<i class="fa fa-print"></i>', array(
-                        'escape' => false, "class" => "btn  btn-primary btn-outline",
-                        'id' => 'printButton',
-                        "data-toggle" => "tooltip",
-                        "data-placement" => "left",
-                        "data-container" => "body",
-                        "data-original-title" => "Print this document?"
+                          'escape' => false, "class" => "btn  btn-primary btn-outline",
+                          'id' => 'printButton',
+                          "data-toggle" => "tooltip",
+                          "data-placement" => "left",
+                          "data-container" => "body",
+                          "data-original-title" => "Print page?"
                     ));
                     ?> 
                 </div>
 
                 <?php
-                if (!empty($annotationsInterRelations) && !empty($documentsMap)) {
+                if (!empty($relations) && !empty($documentsMap)) {
                     ?> 
                     <div class="btn-group" role="group">
                         <?php
-                        echo $this->Form->button('<i class="fa fa-link"></i>', array(
-                            'escape' => false,
-                            'type' => 'button',
-                            "class" => "btn btn-primary btn-outline stack ",
-                            'id' => 'viewRelations',
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "View relations in this documents?"
+                        echo $this->Form->button('<i class="fa fa-table"></i>', array(
+                              'escape' => false,
+                              'type' => 'button',
+                              "class" => "btn btn-primary btn-outline stack ",
+                              'id' => 'viewRelationsTable',
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "List relations?"
+                        ));
+                        ?> 
+                    </div>
+                    <div class="btn-group" role="group">
+                        <?php
+                        echo $this->Form->button('<i class="fa fa-share-alt"></i>', array(
+                              'escape' => false,
+                              'type' => 'button',
+                              "class" => "btn btn-primary btn-outline stack ",
+                              'id' => 'viewRelations',
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "View relations?"
                         ));
                         ?> 
                     </div>
@@ -317,68 +324,71 @@ if (!$changeBar) {
                 <i class="fa fa-cogs fa-stack-1x"></i>
                 <i class="fa fa-ban fa-stack-2x text-danger"></i>
                 </span>', array(
-                            'escape' => false,
-                            'type' => 'button',
-                            "class" => "btn btn-warning  btn-outline stack ",
-                            'id' => 'disableHelper',
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "Disable annotation helpers? (shift)"
+                              'escape' => false,
+                              'type' => 'button',
+                              "class" => "btn btn-warning  btn-outline stack ",
+                              'id' => 'disableHelper',
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "Disable annotation helpers? (shift)"
                         ));
                         ?> 
                     </div>
                     <div class="btn-group" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-power-off"></i>', array(
-                            'escape' => false,
-                            'type' => 'button',
-                            "class" => "btn btn-outline dark",
-                            'id' => 'disableAnnotations',
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "Disable annotations? (ctrol)"
+                              'escape' => false,
+                              'type' => 'button',
+                              "class" => "btn btn-outline dark",
+                              'id' => 'disableAnnotations',
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "Disable annotation? (ctrl)"
                         ));
                         ?> 
                     </div>
                     <div class="btn-group hidden" role="group">
                         <?php
                         echo $this->Form->button('<i class="fa fa-refresh"></i>', array(
-                            'escape' => false, "class" => "btn btn-warning  btn-outline",
-                            'id' => 'restoreLastSave',
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "Restore last save?"
+                              'escape' => false, "class" => "btn btn-warning  btn-outline",
+                              'id' => 'restoreLastSave',
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "Restore last save?"
                         ));
                         ?> 
                     </div>
 
                     <div class="btn-group hidden" role="group" id="save">
                         <?php
-                        echo $this->Form->create('AnnotatedDocument', array('url' => array(
-                                'controller' => 'annotatedDocuments',
-                                'action' => 'save'), 'id' => 'roundSave'));
+                        echo $this->Form->create('AnnotatedDocument', array(
+                              'url' => array(
+                                    'controller' => 'annotatedDocuments',
+                                    'action' => 'save'
+                              ),
+                              'id' => 'roundSave'));
                         $page++;
                         echo $this->Form->hidden('page', array('value' => $page,
-                            'id' => 'page'));
-//            echo $this->Form->hidden('document_id', array('value' => $document_id));
+                              'id' => 'page'));
+
                         echo $this->Form->hidden('text_marked', array('value' => '',
-                            'id' => 'textToSave'));
+                              'id' => 'textToSave'));
                         //esta variable sirve para eliminar de session el cache de querys si el numero de preguntas se ha modificado
                         echo $this->Form->hidden('deleteSessionData', array('value' => false,
-                            'id' => 'deleteSessionData'));
+                              'id' => 'deleteSessionData'));
 
                         echo $this->Form->button('<i class="fa fa-floppy-o"></i>', array(
-                            'escape' => false,
-                            "class" => "btn btn-success btn-outline",
-                            "data-toggle" => "tooltip",
-                            "data-placement" => "left",
-                            "data-container" => "body",
-                            "data-original-title" => "Save progress?",
-                            'id' => 'mySave',
-                            'type' => 'submit',
+                              'escape' => false,
+                              "class" => "btn btn-success btn-outline",
+                              "data-toggle" => "tooltip",
+                              "data-placement" => "left",
+                              "data-container" => "body",
+                              "data-original-title" => "Save progress?",
+                              'id' => 'mySave',
+                              'type' => 'submit',
                         ));
                         echo $this->Form->end();
                         ?> 
@@ -389,7 +399,7 @@ if (!$changeBar) {
                         $page = 0;
                     }
                     echo $this->Form->hidden('page', array('value' => $page,
-                        'id' => 'page'));
+                          'id' => 'page'));
                 }
                 ?> 
             </div>

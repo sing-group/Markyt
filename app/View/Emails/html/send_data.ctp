@@ -7,7 +7,7 @@
 
         </tr>
     </thead>
-    <!-- end #header -->
+    
     <tbody>
         <tr>
             <td><img src="<?php echo Router::url('/', true) . '/img/markyLogo.png'; ?>" alt="image" title="image" style="padding: 10px;border: 1px solid #e4e4e4;margin-left: 10px;margin-right: 20px;position: relative;top: -71px;"/>
@@ -21,12 +21,12 @@
             </td>
         </tr>
     </tbody>
-    <!-- end #content -->
+    
     <tfoot style="height: 100px;background-color: #efefef;">
         <tr style="height: 80px !important;" >
             <td colspan="2"><a href="http://sing.ei.uvigo.es/marky/" title="Marky" target="_blank" style="color: #909090;padding: 0 15px;text-decoration: none;font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif !important;">Marky About</a><a href="http://sing.ei.uvigo.es" title="sing" target="_blank" style="color: #909090;padding: 0 15px;text-decoration: none;font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif !important;">Sing</a></td>
         </tr>
     </tfoot>
-    <!-- end #footer-->
+    
 
 </table>

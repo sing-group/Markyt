@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application model for Cake.
  *
@@ -20,7 +21,6 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Model', 'Model');
 
 /**
@@ -34,34 +34,37 @@ App::uses('Model', 'Model');
 class AppModel extends Model {
 
     function validateNameJoke($field = array(), $name_field = null) {
-        return $this -> data[$this -> name][$name_field] != 'Removing...';
+        return $this->data[$this->name][$name_field] != 'Removing...';
     }
 
     function updateAll($fields, $conditions = true, $recursive = null) {
         if (!isset($recursive)) {
-            $recursive = $this -> recursive;
+            $recursive = $this->recursive;
         }
-
         if ($recursive == -1) {
-            $this -> unbindModel(array('belongsTo' => array_keys($this -> belongsTo), 'hasOne' => array_keys($this -> hasOne)), true);
+            $this->unbindModel(array('belongsTo' => array_keys($this->belongsTo),
+                  'hasOne' => array_keys($this->hasOne)), true);
         }
-
         return parent::updateAll($fields, $conditions);
     }
-    
-   function deleteAll( $conditions, $cascade = true, $callbacks = false,$recursive=-1) {
+
+    function deleteAll($conditions, $cascade = true, $callbacks = false, $recursive = -1) {
         if (!isset($recursive)) {
-            $recursive = $this -> recursive;
+            $recursive = $this->recursive;
         }
-
         if ($recursive == -1) {
-            $this -> unbindModel(array('belongsTo' => array_keys($this -> belongsTo), 'hasOne' => array_keys($this -> hasOne)), true);
+            $this->unbindModel(array('belongsTo' => array_keys($this->belongsTo),
+                  'hasOne' => array_keys($this->hasOne)), true);
         }
-
-        return parent::deleteAll( $conditions, $cascade , $callbacks );
+        return parent::deleteAll($conditions, $cascade, $callbacks);
     }
-   
 
-    
+    function encodeToUTF8($content) {
+        $content = trim(html_entity_decode($content, ENT_COMPAT | ENT_HTML5, 'UTF-8'));
+        $codification = mb_detect_encoding($content, mb_detect_order(), true);
+        if ($codification)
+            $content = iconv($codification, "UTF-8//TRANSLIT", $content);
+        return $content;
+    }
 
 }

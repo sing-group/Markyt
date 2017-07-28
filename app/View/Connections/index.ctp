@@ -3,31 +3,21 @@ echo $this->Html->css('/css/phocacssflagsheight/css/phoca-flags', array('block' 
 echo $this->Html->script('Bootstrap/markyConnections', array('block' => 'scriptInView'));
 ?>
 <div class="connections index data-table">
-    <h1><?php echo __('Sessions'); ?></h1>
+    <h1><?php echo __('User Sessions'); ?></h1>
     <table class="table table-hover table-responsive" >
         <thead>
             <tr>
-<!--                <th><?php
-//                    echo $this->Form->input('All', array('type' => 'checkbox',
-//                        'id' => 'select-all-items', 'label' => false, 'div' => false))
-                ?></th>-->
                 <th><?php echo $this->Paginator->sort('username'); ?></th>
                 <th><?php echo $this->Paginator->sort('country'); ?></th>
                 <th><?php echo $this->Paginator->sort('city'); ?></th>
-                <th><?php echo $this->Paginator->sort('ip'); ?></th>
-                <th><?php echo $this->Paginator->sort('created'); ?></th>
-                <th><?php echo $this->Paginator->sort('session_time'); ?></th>
+                <th><?php echo $this->Paginator->sort('ip', 'IP address'); ?></th>
+                <th><?php echo $this->Paginator->sort('created', 'Start'); ?></th>
+                <th><?php echo $this->Paginator->sort('session_time', 'Duration'); ?></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($connections as $connection): ?>
                 <tr class="table-item-row connection">
-    <!--                    <td class="item-id"><?php
-//                        echo $this->Form->input('', array('type' => 'checkbox',
-//                            'value' => $connection['Connection']['id'], 'class' => 'item',
-//                            'id' => uniqid(),
-//                            'div' => false));
-                    ?>&nbsp;</td>-->
 
                     <td> <?php
                         if (isset($user['User']['image'])) {
@@ -43,7 +33,7 @@ echo $this->Html->script('Bootstrap/markyConnections', array('block' => 'scriptI
                         }
 
                         echo $this->Html->link($connection['User']['username'], array(
-                            'controller' => 'users', 'action' => 'view', $connection['Connection']['user_id']));
+                              'controller' => 'users', 'action' => 'view', $connection['Connection']['user_id']));
                         ?>                            
                     </td>
 
@@ -54,7 +44,7 @@ echo $this->Html->script('Bootstrap/markyConnections', array('block' => 'scriptI
                             ?>
                             <div class="phoca-box">
                                 <div class="phoca-flagbox">
-                                    <span class="phoca-flag <?php echo $connection['Connection']['country'];?>"></span>
+                                    <span class="phoca-flag <?php echo $connection['Connection']['country']; ?>"></span>
                                 </div>
                                 <div class="phoca-title">
                                     <?php
@@ -82,7 +72,7 @@ echo $this->Html->script('Bootstrap/markyConnections', array('block' => 'scriptI
     <p>
         <?php
         echo $this->Paginator->counter(array(
-            'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+              'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
         ));
         ?>	
     </p>
@@ -93,11 +83,15 @@ echo $this->Html->script('Bootstrap/markyConnections', array('block' => 'scriptI
             <div class="multiDelete col-sm-6 action">
                 <?php
                 echo $this->Form->create('connections', array('id' => 'connectionsDeleteAll',
-                    'class' => 'multiDeleteIndex', 'action' => 'deleteAll'));
+                      'url' => array(
+                            'controller' => 'connections',
+                            'action' => 'deleteAll'
+                      ),
+                      'class' => 'multiDeleteIndex'));
                 echo $this->Form->button('<i class="fa fa-exclamation-triangle "></i><i class="fa fa-trash-o"></i> Delete All', array(
-                    'title' => 'Are you sure you want to delete all Connections?',
-                    'class' => 'deleteButton deleteAll btn btn-danger delete-item',
-                    'scape' => false, 'type' => 'submit'));
+                      'title' => 'Are you sure you want to delete all Connections?',
+                      'class' => 'deleteButton deleteAll btn btn-danger delete-item',
+                      'scape' => false, 'type' => 'submit'));
                 echo $this->Form->end();
                 ?>
             </div>

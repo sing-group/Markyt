@@ -1,31 +1,36 @@
 <?php
-//echo $this->Html->css('../js/Bootstrap/bootstrap-colorpicker/css/bootstrap-colorpicker.min', array('block' => 'cssInView'));
-//echo $this->Html->script('Bootstrap/bootstrap-colorpicker/js/bootstrap-colorpicker.min', array('block' => 'scriptInView'));
-echo $this->Html->css('../js/Bootstrap/bootstrap-colorpickersliders/bootstrap.colorpickersliders.min',array('block' => 'cssInView'));
-echo $this->Html->script('Bootstrap/bootstrap-colorpickersliders/tinycolor.min', array('block' => 'scriptInView'));
-echo $this->Html->script('Bootstrap/bootstrap-colorpickersliders/bootstrap.colorpickersliders.min', array('block' => 'scriptInView'));
+
+
+echo $this->Html->css('../js/Bootstrap/bootstrap-colorpickersliders/bootstrap.colorpickersliders.min', array(
+      'block' => 'cssInView'));
+echo $this->Html->script('Bootstrap/bootstrap-colorpickersliders/tinycolor.min', array(
+      'block' => 'scriptInView'));
+echo $this->Html->script('Bootstrap/bootstrap-colorpickersliders/bootstrap.colorpickersliders.min', array(
+      'block' => 'scriptInView'));
 echo $this->Html->script('Bootstrap/markyColorSelector', array('block' => 'scriptInView'));
 
-//
-//
-//echo $this->Html->script('./jpicker/jpicker-1.1.6.js', array('block' => 'scriptInView'));
+
+
+
 ?>
 <div class="types form">
     <h1>
-        <?php echo $this->Html->link('<i class="fa fa-eye"></i>', array('action' => 'view', $this->request->data['Type']['id']), array('escape' => false)); ?>
-        <?php echo __('Edit Type'); ?>
+        <?php echo $this->Html->link('<i class="fa fa-eye"></i>', array(
+              'action' => 'view', $this->request->data['Type']['id']), array('escape' => false)); ?>
+<?php echo __('Edit entity type'); ?>
     </h1>
     <div class="col-md-12">
-        <?php echo $this->Form->create('Type'); ?>
+                <?php echo $this->Form->create('Type'); ?>
         <fieldset>
             <div class="col-md-6">
                 <?php
                 echo $this->Form->input('id');
                 echo $this->Form->hidden('project_id');
                 echo $this->Form->input('name', array("placeholder" => "Gene", 'class' => 'form-control'));
-                echo $this->Form->input('description', array("placeholder" => "A gene is a molecular unit of heredity of a living organism...", 'class' => 'form-control'));
+                echo $this->Form->input('description', array("placeholder" => "A gene is a molecular unit of heredity of a living organism...",
+                      'class' => 'form-control'));
 
-//                echo $this->Form->label('colour of anotation');
+
                 ?>
             </div>
             <div class="col-md-6">
@@ -33,9 +38,10 @@ echo $this->Html->script('Bootstrap/markyColorSelector', array('block' => 'scrip
                 <div class="input col-md-6">
                     <label for="color">Colour of anotation</label>
                     <div class="input-group " id = 'colorPicker' >
-                        <?php
-                        echo $this->Form->input('colour', array('label' => false, 'class' => 'form-control', 'div' => false, 'id' => 'colour','readonly'=>"readonly"));
-                        ?>
+<?php
+echo $this->Form->input('colour', array('label' => false, 'class' => 'form-control',
+      'div' => false, 'id' => 'colour', 'readonly' => "readonly"));
+?>
                         <span class="input-group-addon"><i id="color-button"></i></span>
                     </div>
                 </div>
@@ -56,11 +62,11 @@ echo $this->Html->script('Bootstrap/markyColorSelector', array('block' => 'scrip
 
             </div>
         </fieldset>
-        <?php
-        echo $this->Form->submit('Submit', array('class' => 'btn btn-success'));
-        echo $this->Form->end();
-        $redirect = $this->Session->read('redirect');
-        ?>
+<?php
+echo $this->Form->submit('Submit', array('class' => 'btn btn-success'));
+echo $this->Form->end();
+$redirect = $this->Session->read('redirect');
+?>
     </div>
 </div>
 

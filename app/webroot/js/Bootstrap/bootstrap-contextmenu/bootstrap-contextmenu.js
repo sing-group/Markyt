@@ -29,15 +29,13 @@
                 contextMenu = $(this).clone();
                 $(target).append(contextMenu)
                 $(this).remove();
-            }
-            else
+            } else
             {
                 contextMenu = $(this);
             }
             scrollTop = $(target).scrollTop()
             lastTarget = target;
-        }
-        else
+        } else
         {
             if (target == undefined)
             {
@@ -45,8 +43,7 @@
 //                $("body").append(contextMenu)
 //                $(this).remove();
 //                contextMenu.attr("data-target", "body")
-            }
-            else
+            } else
             {
                 contextMenu = $(this);
             }
@@ -60,40 +57,45 @@
         var documentWidth = win.width();
         var x = settings.evt.pageX;
         var y = settings.evt.pageY + scrollTop;
+        var overflow = false;
+        var maxX = x;
+        var tempX;
 
-        var dropDownSubMenu = contextMenu.find(".dropdown-submenu .dropdown-menu");
+        contextMenu.find(".dropdown-submenu .dropdown-menu").each(function () {
+            var dropDownSubMenu = $(this);
+            var submenuWidth = dropDownSubMenu.getRealDimensions().width;
+            if (submenuWidth === undefined)
+            {
+                submenuWidth = 0;
+            }
+            if (x + contextMenu.width() + submenuWidth > documentWidth)
+            {
+                tempX = x - 10 - contextMenu.width();               
 
+                if (tempX < maxX)
+                {
+                    maxX = tempX;
+                }
+            }
+            if (x + contextMenu.width() + submenuWidth > documentWidth)
+            {
+                contextMenu.addClass("overflow");
+                var minus = -dropDownSubMenu.width();
+                dropDownSubMenu.css("left", -dropDownSubMenu.getRealDimensions().width);
+            } else
+            {
+                contextMenu.removeClass("overflow");
+                dropDownSubMenu.css("left", "100%");
+            }
 
-
-        var submenuWidth = dropDownSubMenu.getRealDimensions().width;
-        if (submenuWidth === undefined)
-        {
-            submenuWidth = 0;
-        }
-
-        if (x + contextMenu.width() + submenuWidth > documentWidth)
-        {
-            x = x - 10 - contextMenu.width();
-        }
-        if (x + contextMenu.width() + submenuWidth > documentWidth)
-        {
-            contextMenu.addClass("overflow");
-            var minus = -dropDownSubMenu.width();
-            dropDownSubMenu.css("left", -dropDownSubMenu.getRealDimensions().width);
-        }
-        else
-        {
-            contextMenu.removeClass("overflow");
-            dropDownSubMenu.css("left", "100%");
-        }
+        });
 
         //open menu
         contextMenu.css({
             position: "absolute",
-            left: x,
+            left: maxX,
             top: y
-        })
-                .find('li.action a')
+        }).find('li.action a')
                 .off('click')
                 .on('click', function (e) {
                     e.stopPropagation();
@@ -107,8 +109,6 @@
 
         $('html').click(function (e) {
             contextMenu.hide();
-
-
         });
     };
 })(jQuery, window);

@@ -20,7 +20,7 @@ function blackFontColor($backColor) {
     <div class="col-md-4 section">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h4><i class="fa fa-info"></i><?php echo __('Types'); ?></h4>
+                <h4><i class="fa fa-info"></i><?php echo __('Entity types'); ?></h4>
             </div>
             <div class="panel-body">
                 <div class="types-annotations">
@@ -31,10 +31,10 @@ function blackFontColor($backColor) {
                         else
                             $fontColor = "#ffffff";
                         echo $this->Html->tag('span', str_replace("_", " ", $type['Type']['name']), array(
-                            'name' => $type['Type']['name'],
-                            'style' => 'color:' . $fontColor . '; background-color:rgba(' . $type['Type']['colour'] . ')',
-                            'class' => 'label',
-                            'title' => 'Type: ' . $type['Type']['name']));
+                              'name' => $type['Type']['name'],
+                              'style' => 'color:' . $fontColor . '; background-color:rgba(' . $type['Type']['colour'] . ')',
+                              'class' => 'label',
+                              'title' => 'Type: ' . $type['Type']['name']));
                     endforeach;
                     ?>
                 </div>
@@ -45,7 +45,7 @@ function blackFontColor($backColor) {
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h4><i class="fa fa-users"></i>
-                    <?php echo __('To whom it compare?'); ?>
+                    <?php echo __('Comparison '); ?>
                 </h4>
             </div>
             <div class="panel-body">

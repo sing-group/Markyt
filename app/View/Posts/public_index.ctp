@@ -41,7 +41,7 @@ echo $this->Html->script('Bootstrap/markySliderPost', array('block' => 'scriptIn
         <div class='row'>
             <div class=''>
                 <div class="carousel slide" data-ride="carousel" id="quote-carousel">
-                    <!-- Bottom Carousel Indicators -->
+                    
 
                     <ol class="carousel-indicators">
                         <?php
@@ -64,9 +64,9 @@ echo $this->Html->script('Bootstrap/markySliderPost', array('block' => 'scriptIn
                         }
                         ?>
                     </ol>
-                    <!-- Carousel Slides / Quotes -->
+                    
                     <div class="carousel-inner" id="posts">
-                        <!-- Quote 1 -->
+                        
                         <?php
                         if (!empty($posts)) {
                             $index = 0;
@@ -142,7 +142,7 @@ echo $this->Html->script('Bootstrap/markySliderPost', array('block' => 'scriptIn
                         }
                         ?>
                     </div>
-                    <!--Carousel Buttons Next/Prev -->
+                    
                     <a data-slide = "prev" href = "#quote-carousel" class = "left carousel-control"><i class = "fa fa-chevron-left"></i></a>
                     <a data-slide = "next" href = "#quote-carousel" class = "right carousel-control"><i class = "fa fa-chevron-right"></i></a>
 

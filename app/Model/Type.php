@@ -23,12 +23,12 @@ class Type extends AppModel {
             $this->data[$this->name]['description'] = str_replace("'", '´', ucfirst($this->data[$this->name]['description']));
         }
         if (isset($this->data[$this->name]['colour'])) {
-            $colour=$this->data[$this->name]['colour'];
-            $colour=str_replace("rgba(", '',$colour);
-            $colour=str_replace(")", '',$colour);        
+            $colour = $this->data[$this->name]['colour'];
+            $colour = str_replace("rgba(", '', $colour);
+            $colour = str_replace(")", '', $colour);
             $this->data[$this->name]['colour'] = $colour;
         }
-        
+
         return true;
     }
 
@@ -38,46 +38,46 @@ class Type extends AppModel {
      * @var array
      */
     public $validate = array(
-        'project_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-            //'message' => 'Your custom message here',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-        ),
-        'name' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'This field cannot be empty',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-            'duplicatesCreate' => array(
-                'rule' => array('limitDuplicates', 0),
-                'message' => 'Sorry but there is already a name for this type in this project . Please change the name of this type',
-                'on' => 'create'
-            ),
-            'duplicatesUpdate' => array(
-                'rule' => array('limitDuplicates', 1),
-                'message' => 'Sorry but there is already a name for this type in this project . Please change the name of this type',
-                'on' => 'update'
-            ),
-        ),
-        'colour' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'This field cannot be empty',
-            //'allowEmpty' => false,
-            //'required' => false,
-            //'last' => false, // Stop validation after this rule
-            //'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-        ),
+          'project_id' => array(
+                'numeric' => array(
+                      'rule' => array('numeric'),
+                //'message' => 'Your custom message here',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
+          'name' => array(
+                'notBlank' => array(
+                      'rule' => array('notBlank'),
+                      'message' => 'This field cannot be empty',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+                'duplicatesCreate' => array(
+                      'rule' => array('limitDuplicates', 0),
+                      'message' => 'Sorry but there is already a name for this type in this project . Please change the name of this type',
+                      'on' => 'create'
+                ),
+                'duplicatesUpdate' => array(
+                      'rule' => array('limitDuplicates', 1),
+                      'message' => 'Sorry but there is already a name for this type in this project . Please change the name of this type',
+                      'on' => 'update'
+                ),
+          ),
+          'colour' => array(
+                'notBlank' => array(
+                      'rule' => array('notBlank'),
+                      'message' => 'This field cannot be empty',
+                //'allowEmpty' => false,
+                //'required' => false,
+                //'last' => false, // Stop validation after this rule
+                //'on' => 'create', // Limit validation to 'create' or 'update' operations
+                ),
+          ),
     );
 
     function limitDuplicates($data, $num) {
@@ -87,20 +87,19 @@ class Type extends AppModel {
     }
 
     //The Associations below have been created with all possible keys, those that are not needed can be removed
-
     /**
      * belongsTo associations
      *
      * @var array
      */
     public $belongsTo = array(
-        'Project' => array(
-            'className' => 'Project',
-            'foreignKey' => 'project_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        )
+          'Project' => array(
+                'className' => 'Project',
+                'foreignKey' => 'project_id',
+                'conditions' => '',
+                'fields' => '',
+                'order' => ''
+          )
     );
 
     /**
@@ -109,32 +108,32 @@ class Type extends AppModel {
      * @var array
      */
     public $hasMany = array(
-        'Annotation' => array(
-            'className' => 'Annotation',
-            'foreignKey' => 'type_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => '',
-            'dependent' => true,
-        ),
-        'Question' => array(
-            'className' => 'Question',
-            'foreignKey' => 'type_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'exclusive' => '',
-            'finderQuery' => '',
-            'counterQuery' => '',
-            'dependent' => true
-        )
+          'Annotation' => array(
+                'className' => 'Annotation',
+                'foreignKey' => 'type_id',
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => '',
+                'dependent' => true,
+          ),
+          'Question' => array(
+                'className' => 'Question',
+                'foreignKey' => 'type_id',
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => '',
+                'dependent' => true
+          )
     );
 
     /**
@@ -143,21 +142,20 @@ class Type extends AppModel {
      * @var array
      */
     public $hasAndBelongsToMany = array(
-        'Round' => array(
-            'className' => 'Round',
-            'joinTable' => 'types_rounds',
-            'foreignKey' => 'type_id',
-            'associationForeignKey' => 'round_id',
-            'unique' => 'keepExisting',
-            'conditions' => '',
-            'fields' => '',
-            'order' => '',
-            'limit' => '',
-            'offset' => '',
-            'finderQuery' => '',
-            'deleteQuery' => '',
-            'insertQuery' => ''
-        )
+          'Round' => array(
+                'className' => 'Round',
+                'joinTable' => 'types_rounds',
+                'foreignKey' => 'type_id',
+                'associationForeignKey' => 'round_id',
+                'unique' => 'keepExisting',
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'finderQuery' => '',
+                'deleteQuery' => '',
+                'insertQuery' => ''
+          )
     );
-
 }

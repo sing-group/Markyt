@@ -1,38 +1,31 @@
 <?php
-//echo $this->Html->css('../js/Bootstrap/captcha/motionCaptcha/jquery.motionCaptcha.0.2.min.css');
-//echo $this->Html->script('./Bootstrap/captcha/motionCaptcha/jquery.motionCaptcha.0.2.min.js');
-//echo $this->Html->script('Bootstrap/captcha/captchaForm.js');
-
 echo $this->Html->css('../js/Bootstrap/captcha/motionCaptcha/jquery.motionCaptcha.0.2.min.css', array(
-    'block' => 'cssInView'));
+      'block' => 'cssInView'));
 echo $this->Html->script('./Bootstrap/captcha/motionCaptcha/jquery.motionCaptcha.0.2.min.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 
 echo $this->Html->css('../js/Bootstrap/captcha/PuzzleCAPTCHA/puzzleCAPTCHA.css', array(
-    'block' => 'cssInView'));
+      'block' => 'cssInView'));
 echo $this->Html->script('./Bootstrap/captcha/PuzzleCAPTCHA/puzzleCAPTCHA.js', array(
-    'block' => 'scriptInView'));
+      'block' => 'scriptInView'));
 
 
 echo $this->Html->script('Bootstrap/captcha/captchaForm.js', array('block' => 'scriptInView'));
 ?>
 <div class="recoverAccount" >
     <h2 class="title"><?php echo __('Recover account'); ?></h2>
-    <?php
-    echo $this->Form->create('User', array('url' => '#', 'id' => 'captchaForm'));
-
-//    echo $this->Form->create('User', array('controller' => 'users', 'action' => 'recoverAccount'),array("id"=>"captchaForm"));
-    ?>
+<?php
+echo $this->Form->create('User', array('url' => '#', 'id' => 'captchaForm'));
+?>
     <div class="col-md-12">
         <div class="row">
             Write the email with which you registered and we will send an email with your username and your new password
-            <?php
-            echo $this->Form->input('email', array('class' => 'form-control',
-                "placeholder" => "mymail@example.com"));
-            echo $this->Form->hidden('hiddent', array('id' => 'goTo', 'value' => $this->Html->url(array(
-                    'controller' => 'users', 'action' => 'recoverAccount'))));
-//            echo $this->Form->hidden('security_key', array('value' => $security_key));
-            ?>
+    <?php
+    echo $this->Form->input('email', array('class' => 'form-control',
+          "placeholder" => "mymail@example.com"));
+    echo $this->Form->hidden('hiddent', array('id' => 'goTo', 'value' => $this->Html->url(array(
+                'controller' => 'users', 'action' => 'recoverAccount'))));
+    ?>
             <div class="captcha mouse">
                 <div id="" class="bold">
                     <p>Please draw the shape(with the mouse) in the box to submit the form: 
@@ -55,32 +48,21 @@ echo $this->Html->script('Bootstrap/captcha/captchaForm.js', array('block' => 's
     </div>
     <div class="row">
         <div class="col-xs-6 text-center">
-            <?php
-            echo $this->Form->button('Recover my account', array('class' => 'btn btn-info',
-                'id' => 'successCaptchaButton', "disabled" => "disabled"));
-            ?>
+<?php
+echo $this->Form->button('Recover my account', array('class' => 'btn btn-info',
+      'id' => 'successCaptchaButton', "disabled" => "disabled"));
+?>
         </div>
         <div class="col-xs-6 text-center">
             <?php
             echo $this->Form->button('Reset', array('type' => 'reset', 'id' => 'reset',
-                'class' => 'btn btn-inverse'));
+                  'class' => 'btn btn-inverse'));
             ?>                         
         </div>
     </div>
-    <!--
-            <div class="captcha_wrap hidden">
-                <div class="captchaNumbers">
-                    Drag to order
-                </div>
-                <ul id="sortable" class="ui-sortable" unselectable="on">
-                    <li class="captchaItem">6</li><li class="captchaItem">1</li
-                    ><li class="captchaItem">5</li><li class="captchaItem">2</li>
-                    <li class="captchaItem">4</li><li class="captchaItem">3</li>
-                </ul>
-            </div>-->
 </div>
 <div class="clear"></div>
-<?php
-echo $this->form->end();
-?>
+            <?php
+            echo $this->form->end();
+            ?>
 </div>

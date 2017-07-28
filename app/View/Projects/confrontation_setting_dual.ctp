@@ -10,7 +10,7 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
 
         <div class="col-md-6">
             <p>
-                In this section you you can get a <span class="bold">quality measure between two or more types of annotations</span>. 
+                You can get a <span class="bold">quality measure between two or more types of annotations</span>. 
                 If you want to include a concordance of the following annotations, you should put a margin of 2:
             </p>
             <p>
@@ -24,7 +24,7 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
                 <span class="bold">Want to send the data to your email to load later with option "load confrontation with file"?</span>
                 <div class="onoffswitch">
                     <?php
-//                    echo $this->Form->input('allRounds', array('label' => false, 'type' => "checkbox", "class" => "onoffswitch-checkbox", "id" => "only_abstract", "div" => false));
+
                     ?>
                     <?php
                     echo $this->Form->input('sendEmail', array(
@@ -45,7 +45,7 @@ echo $this->Html->script('Bootstrap/markyConfrontationSettings', array('block' =
 
 
         </div>
-        <div class="col-md-6"
+        <div class="col-md-6">
              <fieldset>                        	
                      <?php
                      echo $this->Form->hidden('id', array('value' => $project_id));

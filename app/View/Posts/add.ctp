@@ -4,7 +4,7 @@ echo $this->Html->script('marky-htmlEditable', array('block' => 'scriptInView'))
 ?>
 <div class="posts form">
     <div class="col-md-12">
-        <h1><?php echo __('Add Post'); ?></h1>
+        <h1><?php echo __('New Post'); ?></h1>
         <?php echo $this->Form->create('Post'); ?>
         <fieldset>
             <?php

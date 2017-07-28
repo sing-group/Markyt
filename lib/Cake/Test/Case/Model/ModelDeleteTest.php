@@ -422,6 +422,20 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * testDeleteAll diamond operator method
+ *
+ * @return void
+ */
+	public function testDeleteAllDiamondOperator() {
+		$this->loadFixtures('Article');
+		$article = new Article();
+
+		$result = $article->deleteAll(array('Article.id <>' => 1));
+		$this->assertTrue($result);
+		$this->assertFalse($article->exists(2));
+	}
+
+/**
  * testDeleteAllUnknownColumn method
  *
  * @expectedException PDOException
@@ -443,9 +457,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	public function testDeleteAllFailedFind() {
 		$this->loadFixtures('Article');
-		$this->getMock('Article', array('find'), array(), 'ArticleDeleteAll');
-
-		$TestModel = new ArticleDeleteAll();
+		$TestModel = $this->getMock('Article', array('find'));
 		$TestModel->expects($this->once())
 			->method('find')
 			->will($this->returnValue(null));

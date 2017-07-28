@@ -2,16 +2,15 @@
 echo $this->Html->script('./amcharts/amcharts.js', array('block' => 'scriptInView'));
 echo $this->Html->script('./amcharts/serial.js', array('block' => 'scriptInView'));
 echo $this->Html->script('./amcharts/pie.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/filesaver.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/amexport.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/canvg.js', array('block' => 'scriptInView'));
-echo $this->Html->script('./amcharts/exporting/rgbcolor.js', array('block' => 'scriptInView'));
+echo $this->Html->script('./amcharts/plugins/export/export.min.js', array('block' => 'scriptInView'));
+
 echo $this->Html->script('./jquery-hottie/jquery.hottie.js', array('block' => 'scriptInView'));
 echo $this->Html->script('markyChart.js', array('block' => 'scriptInView'));
 echo $this->Html->script('markyExportDataRound.js', array('block' => 'scriptInView'));
 echo $this->Html->css('print', array('block' => 'cssInView'));
 
-echo $this->Html->image('print.svg', array('alt' => 'printDocument', 'id' => 'printData', 'class' => 'toolButton', 'title' => 'Print this document'));
+echo $this->Html->image('print.svg', array('alt' => 'printDocument', 'id' => 'printData',
+      'class' => 'toolButton', 'title' => 'Print this document'));
 
 function random_color_part() {
     return str_pad(dechex(mt_rand(0, 255)), 2, '0', STR_PAD_LEFT);
@@ -26,17 +25,18 @@ function random_color() {
         <dl>
             <dt><?php echo __('Project'); ?></dt>
             <dd>
-                <?php echo $this->Html->link($project['Project']['title'], array('controller' => 'projects', 'action' => 'view', $project['Project']['id'])); ?>
+<?php echo $this->Html->link($project['Project']['title'], array(
+      'controller' => 'projects', 'action' => 'view', $project['Project']['id'])); ?>
                 &nbsp;
             </dd>
             <dt><?php echo __('Title'); ?></dt>
             <dd>
-                <?php echo h($round['Round']['title']); ?>
+<?php echo h($round['Round']['title']); ?>
                 &nbsp;
             </dd>
             <dt><?php echo __('Ends In Date'); ?></dt>
             <dd>
-                <?php echo h($round['Round']['ends_in_date']); ?>
+<?php echo h($round['Round']['ends_in_date']); ?>
                 &nbsp;
             </dd>
             <dt><?php echo __('Description'); ?></dt>
@@ -44,7 +44,7 @@ function random_color() {
 
             </dd>            
         </dl>
-        <?php echo $round['Round']['description']; ?>
+<?php echo $round['Round']['description']; ?>
     </div>
     <div class="exportData view print">
         <table   >
@@ -52,7 +52,7 @@ function random_color() {
                 <th>Name</th>
                 <th>Colour</th>
             </tr>
-            <?php foreach ($types as $type): ?>
+<?php foreach ($types as $type): ?>
                 <tr>
                     <td>
                         <h3>
@@ -61,7 +61,7 @@ function random_color() {
                             ?>
                         </h3>
                         <?php
-                        if ($type['Type']['description']!='') {
+                        if ($type['Type']['description'] != '') {
                             ?>
                             <p>
                                 <?php
@@ -74,7 +74,7 @@ function random_color() {
                     </td>
                     <td><?php echo '<div class="typeColorIndex" style="background-color: rgba(' . $type['Type']['colour'] . ')"></div>'; ?>&nbsp;</td>
                 </tr>
-            <?php endforeach; ?>
+<?php endforeach; ?>
         </table>
     </div>
 </div>
@@ -92,10 +92,11 @@ foreach ($users as $user) {
             <?php
             if ($user['User']['image_type'] != null) {
                 ?>
-                <img src="<?php echo 'data:'.$user['User']['image_type'].';base64,' . base64_encode($user['User']['image']);?>"  title="profileImage" class="imageProfile" alt="userImage">
+                <img src="<?php echo 'data:' . $user['User']['image_type'] . ';base64,' . base64_encode($user['User']['image']); ?>"  title="profileImage" class="imageProfile" alt="userImage">
                 <?php
             } else {
-                echo $this->Html->image('defaultProfile.svg', array('title' => 'defaultProfile', 'class' => 'imageProfile'));
+                echo $this->Html->image('defaultProfile.svg', array('title' => 'defaultProfile',
+                      'class' => 'imageProfile'));
             }
             ?>
         </div>
@@ -107,9 +108,9 @@ foreach ($users as $user) {
 ?>
 <div class="comparation view print">
     <h1>
-        <?php
-        echo 'User comparison';
-        ?>
+<?php
+echo 'User comparison';
+?>
     </h1>
     <div id="tableResults" class="tableConfrontation">
         <table  class="tableMap">
@@ -117,11 +118,11 @@ foreach ($users as $user) {
             <th>&nbsp;</th>
             <?php foreach ($users as $element): ?> 
                 <th class="bold">
-                    <?php echo h($element['User']['full_name']); ?>
+                <?php echo h($element['User']['full_name']); ?>
                 </th>
-                <?php
-            endforeach;
-            ?>
+    <?php
+endforeach;
+?>
             </thead>
             <tbody>
                 <?php
@@ -144,7 +145,7 @@ foreach ($users as $user) {
                                 $arrayChart = array('GraficColumns' => $typeFil['User']['full_name'] . '-' . $typeCol['User']['full_name']);
                                 $arrayChart['Hits'] = $num;
                                 $arrayChart['Colour'] = '#' . random_color();
-                                $pure_hits+=$num;
+                                $pure_hits += $num;
                                 $pos_in_relations++;
                             } else {
                                 echo '<td>0</td>';
@@ -173,7 +174,8 @@ foreach ($users as $user) {
                 </tr>
                 <tr>
                     <td>Number of Annotations:</td>
-                    <td><?php echo $this->Html->link($NumAnnotations, array('controller' => 'annotations', 'action' => 'index')); ?></td>
+                    <td><?php echo $this->Html->link($NumAnnotations, array('controller' => 'annotations',
+                      'action' => 'index')); ?></td>
                 </tr>
             </table>
         </div>
@@ -188,18 +190,21 @@ foreach ($users as $user) {
         <span>This process can be very long, more than 5 min, depending on the state of the server and the data sent. Thanks for your patience</span>
     </p>
     <div id="loadingSprite">
-        <?php
-        echo $this->Html->image('loading.gif', array('alt' => 'loading'));
-        echo $this->Html->image('textLoading.gif', array('alt' => 'Textloading'));
-        ?>
+<?php
+echo $this->Html->image('loading.gif', array('alt' => 'loading'));
+echo $this->Html->image('textLoading.gif', array('alt' => 'Textloading'));
+?>
     </div>
     <div id="progressbar" class="default"><div class="progress-label">Loading...</div></div>
 </div>
 
-<a href="<?php echo $this->webroot . 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
+<a href="<?php echo 'js/amcharts/images/' ?>" class="hidden" id="chartImages">chartImages</a>
 <?php
 echo $this->Html->media('BleepSound.mp3', array('fullBase' => true, 'autoplay'));
-echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'confrontationDual'), array('id' => 'endGoTo', 'class' => "hidden"));
-echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'getProgress', true), array('id' => 'goTo', 'class' => "hidden"));
-echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'view', $project_id), array('id' => 'goToMail', 'class' => "hidden"));
+echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'confrontationDual'), array(
+      'id' => 'endGoTo', 'class' => "hidden"));
+echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'getProgress',
+      true), array('id' => 'goTo', 'class' => "hidden"));
+echo $this->Html->link(__('Empty'), array('controller' => 'projects', 'action' => 'view',
+      $project_id), array('id' => 'goToMail', 'class' => "hidden"));
 
