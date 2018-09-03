@@ -404,7 +404,7 @@ class AppController extends Controller {
         $runJava = Configure::read('runJava');
         $javaJarPath = Configure::read('javaJarPath');
         $javaProgram = "MARKYT_Scripts.jar";
-        if ($programName != "importation-1.0-SNAPSHOT-jar-with-dependencies.jar") {
+        if ($programName != "importation.jar") {
             $javaProgram = "MARKYT_Scripts.jar";
         } else {
             $javaProgram = $programName;

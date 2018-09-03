@@ -2503,7 +2503,7 @@ class ProjectsController extends AppController {
                             }
                         }
                         $this->Job->create();
-                        $programName = "importation-1.0-SNAPSHOT-jar-with-dependencies.jar";
+                        $programName = "importation.jar";
                         $data = array('user_id' => $user_id,
                               'percentage' => 0, '' => $programName,
                               'status' => 'Starting...');
@@ -2514,7 +2514,7 @@ class ProjectsController extends AppController {
                             $operationId = 0;
                             $javaJarPath = Configure::read('javaJarPath');
                             $filePath = $javaJarPath . DS . "job$id.log";
-                            $jsonArguments = new File($dir->pwd() . DS . "MKarguments.json");
+                            $jsonArguments = new File($dir->pwd() . DS . "arguments.json");
                             $jsonArguments->write(json_encode($params));
                             $this->sendJob($id, $programName, $jsonArguments->pwd(), false, $filePath);
                             $this->redirect(array(
