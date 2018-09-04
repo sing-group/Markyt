@@ -2486,8 +2486,8 @@ class ProjectsController extends AppController {
                               'twitter_project' => false,
                               'has_title' => true,
                               'bioc_byte_level' => isset($data['Project']['bioc_default_options']),
-                              'bioc_annotation_key' => isset($data['Project']['bioc_annotation_key']) ? $data['Project']['bioc_annotation_key'] : '',
-                              'bioc_relation_key' => isset($data['Project']['bioc_relation_key']) ? $data['Project']['bioc_relation_key'] : '',
+                              'bioc_annotation_key' => isset($data['Project']['bioc_annotation_key']) && $data['Project']['bioc_annotation_key']!='' ? $data['Project']['bioc_annotation_key'] : 'type',
+                              'bioc_relation_key' => isset($data['Project']['bioc_relation_key'])&& $data['Project']['bioc_relation_key']!='' ? $data['Project']['bioc_relation_key'] : 'type',
                               'file' => $dir->path . DS . $data['Project']['File']['name'],
                               'user' => $data['User']["User"]
                         );
